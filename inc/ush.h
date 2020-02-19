@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <stdbool.h>
 
 #define BUFSIZE 1024
 #define DELIMITERS "\t\r\n\a "
@@ -21,7 +22,8 @@ typedef struct s_lst {
 void switch_noncanon(struct termios *savetty, struct termios *tty);
 void switch_canon(struct termios *savetty);
 char *lsh_read_line();
-
+bool mx_is_command(char *str);
+char **ush_split_line(char *line);
 
 
 #endif

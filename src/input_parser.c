@@ -48,6 +48,7 @@
 
 char *lsh_read_line() {
     char *line = NULL;
+    char **av = NULL;
     size_t bufsize = 0;
     t_lst *head;
 
@@ -56,9 +57,29 @@ char *lsh_read_line() {
                                      /* режим, опрацьовувати сигнали та змінні  */
 /*                                   * і повертати строку                      */
 /*    */
+    av = ush_split_line(line);      /* розділяємо строку на токени  */ 
+    // mx_is_command(av[0]));       /* формуємо список із команд і аргументів ;/
     return line;
 }
 
-// bool mx_is_command(char *str) {
-    
-// }
+bool mx_is_command(char *str) {
+    int j = 0;
+    bool flag;
+
+    for (int i = 0; COMMANDS[i] != '\0'; i++) {
+        if(COMMANDS[i] == str[j]) {
+            flag = true;
+            while(str[j] != '\0') {
+                if(str[j++] != COMMANDS[i++]) {
+                    flag = false;
+                    break;
+                }
+            }
+            if(flag)
+                return true;
+            else
+                i -= j - 1;
+        }
+    }
+    return false;
+}
