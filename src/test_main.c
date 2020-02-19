@@ -12,11 +12,6 @@
 */
 
 #include "ush.h"
-#include <string.h>
-
-#define BUFSIZE 1024
-#define DELIMITERS "\t\r\n\a "
-#include <string.h>
 
 //builtin commands: export, unset, fg, exit
 char *builtin_str[] = {"cd", "help", "exit"}; 
@@ -50,47 +45,6 @@ int ush_exit(char **args) {
 }
 
 int (*builtin_func[]) (char **args) = { &ush_cd, &ush_help, &ush_exit };
-
-
-
-
-
-////////////////////////////////////////звитування строки////////////////////////////
-char *ush_read_line() {
-    int buf_size = BUFSIZE;
-    int pos = 0;
-    char *buffer = (char *)malloc(sizeof(char) * buf_size);
-    int c;
-
-    while(1) {
-        c = getchar();                      //зчитуємо символ
-
-        if(c == EOF || c == '\n') {
-            buffer[pos] = '\0';
-            return buffer;
-        }
-        else {
-            buffer[pos] = c;                //записуємо в строку (буфер)
-        }
-        pos++;
-
-        if(pos >= buf_size) {               //перевіряємо розмір буфера
-            buf_size += BUFSIZE;
-            buffer = realloc(buffer, buf_size);
-        }
-    }
-}
-
-char *lsh_read_line(void)
-{
-  char *line = NULL;
-  size_t bufsize = 0; // getline сама выделит память
-  getline(&line, &bufsize, stdin);
-  return line;
-}
-/////////////////////////////////////////////////////////////////////////////////////////
-
-
 
 
 ////////////////////////////////////парсинг строки//////////////////////////////////////
@@ -187,7 +141,7 @@ void ush_loop() {
 
     do {
         printf("u$h> ");
-        line = ush_read_line();                     //зчитуємо строку
+        line = lsh_read_line();                     //зчитуємо строку
         //неканонічний режим терміналу
         //зчитування символів в буфер
         //відловлення сигналів
