@@ -1,0 +1,36 @@
+***Создание новой ветки
+git branch <new_branch_name>
+
+***Список веток
+git branch
+
+***Переключение на другую ветку (!закоммитить изменения, а то проебуться!)
+git checkout <new_branch_name>
+
+***Push с новой ветки
+git push --set-upstream origin <new_branch_name>
+
+***Слияние веток
+git checkout master
+git merge <new_branch_name>
+//исправить возможные конликты
+//удалить старую ветку, если больше не нужна
+git branch -d <new_branch_name>
+
+***commit log
+git log
+
+***посмотреть конкретный коммит (HEAD - ID последнего коммита)
+git show <first sumbols of commit ID>
+
+***разница между двумя коммитами
+git diff <first sumbols of commit ID>..<first sumbols of commit ID>
+
+***возвращение файла к состоянию какого-то коммита
+git checkout <first sumbols of commit ID> <file_name>
+
+***исправление комментария последнего коммита (до git push!)
+git commmit --amend
+
+***отмена коммита (после git push!)
+git revert <firs sumbols of commit ID>
