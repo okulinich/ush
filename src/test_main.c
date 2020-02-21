@@ -26,13 +26,12 @@ int ush_cd(char **args) {
     }
     else {
         if(chdir(args[1]) != 0)     //встановлює в якості поочного каталог 
-            perror("ush");          //на який вказує аргумент
+            perror("cd");      //на який вказує аргумент
     }
     return 1;
 }
 
 int ush_help(char **args) {
-    int i;
     printf("-------------USH-------------\n");
     printf("- List of builtin commands: -");
     for(int i = 0; i < ush_num_builtins(); i++)
@@ -78,7 +77,7 @@ char **ush_split_line(char *line) {
 
 
 //////////////////////////////////запуск програми//////////////////////////////////////
-int ush_launch(char **args) {
+int ush_launch(t_lst *head) {
     pid_t pid;          //proccess id
     pid_t wpid;         //
     int status;
@@ -94,12 +93,14 @@ int ush_launch(char **args) {
             v -> ми передаємо вектор (масив строк)
             p -> замість повного шляху до команди ми передаємо тільки її імя
         */
-        if(execvp(args[0], args) == -1)
-            perror("ush");
-        exit(1);
+        //printf("********%s\n", head->cmd);
+        if(execvp(head->cmd, head->av) == -1) {
+            fprintf(stderr, "%s", head->cmd);
+            exit(1);
+        }
     }
     else if(pid < 0) {
-        perror("ush");
+            perror("ush: ");
     }
     else {
         //родительский процес
@@ -114,10 +115,10 @@ int ush_launch(char **args) {
 //////////////////////////////////////////////////////////////////////////////////////
 
 
-int ush_execute(char **args) {
+int ush_execute(t_lst *head) {
     int i;
 
-    if(args[0] == NULL) {
+    if(head->cmd == NULL) {
         return 1;
     }
 
@@ -125,10 +126,10 @@ int ush_execute(char **args) {
     //якшо так, тоді викликає її
     //якшо ні, то запускає процес через ush_launch
     for(i = 0; i < ush_num_builtins(); i++) {
-        if(strcmp(args[0], builtin_str[i]) == 0)
-            return (*builtin_func[i])(args);
+        if(strcmp(head->cmd, builtin_str[i]) == 0)
+            return (*builtin_func[i])(head->av);
     }
-    return ush_launch(args);
+    return ush_launch(head);
 }
 
 
@@ -136,21 +137,30 @@ int ush_execute(char **args) {
 //////////////////////////////////////основний цикл/////////////////////////////////////
 void ush_loop() {
     char *line;
-    char **args;
+    t_lst *head;
+    t_lst *root;
     int status;
 
     do {
         printf("u$h> ");
-        line = lsh_read_line();                     //зчитуємо строку
+        head = lsh_read_line();                     //зчитуємо строку
+        root = head;
         //неканонічний режим терміналу
         //зчитування символів в буфер
         //відловлення сигналів
-        //
-        args = ush_split_line(line);                //парсимо строку (виділяємо команди флаги і аргументи)
-        status = ush_execute(args);                 //виконуємо команди
+    while(head) {
+        int i = 1;
+        printf("\n*** Command = %s, \targs: ", head->cmd);
+        while(head->av[i])
+            printf("%s, ", head->av[i++]);
+        printf(" ***\n");
+        head = head->next;
+    }
+        for ( ; root; root = root->next) {
+            status = ush_execute(root);                 //виконуємо команди
+        }
+        
 
-        free(line);
-        free(args);
     } while(status);
 }
 /////////////////////////////////////////////////////////////////////////////////////////

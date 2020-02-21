@@ -46,11 +46,13 @@
 //     exit(0);
 // }
 
-char *lsh_read_line() {
+t_lst *lsh_read_line() {
     char *line = NULL;
     char **av = NULL;
     size_t bufsize = 0;
-    t_lst *head;
+    t_lst *head = NULL;
+    t_lst *tmp = NULL;
+    int i = 0;
 
 /*                                   * тут потрібно викликати функцію, яка     */
     getline(&line, &bufsize, stdin); /* буде переводити термінал в неканонічний */
@@ -58,28 +60,54 @@ char *lsh_read_line() {
 /*                                   * і повертати строку                      */
 /*    */
     av = ush_split_line(line);      /* розділяємо строку на токени  */ 
-    // mx_is_command(av[0]));       /* формуємо список із команд і аргументів ;/
-    return line;
+
+    while (av[i] != NULL) {
+        if (mx_is_command(av[i])) {         /* якшо строка це команда, тоді додаємо */
+                                            /* команду в список */
+            tmp = push_back(&head, av[i]);
+            while(av[++i] && !mx_is_command(av[i]) && strcmp(av[i], "&&") != 0) {   /* доки строка не команда -> записуємо */
+                add_new_arg(tmp, av[i]);                            /* строку як аргумент до команди */
+            }
+        }
+        else {
+            //push_back(&head, av[i]);
+            ++i;
+        }
+    }
+    // while(head) {
+    //     i = 0;
+    //     printf("\n*** Command = %s, \targs: ", head->cmd);
+    //     while(head->av[i])
+    //         printf("%s, ", head->av[i++]);
+    //     printf(" ***\n");
+    //     head = head->next;
+    // }
+
+    return head;
 }
 
 bool mx_is_command(char *str) {
-    int j = 0;
-    bool flag;
+    char **comands = get_commands();            //потрібно потім ЗАФРІШИТИ!!
 
-    for (int i = 0; COMMANDS[i] != '\0'; i++) {
-        if(COMMANDS[i] == str[j]) {
-            flag = true;
-            while(str[j] != '\0') {
-                if(str[j++] != COMMANDS[i++]) {
-                    flag = false;
-                    break;
-                }
-            }
-            if(flag)
-                return true;
-            else
-                i -= j - 1;
-        }
+    for(int i = 0; i < COMMANDS; i++) {
+        if(strcmp(str, comands[i]) == 0)
+            return true;
     }
     return false;
+}
+
+char **get_commands() {
+    char **comands = (char **)malloc(sizeof(char *) * COMMANDS);
+
+    comands[0] = strdup("export");
+    comands[1] = strdup("unset");
+    comands[2] = strdup("fg");
+    comands[3] = strdup("exit");
+    comands[4] = strdup("env");
+    comands[5] = strdup("cd");
+    comands[6] = strdup("pwd");
+    comands[7] = strdup("which");
+    comands[8] = strdup("echo");
+    comands[9] = strdup("ls");
+    return comands;
 }
