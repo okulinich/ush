@@ -14,7 +14,7 @@
 #include "ush.h"
 
 //builtin commands: export, unset, fg, exit
-char *builtin_str[] = {"cd", "help", "exit"}; 
+char *builtin_str[] = {"cd", "help", "exit", "env"}; 
 
 int ush_num_builtins() {
     return sizeof(builtin_str) / sizeof(char *);
@@ -43,7 +43,11 @@ int ush_exit(char **args) {
     return 0;
 }
 
-int (*builtin_func[]) (char **args) = { &ush_cd, &ush_help, &ush_exit };
+void ush_env() {
+
+}
+
+int (*builtin_func[]) (char **args) = { &ush_cd, &ush_help, &ush_exit, &ush_env};
 
 
 ////////////////////////////////////парсинг строки//////////////////////////////////////
@@ -148,14 +152,14 @@ void ush_loop() {
         //неканонічний режим терміналу
         //зчитування символів в буфер
         //відловлення сигналів
-    while(head) {
-        int i = 1;
-        printf("\n*** Command = %s, \targs: ", head->cmd);
-        while(head->av[i])
-            printf("%s, ", head->av[i++]);
-        printf(" ***\n");
-        head = head->next;
-    }
+    // while(head) {
+    //     int i = 1;
+    //     printf("\n*** Command = %s, \targs: ", head->cmd);
+    //     while(head->av[i])
+    //         printf("%s, ", head->av[i++]);
+    //     printf(" ***\n");
+    //     head = head->next;
+    // }
         for ( ; root; root = root->next) {
             status = ush_execute(root);                 //виконуємо команди
         }
@@ -166,8 +170,7 @@ void ush_loop() {
 /////////////////////////////////////////////////////////////////////////////////////////
 
 
-int main() {
-    
+int main(int argc, char *argv[], char * envp[]) {
     ush_loop();         //цикл команд
 
     return 0;
