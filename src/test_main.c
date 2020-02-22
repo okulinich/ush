@@ -147,10 +147,10 @@ void ush_loop() {
     t_lst *head;
     t_lst *root;
     int status;
+    t_cmd_history *hist = NULL;
 
     do {
-        printf("u$h> ");
-        head = lsh_read_line();                     //зчитуємо строку
+        head = lsh_read_line(&hist);                     //зчитуємо строку
         root = head;
         //неканонічний режим терміналу
         //зчитування символів в буфер
@@ -166,9 +166,9 @@ void ush_loop() {
         for ( ; root; root = root->next) {
             status = ush_execute(root);                 //виконуємо команди
         }
-        
 
     } while(status);
+
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 
@@ -176,6 +176,7 @@ void ush_loop() {
 int main(int argc, char *argv[], char * envp[]) {
     ush_loop();         //цикл команд
 
+    //system("leaks -q ush");
     return 0;
 }
 

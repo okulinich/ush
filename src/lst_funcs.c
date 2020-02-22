@@ -39,3 +39,13 @@ void add_new_arg(t_lst *tmp, char *arg) {
         tmp->av[i + 1] = NULL;
     }
 }
+
+void push_front_history(t_cmd_history **head, char *line) {
+    t_cmd_history *new_item = (t_cmd_history *)malloc(sizeof (t_cmd_history));
+
+    new_item->user_input = mx_strdup(line);
+    new_item->next = *head;
+    if(*head)
+        (*head)->prev = new_item;
+    *head = new_item;
+}
