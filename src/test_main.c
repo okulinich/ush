@@ -102,12 +102,12 @@ int ush_launch(t_lst *head) {
         //     printf("%s, ", head->av[i]);
         // printf("\'\n");
         if(execvp(head->cmd, head->av) == -1) {
-            fprintf(stderr, "%s", head->cmd);
+            perror("u$h");
             exit(1);
         }
     }
     else if(pid < 0) {
-            perror("ush: ");
+            perror("u$h");
     }
     else {
         //родительский процес

@@ -70,18 +70,10 @@ t_lst *lsh_read_line() {
             }
         }
         else {
-            //push_back(&head, av[i]);
+            push_back(&head, av[i]);
             ++i;
         }
     }
-    // while(head) {
-    //     i = 0;
-    //     printf("\n*** Command = %s, \targs: ", head->cmd);
-    //     while(head->av[i])
-    //         printf("%s, ", head->av[i++]);
-    //     printf(" ***\n");
-    //     head = head->next;
-    // }
 
     return head;
 }
