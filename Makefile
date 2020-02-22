@@ -13,7 +13,7 @@ LMXI:=	$(LMXD)/$(INCD)
 INC		=	ush.h
 INCS	=	$(addprefix $(INCD)/, $(INC))
 
-SRC		=	main.c
+SRC		=	test_main.c canon.c input_parser.c lst_funcs.c
 
 SRCS	=	$(addprefix $(SRCD)/, $(SRC))
 OBJS	=	$(addprefix $(OBJD)/, $(SRC:%.c=%.o))
