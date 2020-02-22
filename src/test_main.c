@@ -47,7 +47,7 @@ void ush_env() {
 
 }
 
-int (*builtin_func[]) (char **args) = { &ush_cd, &ush_help, &ush_exit, &ush_env};
+int (*builtin_func[]) (char **args) = { &ush_cd, &ush_help, &ush_exit};
 
 
 ////////////////////////////////////парсинг строки//////////////////////////////////////
@@ -97,7 +97,10 @@ int ush_launch(t_lst *head) {
             v -> ми передаємо вектор (масив строк)
             p -> замість повного шляху до команди ми передаємо тільки її імя
         */
-        //printf("********%s\n", head->cmd);
+        // printf("INTO execvp: first arrg = \'%s\', second arg = \'", head->cmd);
+        // for(int i = 0; head->av[i] != NULL; i++)
+        //     printf("%s, ", head->av[i]);
+        // printf("\'\n");
         if(execvp(head->cmd, head->av) == -1) {
             fprintf(stderr, "%s", head->cmd);
             exit(1);

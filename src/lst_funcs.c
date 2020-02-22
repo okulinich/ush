@@ -3,8 +3,9 @@
 t_lst *create_node(char *str) {
     t_lst *node = (t_lst *)malloc(sizeof(t_lst));
     node->cmd = strdup(str);
-    node->av = (char **)malloc(sizeof(char *));
+    node->av = (char **)malloc(sizeof(char *) * 2);
     node->av[0] = strdup(str);
+    node->av[1] = NULL;
     node->next = NULL;
     return node;
 }
@@ -31,9 +32,9 @@ void add_new_arg(t_lst *tmp, char *arg) {
     if(tmp->av[i] == NULL)
         tmp->av[i] = strdup(arg);
     else {
-        tmp->av = realloc(tmp->av, sizeof(tmp->av) + sizeof(char *));
         while(tmp->av[i] != NULL)
             i++;
+        tmp->av = realloc(tmp->av, (i + 2) * sizeof(char *));
         tmp->av[i] = strdup(arg);
         tmp->av[i + 1] = NULL;
     }
