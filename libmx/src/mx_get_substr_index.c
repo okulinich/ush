@@ -1,21 +1,12 @@
-#include "./libmx.h"
+#include "libmx.h"
 
 int mx_get_substr_index(const char *str, const char *sub) {
-    int res = -1;
+    char *result;
 
-    if (!(str && sub))
-        res = -2;
-    else {
-        int i = 0;
-        for (int j = 0; str[i] != '\0'; i++) {
-            if (str[i] == sub[j]) {
-                if (j == mx_strlen(sub) - 1) {
-                    res = i - j;
-                    break;
-                }
-                j++;
-            }
-        }
-    }
-    return res;
+    if (!str || !sub)
+        return -2;
+    result = mx_strstr(str, sub);
+    if (result)
+        return (result - str);
+    return -1;
 }

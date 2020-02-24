@@ -1,34 +1,31 @@
-#include "./libmx.h"
+#include "libmx.h"
 
-static int count_size(unsigned long nbr) {
-    unsigned long nbr_copy = nbr;
-    int size = 0;
+static int num_len(unsigned long num) {
+    int length = 0;
 
-    while(nbr_copy > 0) {
-        size++;
-        nbr_copy /= 16;
+    while (num) {
+        num /= 16;
+        length++;
     }
-    return size;
+    return length;
 }
 
 char *mx_nbr_to_hex(unsigned long nbr) {
-    int size = 0;
-    char *res = NULL;
-    char hex[] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
-                  'a', 'b', 'c', 'd', 'e', 'f'};
-    
+    char *number = NULL;
+    unsigned long num = nbr;
+    int length = num_len(nbr);
+    int temp;
 
-    if (nbr == 0) {
-        res = mx_strnew(1);
-        res[0] = '0';
+    number = malloc(length);
+    if (nbr == 0)
+        return mx_strcpy(number, "0");
+    while (num) {
+        temp = num % 16;
+        if (temp < 10)
+            number[--length] = 48 + temp;
+        if (temp >= 10)
+            number[--length] = 87 + temp;
+        num /= 16;
     }
-    else {
-        size = count_size(nbr);
-        res = mx_strnew(size);
-        while(nbr > 0) {
-            res[--size] = hex[nbr % 16];
-            nbr /= 16;
-        }
-    }
-    return res;
+    return number;
 }

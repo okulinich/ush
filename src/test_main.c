@@ -1,4 +1,4 @@
-/*Цикл життя командної оболонки: 
+/*Цикл життя командної оболонки:
     - ініціалізація: шел читає і виконує свої файли конфігурацій
     - інтерпритація: шел зчитує команди із stdin і виконує їх
     - завершення: фрішемо пам'ять і завершуємо роботу
@@ -14,7 +14,7 @@
 #include "ush.h"
 
 //builtin commands: export, unset, fg, exit
-char *builtin_str[] = {"cd", "help", "exit", "env"}; 
+char *builtin_str[] = {"cd", "help", "exit", "env"};
 
 int ush_num_builtins() {
     return sizeof(builtin_str) / sizeof(char *);
@@ -25,13 +25,13 @@ int ush_cd(char **args) {
         fprintf(stderr, "ush: waiting argument for \"cd\"");
     }
     else {
-        if(chdir(args[1]) != 0)     //встановлює в якості поочного каталог 
+        if(chdir(args[1]) != 0)     //встановлює в якості поочного каталог
             perror("cd");      //на який вказує аргумент
     }
     return 1;
 }
 
-int ush_help(char **args) {
+int ush_help() {
     printf("-------------USH-------------\n");
     printf("- List of builtin commands: -");
     for(int i = 0; i < ush_num_builtins(); i++)
@@ -39,7 +39,7 @@ int ush_help(char **args) {
     return 1;
 }
 
-int ush_exit(char **args) {
+int ush_exit() {
     return 0;
 }
 
@@ -113,7 +113,7 @@ int ush_launch(t_lst *head) {
         //родительский процес
         do {
             //знаємо що дочерний процес має шось виконати, тому очікуємо на зміну стану цього процесу
-            wpid = waitpid(pid, &status, WUNTRACED);        
+            wpid = waitpid(pid, &status, WUNTRACED);
         } while(!WIFEXITED(status) && !WIFSIGNALED(status));
     }
 
@@ -125,9 +125,8 @@ int ush_launch(t_lst *head) {
 int ush_execute(t_lst *head) {
     int i;
 
-    if(head->cmd == NULL) {
+    if(head->cmd == NULL)
         return 1;
-    }
 
     //цикл перевіряє чи є команда вбудованою
     //якшо так, тоді викликає її
@@ -143,13 +142,12 @@ int ush_execute(t_lst *head) {
 
 //////////////////////////////////////основний цикл/////////////////////////////////////
 void ush_loop() {
-    char *line;
     t_lst *head;
     t_lst *root;
-    int status;
+    int status = 1;
     t_cmd_history *hist = NULL;
 
-    do {
+    while (status) {
         head = lsh_read_line(&hist);                     //зчитуємо строку
         root = head;
         //неканонічний режим терміналу
@@ -166,17 +164,14 @@ void ush_loop() {
         for ( ; root; root = root->next) {
             status = ush_execute(root);                 //виконуємо команди
         }
-
-    } while(status);
-
+        delete_list(head);
+    }
+    delete_history(hist);
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 
 
-int main(int argc, char *argv[], char * envp[]) {
+int main() {
     ush_loop();         //цикл команд
-
-    //system("leaks -q ush");
-    return 0;
+    system("leaks -q ush");
 }
-

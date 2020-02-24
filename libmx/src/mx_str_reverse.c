@@ -1,17 +1,7 @@
-#include "./libmx.h"
+#include "libmx.h"
 
-void mx_swapchar(char *a, char *b) {
-    char tmp = *a;
-    *a = *b;
-    *b = tmp;
-}
-
-void mx_str_reverse(char *str) {
-    if (str) {
-        int i = 0;
-        int j = mx_strlen(str) - 1;
-
-        while(i <= j)
-            mx_swapchar(&str[i++], &str[j--]);
-    }
+void mx_str_reverse(char *s) {
+    if (s)
+        for (int i = 0; i < (mx_strlen(s) / 2); i++)
+            mx_swap_char(&s[i], &s[mx_strlen(s) - i - 1]);
 }

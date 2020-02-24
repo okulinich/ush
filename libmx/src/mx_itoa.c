@@ -1,43 +1,34 @@
-#include "./libmx.h"
+#include "libmx.h"
 
-static void sign_and_size(int *sign, int *size, int *number, int *flag) {
-    int copy_number = *number;
+static int number_length(int number) {
+    int length = 0;
 
-    if(*number == -2147483648) {
-        *flag = 1;
-        (*number) += 1;
+    while (number) {
+        number /= 10;
+        length++;
     }
-    if ((*number) < 0) {
-        (*sign) = -1;
-        (*size)++;
-        (*number) *= -1;
-        copy_number = *number;
-    }
-    while (copy_number > 0) {
-        (*size)++;
-        copy_number /= 10;
-    }
+    return length;
 }
 
 char *mx_itoa(int number) {
-    int size = 0;
-    char *res = NULL;
-    int sign = 1;
-    int flag = 0;
+    int length = number_length(number);
+    int tmp = number;
+    char *result = NULL;
 
-    if (number == 0) {
-        res = mx_strnew(1);
-        res[0] = '0';
-    }
-    else {
-        sign_and_size(&sign, &size, &number, &flag);
-        res = mx_strnew(size);
-        while(number > 0) {
-            res[--size] = number % 10 + '0';
-            number /= 10;
+    result = mx_strnew(length);
+    if (number == 0)
+        return mx_strcpy(result, "0");
+    if (number == -2147483648)
+        return mx_strcpy(result, "-2147483648");
+    tmp = number;
+    for (int i = 0; i < length; i++) {
+        if (tmp < 0) {
+            result[length] = '-';
+            tmp = -tmp;
         }
-        res[0] = (sign == -1) ? '-' : res[0];
-        res[10] = (flag == 1) ? '8' : res[10];
+        result[i] = (tmp % 10) + '0';
+        tmp /= 10;
     }
-    return res;
+    mx_str_reverse(result);
+    return result;
 }

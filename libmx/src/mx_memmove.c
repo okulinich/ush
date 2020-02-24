@@ -1,12 +1,14 @@
-#include "./libmx.h"
+#include "libmx.h"
 
 void *mx_memmove(void *dst, const void *src, size_t len) {
-    byte *dst_ptr = (byte *) dst;
-    byte *src_ptr = (byte *) src;
-    byte *temp = (byte *)malloc(len);
+    unsigned char *pd = (unsigned char *)dst;
+    const unsigned char *ps = (unsigned char *)src;
 
-    mx_memcpy(temp, src_ptr, len);
-    mx_memcpy(dst_ptr, temp, len);
-    free(temp);
+    if (ps < pd)
+        for (pd += len, ps += len; len--;)
+            *--pd = *--ps;
+    else
+        while (len--)
+            *pd++ = *ps++;
     return dst;
 }

@@ -1,10 +1,10 @@
-#include "./libmx.h"
+#include "libmx.h"
 
 void *mx_memcpy(void *restrict dst, const void *restrict src, size_t n) {
-    byte *dst_ptr = (byte *) dst;
-    byte *src_ptr = (byte *) src;
+    char *d = dst;
+    const char *s = src;
 
-    for (size_t i = 0; i < n; i++)
-        dst_ptr[i] = src_ptr[i];
+    while (n--)
+        *d++ = *s++;
     return dst;
 }

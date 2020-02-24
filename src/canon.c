@@ -1,6 +1,6 @@
 #include "ush.h"
 
-void switch_noncanon(struct termios *savetty, struct termios *tty) {
+static void switch_noncanon(struct termios *savetty, struct termios *tty) {
     tcgetattr (0, tty);
     *savetty = *tty;                      /* зберегти управляючу інформацію канонічного режиму */
     tty->c_lflag &= ~(ICANON|ECHO|ISIG);
@@ -12,127 +12,98 @@ void switch_noncanon(struct termios *savetty, struct termios *tty) {
 */
 }
 
-void switch_canon(struct termios *savetty) {
+static void switch_canon(struct termios *savetty) {
 /*                                          */
     tcsetattr (0, TCSAFLUSH, savetty);
 /*          канонічний режим відновлено      */
 //TCSAFLUSH - це набір макросів, його потрібно задефайнити
 }
 
+//%c[1D", 27 - left
 
-void print_next_cmd(t_cmd_history **cur, char **line) {
-    if(*cur) {
-        write(1, (*cur)->user_input, strlen((*cur)->user_input));
-        *line = mx_strdup((*cur)->user_input);
-        if((*cur)->next)
-            *cur = (*cur)->next;
+static void write_symb_to_str(int *i, char **line, char *ch, bool *errow_pressed) {
+    int j = 0;
+    char esc = 27;
+    char *move_left = mx_strjoin(" ", "[1D");
+
+    move_left[0] = esc;
+
+    if(*i >= BUFSIZE)   //sizeof(*line) замість буфера?
+        *line = realloc(*line, sizeof(char) * ((*i) + BUFSIZE));
+    if(*errow_pressed) {
+        j = strlen(*line);
+        (*line)[j + 1] = '\0';
+        while(j > *i) {
+            (*line)[j] = (*line)[j - 1];
+            j--;
+        }
+    }
+    (*line)[(*i)++] = ch[0];                   //записуємо зчитаний символ в строку
+    write(1, &ch[0], 1);                    //echo вивід зчитаного символа
+    if(*errow_pressed) {
+        j = *i;
+        while((*line)[j] != '\0')
+            write(1, &(*line)[j++], 1);
+        while(j-- > *i)
+            mx_printstr(move_left);
+        *errow_pressed = false;
     }
 }
 
-void print_prev_cmd(t_cmd_history **cur, char **line) {
-    if(*cur && (*cur)->prev->prev) {
-        *cur = (*cur)->prev;
-        write(1, (*cur)->prev->user_input, strlen((*cur)->prev->user_input));
-        *line = mx_strdup((*cur)->prev->user_input);
+static int read_from_stdin(t_cmd_history **cur, char **line, int *i, bool *errow_pressed) {
+    char ch[4] = {'\0', '\0', '\0', '\0'};             //буфер для посимвольного зчитування
+
+    read(0, ch, 4);
+    if(ch[0] == '\n')
+        return LOOP_BREAK;          //після натискання Enter припиняємо зчитування
+    else if(ch[0] == 3) {           //відловлюємо ctrl + c
+        mx_printchar('\n');
+        return RETURN_EMPTY;          //freee!!
     }
+    else if(history_or_backsp(ch, cur, line, i))      //опрацьовуємо історію та бекспейс
+        return LOOP_CONTINUE;
+    else if(left_right_key(ch, line, i)) {
+        *errow_pressed = true;
+        return LOOP_CONTINUE;
+    }
+    else if(ch[1] != '\0')                      //відловлюємо натискання невідомих клавіш
+        return LOOP_CONTINUE;
+    else
+        write_symb_to_str(i, line, ch, errow_pressed);
+    return LOOP_CONTINUE;
 }
 
 char *noncanon_read_line(t_cmd_history **head) {
     struct termios savetty;             //змінні для зберігання управляючих струтктур
-    struct termios tty;
+    struct termios tty;                 //
     char *line = (char *)malloc(sizeof(char) * BUFSIZE);
-    char ch[4] = {'\0', '\0', '\0', '\0'};
     int i = 0;
+    int res = 0;
     t_cmd_history *cur = *head;
+    bool errow_pressed = false;         //для реалізації клавіш вліво-вправо
 
     switch_noncanon(&savetty, &tty);
 
     write(1, "u$h> ", 5);
-    for(;;) {
-        read(0, ch, 4);
-        if(ch[0] == '\n')
+    while(1) {
+        res = read_from_stdin(&cur, &line, &i, &errow_pressed);
+        if(!cur)
+            cur = *head;
+        if(res == LOOP_BREAK)
             break;
-        else if(ch[0] == 3) {
-            mx_printchar('\n');
-            return "";          //freee!!
+        else if(res == RETURN_EMPTY) {
+            free(line);
+            return "";
         }
-        else if(hist_or_backsp(ch, &cur, &line, &i)) {
+        else if(res == LOOP_CONTINUE)
             continue;
-        }
-        // else if(strlen(ch) > 1) {
-        //     mx_printstr("here!!");
-        //     continue;
-        // }
-        else {
-            if(i >= BUFSIZE)
-                line = realloc(line, sizeof(char) * (i + BUFSIZE));
-            line[i++] = ch[0];
-            write(1, &ch[0], 1);
-        }
     }
 
-    if(strlen(line) >= 1) {
-        push_front_history(head, line);
-    }
-
+    if(strlen(line) >= 1)                           //добавляємо запис в історію
+        push_front_history(head, line);             //якщо це не пуста строка
+    
     switch_canon(&savetty);
     mx_printchar('\n');
     return line;
 }
 
-bool hist_or_backsp(char *ch, t_cmd_history **cur, char **line, int *i) {
-    bool res = false;
-    char esc = 27;
-
-    if(arrow_pressed(ch, 27, 91, 65)) {
-        if(*cur) {
-            while(strlen(*line) > 0)
-                backspace(esc, line);
-            print_next_cmd(cur, line);
-            *i = strlen(*line) - 1;
-        }
-        res = true;
-    }
-    else if(arrow_pressed(ch, 27, 91, 66)) {
-        if(*cur) {
-            while(strlen(*line) > 0)
-                backspace(esc, line);
-            print_prev_cmd(cur, line);
-            *i = strlen(*line);
-        }
-        res = true;
-    }
-    else if (ch[0] == 127) {
-        backspace(esc, line);
-        (*i)--;
-        res = true;
-    }
-    return res;
-}
-
-void backspace(char ch, char **line) {
-    char *move_left = mx_strjoin(" ", "[1D");
-    char *tmp = mx_strnew(strlen(*line) - 1);
-
-    if(strlen(*line) == 0) {
-        free(move_left);
-        free(tmp);
-        return;
-    }
-    move_left[0] = ch;
-    mx_printstr(move_left);
-    mx_printchar(' ');
-    mx_strncpy(tmp, *line, strlen(*line) - 1);
-    free(*line);
-    *line = tmp;
-    mx_printstr(move_left);
-
-    free(move_left);
-}
-
-bool arrow_pressed(char *str, int a, int b, int c) {
-    if(strlen(str) == 3 && str[0] == a && str[1] == b && str[2] == c)
-        return true;
-    else
-        return false;
-}

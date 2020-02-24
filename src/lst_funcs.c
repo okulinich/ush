@@ -10,6 +10,32 @@ t_lst *create_node(char *str) {
     return node;
 }
 
+void delete_list(t_lst *head) {
+    t_lst *temp = head;
+    int i = 0;
+
+    while (head) {
+        free(head->cmd);
+        while(head->av[i])
+            free(head->av[i++]);
+        free(head->av);
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
+void delete_history(t_cmd_history *head) {
+    t_cmd_history *temp;
+
+    while(head) {
+        free(head->user_input);
+        temp = head;
+        head = head->next;
+        free(temp);
+    }
+}
+
 t_lst *push_back(t_lst **head, char *command) {
     t_lst *root = *head;
 

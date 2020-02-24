@@ -1,14 +1,17 @@
-#include "./libmx.h"
+#include "libmx.h"
 
 void *mx_memmem(const void *big, size_t big_len, const void *little, size_t little_len) {
-    const byte *big_ptr = big;
+    const unsigned char *b = big;
+    const unsigned char *l = little;
 
-    if (big_len < little_len || little_len == 0 || big_len == 0)
+    if (big_len < little_len)
         return NULL;
-    for (size_t i = 0; i < big_len; i++) {
-        if (mx_memcmp(&big_ptr[i], little, little_len) == 0) {
-            return (void *)&big_ptr[i];
-        }
+    if (big_len == 0 || little_len == 0)
+        return NULL;
+    while (b && (big_len-- >= little_len)) {
+        if ((mx_memcmp(b, l, little_len) == 0))
+            return (void *)b;
+        b++;
     }
     return NULL;
 }

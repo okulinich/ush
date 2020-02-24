@@ -1,12 +1,13 @@
-#include "./libmx.h"
+#include "libmx.h"
 
 int mx_list_size(t_list *list) {
-    t_list *head = list;
-    int size = 0;
+    int counter = 1;
 
-    while (head) {
-        size++;
-        head = head->next;
+    if (!list)
+        return 0;
+    while (list->next) {
+        list = list->next;
+        counter++;
     }
-    return size;
+    return counter;
 }

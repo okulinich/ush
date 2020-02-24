@@ -1,35 +1,39 @@
-#include "./libmx.h"
+#include "libmx.h"
 
-static void skip_and_swap(char **arr, int *l, int *r, char *pivot, int *sw) {
-    char *temp = NULL;
+static int swap(char **str1, char **str2) {
+    char *tmp = *str1;
 
-    while(mx_strlen(arr[*l]) < mx_strlen(pivot))
-        (*l)++;
-    while(mx_strlen(arr[*r]) > mx_strlen(pivot))
-        (*r)--;
-    if (*l <= *r) {
-        temp = arr[*l];
-        arr[(*l)++] = arr[*r];
-        arr[(*r)--] = temp;
-        (*sw)++;
+    *str1 = *str2;
+    *str2 = tmp;
+    return 1;
+}
+
+static int partition(char **arr, int l, int r, int *swap_count) {
+    int pivot = mx_strlen(arr[l + (r - l) / 2]);
+    int i = l - 1;
+    int j = r + 1;
+
+    while (69) {
+        while (mx_strlen(arr[++i]) < pivot)
+            ;
+        while (mx_strlen(arr[--j]) > pivot)
+            ;
+        if (i >= j)
+            return j;
+        if (mx_strlen(arr[i]) != mx_strlen(arr[j]))
+            swap(&(arr[i]), &(arr[j])) && ++(*swap_count);
     }
 }
 
 int mx_quicksort(char **arr, int left, int right) {
-    if(arr) {
-        char *pivot = arr[(left + right) / 2];
-        int l = left;
-        int r = right;
-        int swaps = 0;
+    int swap_count = 0;
 
-        while(l <= r)
-            skip_and_swap(arr, &l, &r, pivot, &swaps);
-        if (left < r)
-            mx_quicksort(arr, left, r);
-        if (right > l)
-            mx_quicksort(arr, l, right);
-        return swaps;
-    }
-    else 
+    if (!arr)
         return -1;
+    if (left < right) {
+        int p = partition(arr, left, right, &swap_count);
+        return (swap_count + mx_quicksort(arr, left, p)
+                + mx_quicksort(arr, p + 1, right));
+    }
+    return 0;
 }

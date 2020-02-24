@@ -1,21 +1,24 @@
-#include "./libmx.h"
+#include "libmx.h"
 
 char *mx_file_to_str(const char *file) {
-    int fd = open(file, O_RDONLY);
-    char *str;
-    char buf[] = "a";
+    char *result = NULL;
+    char *tmp = NULL;
+    int file_descriptor;
+    char buffer[1024];
+    int read_result = 0;
 
-    if (fd > 0) {
-        if (read(fd, buf, 1) > 0) {
-            str = mx_strnew(1);
-            str = mx_strjoin(str, buf);
-            while(read(fd, buf, 1) > 0)
-                str = mx_strjoin(str, buf);
-            close(fd);
-            return str;
-        }
-        else
-            return NULL;
+    if (!file)
+        return NULL;
+    if ((file_descriptor = open(file, O_RDONLY)) < 0)
+        return NULL;
+    while ((read_result = read(file_descriptor, buffer, 1023)) > 0) {
+        buffer[read_result] = '\0';
+        tmp = mx_strjoin(result, buffer);
+        mx_strdel(&result);
+        result = mx_strdup(tmp);
+        mx_strdel(&tmp);
     }
-    return NULL;
+    if (close(file_descriptor) < 0)
+        return NULL;
+    return result;
 }

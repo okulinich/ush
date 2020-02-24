@@ -8,13 +8,14 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <stdbool.h>
-#include "./libmx/inc/libmx.h"
+#include "../libmx/inc/libmx.h"
 
 #define BUFSIZE 1024
 #define DELIMITERS "\t\r\n\a "
 #define COMMANDS 10
-
-
+#define LOOP_BREAK 1
+#define RETURN_EMPTY 2
+#define LOOP_CONTINUE 3
 
 // ctrl + z = 26
 // ctrl + c = 3
@@ -25,8 +26,12 @@
 // down[0] = 27
 // down[1] = 91
 // down[2] = 66
-
-
+// left[0] = 27
+// left[1] = 91
+// left[2] = 68
+// right[0] = 27
+// right[1] = 91
+// right[2] = 67
 
 typedef struct s_lst {
     char *cmd; //"ls"
@@ -40,34 +45,32 @@ typedef struct s_cmd_history {
     struct s_cmd_history *prev;
 } t_cmd_history;
 
-//перемкнути термінал в неканочнічний режим
-void switch_noncanon(struct termios *savetty, struct termios *tty);
-//повернути термінал в канонічний режим
-void switch_canon(struct termios *savetty);
+
 //зчитування, парсинг строки, формування списку команд для виконання
-t_lst *lsh_read_line(t_cmd_history **head);
+t_lst *lsh_read_line(t_cmd_history **hist);
+//переводить термінал в неканонічний режим, зчитує строку, опрацьовує сигнали
+char *noncanon_read_line(t_cmd_history **head);
 //функція що перевіряє чи є строка командою
 bool mx_is_command(char *str);
 //функція що ділить строку на токени
 char **ush_split_line(char *line);
 //додавання елемента в кінець списку команд
 t_lst *push_back(t_lst **head, char *command);
-// повертає масив із уменами команд
-char **get_commands();
-//зчитує строку та сигнали з термінала
-char *noncanon_read_line(t_cmd_history **head);
-//дописує аргумент в список до команди
-void add_new_arg(t_lst *tmp, char *arg);
-//додає елемент до історії
+//додавання елемента в історію
 void push_front_history(t_cmd_history **head, char *line);
-//виводить попередній та наступний записи з історії
-void print_next_cmd(t_cmd_history **cur, char **line);
-void print_prev_cmd(t_cmd_history **cur, char **line);
-//виконує функції історії та backspace
-bool hist_or_backsp(char *ch, t_cmd_history **cur, char **line, int *i);
-//
-void backspace(char ch, char **line);
-//перевіряє чи натиснута клавіша стрілки
+//повертає масив команд підтримуваних інтерпретатором (для розпізнавання команд в строці)
+char **get_commands();
+//видалення списку команд і аргументів
+void delete_list(t_lst *head);
+//додає аргумент до поточної команди в списку
+void add_new_arg(t_lst *tmp, char *arg);
+//видаляє список що містить історію
+void delete_history(t_cmd_history *head);
+//опрацювання історії та backspace
+bool history_or_backsp(char *ch, t_cmd_history **cur, char **line, int *i);
+//опрацювання клавіш-стрілок праворуч і ліворуч
+bool left_right_key(char ch[4], char **line, int *i);
+//перевіряє чи була натиснута клавіша за її кодом
 bool arrow_pressed(char *str, int a, int b, int c);
 
 #endif
