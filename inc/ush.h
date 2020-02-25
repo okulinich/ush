@@ -72,5 +72,7 @@ bool history_or_backsp(char *ch, t_cmd_history **cur, char **line, int *i);
 bool left_right_key(char ch[4], char **line, int *i);
 //перевіряє чи була натиснута клавіша за її кодом
 bool arrow_pressed(char *str, int a, int b, int c);
+//заповнює строку '\0'
+void mx_line_alloc(char *line);
 
 #endif

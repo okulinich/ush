@@ -25,9 +25,8 @@ static void write_symb_to_str(int *i, char **line, char *ch, bool *errow_pressed
     int j = 0;
     char esc = 27;
     char *move_left = mx_strjoin(" ", "[1D");
-    FILE *f = fopen("arrows_debug.txt", "rw");
+    
     move_left[0] = esc;
-
     if(*i >= BUFSIZE)   //sizeof(*line) замість буфера?
         *line = realloc(*line, sizeof(char) * ((*i) + BUFSIZE));
     if(*errow_pressed || (*line)[*i] != '\0') {
@@ -48,6 +47,7 @@ static void write_symb_to_str(int *i, char **line, char *ch, bool *errow_pressed
             mx_printstr(move_left);
         *errow_pressed = false;
     }
+    free(move_left);
 }
 
 static int read_from_stdin(t_cmd_history **cur, char **line, int *i, bool *errow_pressed) {

@@ -2,6 +2,11 @@
 
 //%c[1D", 27 - left
 
+void mx_line_alloc(char *line) {
+    for(int i = 0; i < BUFSIZE; i++)
+        line[i] = '\0';
+}
+
 bool left_right_key(char ch[4], char **line, int *i) {
     if(arrow_pressed(ch, 27, 91, 68)) {
         if(strlen(*line) >= 1 && *i > 0) {

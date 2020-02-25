@@ -43,9 +43,6 @@ int ush_exit() {
     return 0;
 }
 
-void ush_env() {
-
-}
 
 int (*builtin_func[]) (char **args) = { &ush_cd, &ush_help, &ush_exit};
 
@@ -142,8 +139,8 @@ int ush_execute(t_lst *head) {
 
 //////////////////////////////////////основний цикл/////////////////////////////////////
 void ush_loop() {
-    t_lst *head;
-    t_lst *root;
+    t_lst *head = NULL;
+    t_lst *root = NULL;
     int status = 1;
     t_cmd_history *hist = NULL;
 
