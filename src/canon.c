@@ -25,12 +25,12 @@ static void write_symb_to_str(int *i, char **line, char *ch, bool *errow_pressed
     int j = 0;
     char esc = 27;
     char *move_left = mx_strjoin(" ", "[1D");
-
+    FILE *f = fopen("arrows_debug.txt", "rw");
     move_left[0] = esc;
 
     if(*i >= BUFSIZE)   //sizeof(*line) замість буфера?
         *line = realloc(*line, sizeof(char) * ((*i) + BUFSIZE));
-    if(*errow_pressed) {
+    if(*errow_pressed || (*line)[*i] != '\0') {
         j = strlen(*line);
         (*line)[j + 1] = '\0';
         while(j > *i) {
@@ -40,11 +40,11 @@ static void write_symb_to_str(int *i, char **line, char *ch, bool *errow_pressed
     }
     (*line)[(*i)++] = ch[0];                   //записуємо зчитаний символ в строку
     write(1, &ch[0], 1);                    //echo вивід зчитаного символа
-    if(*errow_pressed) {
+    if(*errow_pressed || (*line)[*i] != '\0') {
         j = *i;
         while((*line)[j] != '\0')
             write(1, &(*line)[j++], 1);
-        while(j-- > *i)
+        while(--j >= *i)
             mx_printstr(move_left);
         *errow_pressed = false;
     }
