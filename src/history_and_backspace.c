@@ -97,11 +97,21 @@ bool history_or_backsp(char *ch, t_cmd_history **cur, char **line, int *i) {
             print_from_history("", i, &res, line);
             return true;
         }
-        else if(!(*cur)->prev)
+        else if(*cur && !(*cur)->prev) {
             print_from_history("", i, &res, line);
-        else if(*cur && (*cur)->prev) {
+            return true;
+        }
+        else if(*cur && (*cur)->prev && strlen((*cur)->prev->user_input) != 0) {                          //segmentation fault
+            // fprintf(stdout, "i'm going to print -%s-\n", (*cur)->prev->user_input);
             print_from_history((*cur)->prev->user_input, i, &res, line);
+            // fprintf(stdout, "going down through the list\n");
             *cur = (*cur)->prev;
+            // if((*cur)->prev)
+            //     fprintf(stdout, "next el exist!\n");
+            // else
+            //     fprintf(stdout, "next el don't exist\n");
+            mx_line_alloc(*line);
+            return true;
         }
     }
     else if (ch[0] == 127)                    //backspace

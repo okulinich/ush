@@ -25,8 +25,7 @@ t_lst *lsh_read_line(t_cmd_history **hist) {
         }
     }
 
-    if(strlen(line) >= 1)
-        free(line);
+    free(line);
     free(av);
     return head;
 }

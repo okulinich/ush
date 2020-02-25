@@ -71,6 +71,7 @@ void push_front_history(t_cmd_history **head, char *line) {
 
     new_item->user_input = mx_strdup(line);
     new_item->next = *head;
+    new_item->prev = NULL;
     if(*head)
         (*head)->prev = new_item;
     *head = new_item;

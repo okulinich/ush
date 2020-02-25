@@ -76,7 +76,7 @@ static int read_from_stdin(t_cmd_history **cur, char **line, int *i, bool *errow
 char *noncanon_read_line(t_cmd_history **head) {
     struct termios savetty;             //змінні для зберігання управляючих струтктур
     struct termios tty;                 //
-    char *line = (char *)malloc(sizeof(char) * BUFSIZE);
+    char *line = mx_strnew(BUFSIZE);
     int i = 0;
     int res = 0;
     t_cmd_history *cur = *head;
@@ -93,7 +93,7 @@ char *noncanon_read_line(t_cmd_history **head) {
             break;
         else if(res == RETURN_EMPTY) {
             free(line);
-            return "";
+            mx_strnew(1);
         }
         else if(res == LOOP_CONTINUE)
             continue;
