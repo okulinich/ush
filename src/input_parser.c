@@ -103,22 +103,21 @@ char **mx_parse_env_args(t_global **hd) {
     int i;
     char **new_env;
 
-    if(!(*hd)->new->av[1]) {          //якщо env без флагів тоді просто виводимо змінні
+    if(!(*hd)->new->av[1]) {          //якщо env без флагів тоді просто виводимо змінні оболонки
         mx_print_env((*hd)->env);
         return NULL;
     }
     else if(mx_strcmp((*hd)->new->av[1], "-i") == 0) {
-        if(!(*hd)->new->av[2]) {
+        if(!(*hd)->new->av[2])          //якщо немає аргументів після 'і' тоді нічого не робимо 
             return NULL;
-        }
         else {
-            new_env = fill_new_env(hd, &i);
-            if((*hd)->new->av[i]) {
-                reparse_input_for_env(hd, i);
+            new_env = fill_new_env(hd, &i);     //заповнюємо новий масив із введених змінних
+            if((*hd)->new->av[i]) {             //якщо далі є команда яку потрібно виконати тоді 
+                reparse_input_for_env(hd, i);   //передаємо їй новий масив і виконуємо цю команду в execve()
                 return new_env;
             }
-            else {
-                mx_print_env(new_env);
+            else {                              //якщо команди немає, тоді просто виводимо
+                mx_print_env(new_env);          //введені користувачем змінні
                 mx_del_strarr(&new_env);
                 return NULL;
             }
@@ -137,27 +136,5 @@ char **mx_parse_env_args(t_global **hd) {
         new_env = mx_env_copy();
         return new_env;
     }
-    // if(mx_strcmp((*hd)->new->av[1], "-i") == 0 || mx_strcmp((*hd)->new->av[1], "-u") == 0) {
-    //     buf = (char **)malloc(sizeof(char *) * BUFSIZE);
-    //     for(i = 2; mx_get_char_index((*hd)->new->av[i], '=') >= 0; i++) ;
-    //     filename = mx_strdup((*hd)->new->av[i]);            //знайшов і зберіг ім'я файла якого треба запустити
-    //     buf[0] = NULL;
-
-    //     while((*hd)->new->av[++i])
-    //         buf[j++] = mx_strdup((*hd)->new->av[i]);          //зберігаємо флаги якщо вони є
-
-    //     if((*hd)->new->cmd) {
-    //         mx_del_strarr(&(*hd)->new->av);
-    //         free((*hd)->new->cmd);
-    //     }
-    //     (*hd)->new->cmd = mx_strjoin("/bin/", filename);        //записуємо шляха до бінарника
-    //     (*hd)->new->av = (char **)malloc(sizeof(char *) * 2);   //формуємо масив аргументів
-    //     (*hd)->new->av[0] = mx_strdup(filename);
-    //     (*hd)->new->av[1] = NULL;
-
-    //     for(j = 0; buf[j]; j++)
-    //         add_new_arg((*hd)->new, buf[j]);
-    //     mx_del_strarr(&buf);
-    // }
     return NULL;
 }
