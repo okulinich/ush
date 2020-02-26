@@ -87,6 +87,8 @@ bool left_right_key(char ch[4], char **line, int *i);
 bool arrow_pressed(char *str, int a, int b, int c);
 //заповнює строку '\0'
 void mx_line_alloc(char *line);
+//парсинг аргументів для env
+void mx_parse_env_args(t_global **hd);
 
 // ailchuk
 void mx_exit(t_lst *h); // new ver

@@ -58,3 +58,20 @@ char **get_commands() {
     comands[9] = "ls";
     return comands;
 }
+
+void mx_parse_env_args(t_global **hd) {
+    int i;
+    char *filename;
+
+    if(mx_strcmp((*hd)->new->av[1], "-i") == 0) {
+        for(i = 0; (*hd)->new->av[i]; i++) ;
+        filename = mx_strdup((*hd)->new->av[i - 1]);            //знайшов і зберіг ім'я файла якого треба запустити
+
+        free((*hd)->new->cmd);
+        mx_del_strarr(&(*hd)->new->av);
+        (*hd)->new->cmd = mx_strjoin("/bin/", filename);
+        (*hd)->new->av = (char **)malloc(sizeof(char *) * 2);
+        (*hd)->new->av[0] = mx_strdup(filename);
+        (*hd)->new->av[1] = NULL;
+    }
+}

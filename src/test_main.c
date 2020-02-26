@@ -37,9 +37,19 @@ char **ush_split_line(char *line) {
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 
+int func_exec(t_global *hd) {
+    int status = 0;
 
+    if (mx_strcmp(hd->new->cmd, "env") == 0) {
+        mx_parse_env_args(&hd);
+        status = execve(hd->new->cmd, hd->new->av, hd->env); //запускаємо env
+    }
+    else
+        status = execv(hd->new->cmd, hd->new->av); // юзаємо с новими аргументами середи  
+    return status;
+}
 //////////////////////////////////запуск програми//////////////////////////////////////
-int ush_launch(t_lst *head) {
+int ush_launch(t_global *hd) {
     pid_t pid;          //proccess id
     pid_t wpid;         //
     int status;
@@ -55,57 +65,56 @@ int ush_launch(t_lst *head) {
             v -> ми передаємо вектор (масив строк)
             p -> замість повного шляху до команди ми передаємо тільки її імя
         */
-        if(execvp(head->cmd, head->av) < 0) { // сделать так что бы выдавало ошибку command not found.
+        if(func_exec(hd) == 0) { // сделать так что бы выдавало ошибку command not found.
             perror("u$h");
             exit(1);
         }
     }
+    // if(pid < 0)
+        // error
     wpid = waitpid(pid, &status, WUNTRACED);
     return 1;
 }
 //////////////////////////////////////////////////////////////////////////////////////
 
-int ush_execute(t_lst *head) {
-    if(head->cmd == NULL)
+int ush_execute(t_global *hd) {
+    if(hd->new->cmd == NULL)
         return 1;
-    if (mx_strcmp(head->cmd, "pwd") == 0)
-        return mx_builtin_pwd(head);
-    if (mx_strcmp(head->cmd, "exit") == 0)
-        mx_exit(head);
-    return ush_launch(head);
+    if (mx_strcmp(hd->new->cmd, "pwd") == 0)
+        return mx_builtin_pwd(hd->new);
+    if (mx_strcmp(hd->new->cmd, "exit") == 0) {
+        //system("leaks -q ush");
+        mx_exit(hd->new);
+    }
+        // функція яка знаходить білтін і юзає його
+        // якщо енв то заходить ush_launch 
+    
+    return ush_launch(hd);
 }
 
 //////////////////////////////////////основний цикл/////////////////////////////////////
-void ush_loop() {
-    t_lst *head;
+void ush_loop(t_global *hd) {
     t_lst *root;
     int status = 1;
     t_cmd_history *hist = NULL;
 
     while (status) {
-        head = lsh_read_line(&hist);                     //зчитуємо строку
-        root = head;
-        for ( ; root; root = root->next) {
-            status = ush_execute(root);                 //виконуємо команди
+        hd->new = lsh_read_line(&hist);                     //зчитуємо строку
+        root = hd->new;
+        for ( ; hd->new; hd->new = hd->new->next) {
+            status = ush_execute(hd);                 //виконуємо команди
         }
-        delete_list(head);
+        delete_list(root);
     }
     delete_history(hist);
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 
-// int main() {
-//     ush_loop();         //цикл команд
-//     system("leaks -q ush");
-// }
 
 int main() {
-    // t_global *head = malloc(sizeof(t_global *));
-    // head->env = mx_env_copy();
-    // mx_print_strarr(head->env, "\n");
-    // mx_del_strarr(&head->env);
-    // system("leaks -q ush");
-    // return 0;
-    ush_loop();         //цикл команд
+    t_global *head = malloc(sizeof(t_global *));
+
+    head->env = mx_env_copy();
+    ush_loop(head);         //цикл команд
     // free(a);
 }
