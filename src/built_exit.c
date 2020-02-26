@@ -17,7 +17,7 @@ void mx_exit(t_lst *h) {
         // free(h);
         flag = 1;
     }
-    system("leaks -q ush");
+    //system("leaks -q ush");
     if (!flag)
         exit(atoi(h->av[1]));
 }
