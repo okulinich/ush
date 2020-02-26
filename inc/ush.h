@@ -88,7 +88,7 @@ bool arrow_pressed(char *str, int a, int b, int c);
 //заповнює строку '\0'
 void mx_line_alloc(char *line);
 //парсинг аргументів для env
-bool mx_parse_env_args(t_global **hd);
+char **mx_parse_env_args(t_global **hd);
 //вивід системних змінних оточення
 void mx_print_env(char **env);
 
