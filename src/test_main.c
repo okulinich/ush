@@ -13,43 +13,6 @@
 
 #include "ush.h"
 
-//builtin commands: export, unset, fg, exit
-char *builtin_str[] = {"cd", "help", "exit", "env"};
-
-int ush_num_builtins() {
-    return sizeof(builtin_str) / sizeof(char *);
-}
-
-int ush_cd(char **args) {
-    if(args[1] == NULL) {
-        fprintf(stderr, "ush: waiting argument for \"cd\"");
-    }
-    else {
-        if(chdir(args[1]) != 0)     //встановлює в якості поочного каталог
-            perror("cd");      //на який вказує аргумент
-    }
-    return 1;
-}
-
-int ush_help() {
-    printf("-------------USH-------------\n");
-    printf("- List of builtin commands: -");
-    for(int i = 0; i < ush_num_builtins(); i++)
-        printf("- %s *\n", builtin_str[i]);
-    return 1;
-}
-
-int ush_exit() {
-    return 0;
-}
-
-void ush_env() {
-
-}
-
-int (*builtin_func[]) (char **args) = { &ush_cd, &ush_help, &ush_exit};
-
-
 ////////////////////////////////////парсинг строки//////////////////////////////////////
 //функція повертає масив слів із зчитаної строки
 char **ush_split_line(char *line) {
@@ -75,11 +38,6 @@ char **ush_split_line(char *line) {
 /////////////////////////////////////////////////////////////////////////////////////////
 
 
-
-
-
-
-
 //////////////////////////////////запуск програми//////////////////////////////////////
 int ush_launch(t_lst *head) {
     pid_t pid;          //proccess id
@@ -97,79 +55,57 @@ int ush_launch(t_lst *head) {
             v -> ми передаємо вектор (масив строк)
             p -> замість повного шляху до команди ми передаємо тільки її імя
         */
-        // printf("INTO execvp: first arrg = \'%s\', second arg = \'", head->cmd);
-        // for(int i = 0; head->av[i] != NULL; i++)
-        //     printf("%s, ", head->av[i]);
-        // printf("\'\n");
-        if(execvp(head->cmd, head->av) == -1) {
+        if(execvp(head->cmd, head->av) < 0) { // сделать так что бы выдавало ошибку command not found.
             perror("u$h");
             exit(1);
         }
     }
-    else if(pid < 0) {
-            perror("u$h");
-    }
-    else {
-        //родительский процес
-        do {
-            //знаємо що дочерний процес має шось виконати, тому очікуємо на зміну стану цього процесу
-            wpid = waitpid(pid, &status, WUNTRACED);
-        } while(!WIFEXITED(status) && !WIFSIGNALED(status));
-    }
-
+    wpid = waitpid(pid, &status, WUNTRACED);
     return 1;
 }
 //////////////////////////////////////////////////////////////////////////////////////
 
-
 int ush_execute(t_lst *head) {
-    int i;
-
     if(head->cmd == NULL)
         return 1;
-
-    //цикл перевіряє чи є команда вбудованою
-    //якшо так, тоді викликає її
-    //якшо ні, то запускає процес через ush_launch
-    for(i = 0; i < ush_num_builtins(); i++) {
-        if(strcmp(head->cmd, builtin_str[i]) == 0)
-            return (*builtin_func[i])(head->av);
-    }
+    if (mx_strcmp(head->cmd, "pwd") == 0)
+        return mx_builtin_pwd(head);
+    if (mx_strcmp(head->cmd, "exit") == 0)
+        mx_exit(head);
     return ush_launch(head);
 }
-
-
 
 //////////////////////////////////////основний цикл/////////////////////////////////////
 void ush_loop() {
     t_lst *head;
     t_lst *root;
     int status = 1;
+    t_cmd_history *hist = NULL;
 
     while (status) {
-        printf("u$h> ");
-        head = lsh_read_line();                     //зчитуємо строку
+        head = lsh_read_line(&hist);                     //зчитуємо строку
         root = head;
-        //неканонічний режим терміналу
-        //зчитування символів в буфер
-        //відловлення сигналів
-    // while(head) {
-    //     int i = 1;
-    //     printf("\n*** Command = %s, \targs: ", head->cmd);
-    //     while(head->av[i])
-    //         printf("%s, ", head->av[i++]);
-    //     printf(" ***\n");
-    //     head = head->next;
-    // }
         for ( ; root; root = root->next) {
             status = ush_execute(root);                 //виконуємо команди
         }
+        delete_list(head);
     }
+    delete_history(hist);
 }
 /////////////////////////////////////////////////////////////////////////////////////////
 
+// int main() {
+//     ush_loop();         //цикл команд
+//     system("leaks -q ush");
+// }
 
 int main() {
+    // t_global *head = malloc(sizeof(t_global *));
+    // head->env = mx_env_copy();
+    // mx_print_strarr(head->env, "\n");
+    // mx_del_strarr(&head->env);
+    // system("leaks -q ush");
+    // return 0;
     ush_loop();         //цикл команд
-
+    // free(a);
 }

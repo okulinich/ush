@@ -73,6 +73,7 @@ SRC	= 	mx_binary_search.c\
 		mx_terminate.c\
 		mx_tolower.c\
 		mx_toupper.c\
+		mx_arr_size.c\
 
 SRCS	=	$(addprefix $(SRCD)/, $(SRC))
 OBJS	=	$(addprefix $(OBJD)/, $(SRC:%.c=%.o))
