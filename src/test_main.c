@@ -40,8 +40,9 @@ char **ush_split_line(char *line) {
 int func_exec(t_global *hd) {
     int status = 0;
 
-    if (mx_strcmp(hd->new->cmd, "env") == 0 && hd->new->av[1]) {        //якщо в env передано якісь аргументи       
-        mx_parse_env_args(&hd);                                         //тоді виконуємо їх парсинг
+    if (mx_strcmp(hd->new->cmd, "env") == 0) {        //якщо в env передано якісь аргументи       
+        if(!mx_parse_env_args(&hd))                  //тоді виконуємо їх парсинг
+            return 1;
         status = execve(hd->new->cmd, hd->new->av, hd->env); //запускаємо env
     }
     else
@@ -85,10 +86,6 @@ int ush_execute(t_global *hd) {
     if (mx_strcmp(hd->new->cmd, "exit") == 0) {
         //system("leaks -q ush");
         mx_exit(hd->new);
-    }
-    if(mx_strcmp(hd->new->cmd, "env") == 0 && !hd->new->av[1]) {     //якщо env без аргументів
-        mx_print_env(hd->env);
-        return 1;
     }
         // функція яка знаходить білтін і юзає його
         // якщо енв то заходить ush_launch 

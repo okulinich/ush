@@ -59,13 +59,21 @@ char **get_commands() {
     return comands;
 }
 
-void mx_parse_env_args(t_global **hd) {
+bool mx_parse_env_args(t_global **hd) {
     int i;
     char *filename;
     int j = 0;
-    char **buf = (char **)malloc(sizeof(char *) * BUFSIZE);
+    char **buf;
+
+    if(mx_strcmp((*hd)->new->cmd, "env") == 0 && !(*hd)->new->av[1]) {          //якщо env без флагів тоді просто виводимо змінні
+        mx_print_env((*hd)->env);
+        return false;
+    }
+
+
 
     if(mx_strcmp((*hd)->new->av[1], "-i") == 0 || mx_strcmp((*hd)->new->av[1], "-u") == 0) {
+        buf = (char **)malloc(sizeof(char *) * BUFSIZE);
         for(i = 2; mx_get_char_index((*hd)->new->av[i], '=') >= 0; i++) ;
         filename = mx_strdup((*hd)->new->av[i]);            //знайшов і зберіг ім'я файла якого треба запустити
         buf[0] = NULL;
@@ -86,4 +94,5 @@ void mx_parse_env_args(t_global **hd) {
             add_new_arg((*hd)->new, buf[j]);
         mx_del_strarr(&buf);
     }
+    return true;
 }
