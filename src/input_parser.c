@@ -15,7 +15,7 @@ t_lst *lsh_read_line(t_cmd_history **hist) {
         if (mx_is_command(av[i])) {         /* якшо строка це команда, тоді додаємо */
                                             /* команду в список */
             tmp = push_back(&head, av[i]);
-            while(av[++i] && !mx_is_command(av[i]) && strcmp(av[i], "&&") != 0) {   /* доки строка не команда -> записуємо */
+            while(av[++i] && strcmp(av[i], "&&") != 0) {   /* доки строка не команда -> записуємо */
                 add_new_arg(tmp, av[i]);                            /* строку як аргумент до команди */
             }
         }
@@ -64,7 +64,7 @@ void mx_parse_env_args(t_global **hd) {
     char *filename;
 
     if(mx_strcmp((*hd)->new->av[1], "-i") == 0) {
-        for(i = 0; (*hd)->new->av[i]; i++) ;
+        for(i = 1; (*hd)->new->av[i]; i++) ;
         filename = mx_strdup((*hd)->new->av[i - 1]);            //знайшов і зберіг ім'я файла якого треба запустити
 
         free((*hd)->new->cmd);
