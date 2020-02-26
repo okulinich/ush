@@ -1,6 +1,6 @@
 NAME	=	ush
 
-CFLG	=	-std=c11 -g #$(addprefix -W, all extra error pedantic) -g
+CFLG	=	-std=c11 $(addprefix -W, all extra error pedantic) -g
 
 SRCD	=	src
 INCD	=	inc
@@ -13,7 +13,9 @@ LMXI:=	$(LMXD)/$(INCD)
 INC		=	ush.h
 INCS	=	$(addprefix $(INCD)/, $(INC))
 
-SRC		=	test_main.c canon.c input_parser.c lst_funcs.c history_and_backspace.c left_right_key.c
+SRC		=	test_main.c canon.c input_parser.c lst_funcs.c built_exit.c \
+			built_pwd.c built_env.c history_and_backspace.c left_right_key.c \
+			
 
 SRCS	=	$(addprefix $(SRCD)/, $(SRC))
 OBJS	=	$(addprefix $(OBJD)/, $(SRC:%.c=%.o))

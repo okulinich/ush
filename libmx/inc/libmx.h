@@ -38,6 +38,7 @@ void mx_foreach(int *arr, int size, void (*f)(int));
 int mx_binary_search(char **arr, int size, const char *s, int *count);
 int mx_bubble_sort(char **arr, int size);
 int mx_quicksort(char **arr, int left, int right);
+int mx_arr_size(char **arr);
 
 // String pack
 int mx_strlen(const char *s);

@@ -1,6 +1,7 @@
 #ifndef USH_H
 #define USH_H
 
+#include "libmx.h"
 #include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -8,11 +9,17 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <stdbool.h>
-#include "../libmx/inc/libmx.h"
+#include <ctype.h>
+#include <signal.h>
+#include <errno.h>
 
 #define BUFSIZE 1024
 #define DELIMITERS "\t\r\n\a "
 #define COMMANDS 10
+#define MX_RIGHT_ARROW "\x1b\x5b\x43"
+#define MX_LEFT_ARROW "\x1b\x5b\x44"
+#define MX_HOME_KEY "\x1b\x5b\x48"
+#define MX_END_KEY "\x1b\x5b\x46"
 #define LOOP_BREAK 1
 #define RETURN_EMPTY 2
 #define LOOP_CONTINUE 3
@@ -37,6 +44,7 @@ typedef struct s_lst {
     char *cmd; //"ls"
     char **av; //{ "ls" , "-la", "src", null}
     struct s_lst *next;
+    char *pwd;
 } t_lst;
 
 typedef struct s_cmd_history {
@@ -45,6 +53,11 @@ typedef struct s_cmd_history {
     struct s_cmd_history *prev;
 } t_cmd_history;
 
+
+typedef struct s_global {
+    t_lst *new;
+    char **env;   
+} t_global;
 
 //зчитування, парсинг строки, формування списку команд для виконання
 t_lst *lsh_read_line(t_cmd_history **hist);
@@ -74,5 +87,18 @@ bool left_right_key(char ch[4], char **line, int *i);
 bool arrow_pressed(char *str, int a, int b, int c);
 //заповнює строку '\0'
 void mx_line_alloc(char *line);
+//парсинг аргументів для env
+void mx_parse_env_args(t_global **hd);
+
+// ailchuk
+void mx_exit(t_lst *h); // new ver
+int mx_builtin_pwd(t_lst *list);
+// t_envir *mx_copy_env(char **environ);
+// t_envir *mx_create_env(char *env);           // create node
+// void mx_pushf_env(t_envir **ptr, char *env); // push front node
+// void mx_pushb_env(t_envir **ptr, char *env); // push back node
+// void mx_built_env(t_lst *head, t_envir *a);
+// void mx_print_env(t_envir **a);
+char **mx_env_copy(void); // копирует все из env
 
 #endif
