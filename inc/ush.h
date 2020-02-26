@@ -59,6 +59,14 @@ typedef struct s_global {
     char **env;   
 } t_global;
 
+
+// core
+void mx_ush_loop(t_global *hd);
+int mx_ush_execute(t_global *hd);
+int mx_ush_launch(t_global *hd);
+char **mx_ush_split_line(char *line);
+t_lst *mx_ush_read_line(t_cmd_history **hist);
+
 //зчитування, парсинг строки, формування списку команд для виконання
 t_lst *lsh_read_line(t_cmd_history **hist);
 //переводить термінал в неканонічний режим, зчитує строку, опрацьовує сигнали
@@ -87,6 +95,8 @@ bool left_right_key(char ch[4], char **line, int *i);
 bool arrow_pressed(char *str, int a, int b, int c);
 //заповнює строку '\0'
 void mx_line_alloc(char *line);
+void mx_print_env(char **env);
+char **mx_parse_env_args(t_global **hd);
 
 // ailchuk
 void mx_exit(t_lst *h); // new ver

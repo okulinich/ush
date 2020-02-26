@@ -21,3 +21,10 @@ char **mx_env_copy(void) {
     }
     return env_copy;
 }
+
+void mx_print_env(char **env) {
+    for(int i = 0; env[i]; i++) {
+        mx_printstr(env[i]);
+        mx_printstr("\n");
+    }
+}
