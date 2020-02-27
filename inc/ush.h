@@ -12,6 +12,7 @@
 #include <ctype.h>
 #include <signal.h>
 #include <errno.h>
+#include <regex.h>
 
 #define BUFSIZE 1024
 #define DELIMITERS "\t\r\n\a "
@@ -53,11 +54,18 @@ typedef struct s_cmd_history {
     struct s_cmd_history *prev;
 } t_cmd_history;
 
-
 typedef struct s_global {
     t_lst *new;
-    char **env;   
+    char **env;
 } t_global;
+
+
+// core
+void mx_ush_loop(t_global *hd);
+int mx_ush_execute(t_global *hd);
+int mx_ush_launch(t_global *hd);
+char **mx_ush_split_line(char *line);
+t_lst *mx_ush_read_line(t_cmd_history **hist);
 
 //зчитування, парсинг строки, формування списку команд для виконання
 t_lst *lsh_read_line(t_cmd_history **hist);
@@ -87,13 +95,12 @@ bool left_right_key(char ch[4], char **line, int *i);
 bool arrow_pressed(char *str, int a, int b, int c);
 //заповнює строку '\0'
 void mx_line_alloc(char *line);
-//парсинг аргументів для env
-char **mx_parse_env_args(t_global **hd);
-//вивід системних змінних оточення
 void mx_print_env(char **env);
+char **mx_parse_env_args(t_global **hd);
 
 // ailchuk
-void mx_exit(t_lst *h); // new ver
+// void mx_exit(t_lst *h); // new ver
+int mx_exit(t_lst *h);
 int mx_builtin_pwd(t_lst *list);
 // t_envir *mx_copy_env(char **environ);
 // t_envir *mx_create_env(char *env);           // create node

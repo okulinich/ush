@@ -1,6 +1,6 @@
 #include "ush.h"
 
-t_lst *lsh_read_line(t_cmd_history **hist) {
+t_lst *mx_ush_read_line(t_cmd_history **hist) {
     char *line = NULL;
     char **av = NULL;
     t_lst *head = NULL;
@@ -9,7 +9,7 @@ t_lst *lsh_read_line(t_cmd_history **hist) {
 
     line = noncanon_read_line(hist);
 
-    av = ush_split_line(line);      /* розділяємо строку на токени  */
+    av = mx_ush_split_line(line);      /* розділяємо строку на токени  */
 
     while (av[i] != NULL) {
         if (mx_is_command(av[i])) {         /* якшо строка це команда, тоді додаємо */
@@ -59,6 +59,12 @@ char **get_commands() {
     return comands;
 }
 
+
+/*******************************************************************************************************************************************/
+//////////////////////////////////////////////////////////////////ENV part///////////////////////////////////////////////////////////////////
+/*******************************************************************************************************************************************/
+
+//створює новий масив змінних із тих що ввів користувач (після флага -і) для передачі їх в EXECVE
 char **fill_new_env(t_global **hd, int *i) {
     char **new_env = (char **)malloc(sizeof(char *));
     int j = 0;
@@ -75,21 +81,39 @@ char **fill_new_env(t_global **hd, int *i) {
     return new_env;
 }
 
-void reparse_input_for_env(t_global **hd, int i) {
+///функція правильно розприділяє аргументи команди ENV для подальшої передачі в EXECVE///
+void reparse_input_for_env(t_global **hd, int i, char *folder_to_search) {
     char *filename;
     char **buf = NULL;
     int j = 0;
+    char *temp = NULL;
 
     filename = mx_strdup((*hd)->new->av[i]);
     buf = (char **)malloc(sizeof(char *) * BUFSIZE);
     buf[0] = NULL;
     while((*hd)->new->av[++i])
-    buf[j++] = mx_strdup((*hd)->new->av[i]);          //зберігаємо флаги якщо вони є
+        buf[j++] = mx_strdup((*hd)->new->av[i]);                //зберігаємо флаги якщо вони є
     if((*hd)->new->cmd) {
         mx_del_strarr(&(*hd)->new->av);
         free((*hd)->new->cmd);
     }
-    (*hd)->new->cmd = mx_strjoin("/bin/", filename);        //записуємо шляха до бінарника
+    if(filename[0] != '/') {
+        if(folder_to_search == NULL)                            //якщо флаг -Р не введено тоді бінарник шукаємо в /bin
+            (*hd)->new->cmd = mx_strjoin("/bin/", filename);        //записуємо шляха до бінарника
+        else {                                                  //якщо флаг -P активовано, тоді шукаємо у введеній директорії
+            if(folder_to_search[strlen(folder_to_search) - 1] == '/') {
+                (*hd)->new->cmd = mx_strjoin(folder_to_search, filename);
+            }
+            else {
+                temp = mx_strjoin(folder_to_search, "/");
+                (*hd)->new->cmd = mx_strjoin(temp, filename);
+                free(temp);
+            }
+            free(folder_to_search);
+        }
+    }
+    else
+        (*hd)->new->cmd = mx_strdup(filename);
     (*hd)->new->av = (char **)malloc(sizeof(char *) * 2);   //формуємо масив аргументів
     (*hd)->new->av[0] = mx_strdup(filename);
     (*hd)->new->av[1] = NULL;
@@ -99,8 +123,123 @@ void reparse_input_for_env(t_global **hd, int i) {
     mx_del_strarr(&buf);
 }
 
-char **mx_parse_env_args(t_global **hd) {
+//функція перевіряє чи менша строка входить в більшу (до знака = в більшій)
+bool find_var_in_str(char *big, char *little) {
+    int i = 0;
+    bool res = true;
+
+    if(big[0] == little[0]) {
+        while(big[i] != '\0' && big[i] != '=') {
+            if(big[i] != little[i]) {
+                res = false;
+                break;
+            }
+            i++;
+        }
+        if(res)
+            return res;
+    }
+    return false;
+}
+
+//функція для реалізації -u (ігнорує записані користувачем змінні)
+char **ignore_variables(t_global **hd) {
+    int size = 0;
+    char **new_env = NULL;
+    int j = 0;
+
+    while((*hd)->env[size])
+        size++;
+    new_env = (char **)malloc(sizeof(char *) * size + 1);
+    for(int i = 0; i < size; i++) {
+        if(!find_var_in_str((*hd)->env[i], (*hd)->new->av[2]))
+            new_env[j++] = mx_strdup((*hd)->env[i]);
+    }
+    new_env[j] = NULL;
+    return new_env;
+}
+
+
+////////////////окремі функції для флагів ENV/////////////////////////
+char **i_flag_env(t_global **hd) {
+    char **new_env;
     int i;
+    char *folder_to_search = NULL;
+
+    if(!(*hd)->new->av[2])                  //якщо немає аргументів після 'і' тоді нічого не робимо 
+        return NULL;
+    else {
+        new_env = fill_new_env(hd, &i);     //заповнюємо новий масив із введених змінних
+        if(mx_strcmp((*hd)->new->av[2], "-P") == 0) {
+            if((*hd)->new->av[3]) {
+                if(!(*hd)->new->av[4])    //якщо після -Р тільки один аргумент то виходимо
+                    return NULL;            //just skiip and exit!!
+                folder_to_search = mx_strdup((*hd)->new->av[3]);
+                i = 4;
+            }
+            else {
+                mx_printstr("Error!!!!\n");
+                return NULL;
+            }
+        }
+        if((*hd)->new->av[i]) {             //якщо далі є команда яку потрібно виконати тоді 
+            reparse_input_for_env(hd, i, folder_to_search);   //передаємо їй новий масив і виконуємо цю команду в execve()
+            return new_env;
+        }
+        else {                              //якщо команди немає, тоді просто виводимо
+            mx_print_env(new_env);          //введені користувачем змінні
+            mx_del_strarr(&new_env);
+            return NULL;
+        }
+    }
+}
+
+char **u_flag_env(t_global **hd) {
+    char **new_env;
+
+    if(!(*hd)->new->av[2]) {         //якщо немає аргументів після 'u' тоді виводимо usage 
+        mx_printstr("USAGE:\n");
+        return NULL;
+    }
+    else {
+        new_env = ignore_variables(hd);    //копіюємо масив змінних оболонки
+                                                // i видаляємо введені користувачем зміннні
+        if(!(*hd)->new->av[3]) {            //якщо немає програми для запуску, тоді просто виводимо поточні змінні
+            mx_print_env(new_env);          //ігноруючи задану користувачем
+            return NULL;
+        }
+        else {
+            reparse_input_for_env(hd, 3, NULL);       //якщо є програма для запуску, передаємо їй змінні, виключаючи задану користувачем
+            return new_env;
+        }
+    }
+}
+
+char **p_flag_env(t_global **hd) {
+    char **new_env;
+    char *folder_to_search = NULL;
+
+    if(!(*hd)->new->av[2]) {         //якщо немає аргументів після '-P' тоді виводимо usage 
+        mx_printstr("USAGE:\n");
+        return NULL;
+    }
+    else {
+        if(!(*hd)->new->av[3]) {
+            mx_print_env((*hd)->env);
+            return NULL;
+        }
+        else {
+            new_env = mx_env_copy();
+            folder_to_search = mx_strdup((*hd)->new->av[2]);
+            reparse_input_for_env(hd, 3, folder_to_search);
+            return new_env;
+        }
+    }
+}
+
+
+/////////////          ОСНОВНИЙ АЛГОРИТМ env         /////////////
+char **mx_parse_env_args(t_global **hd) {
     char **new_env;
 
     if(!(*hd)->new->av[1]) {          //якщо env без флагів тоді просто виводимо змінні оболонки
@@ -108,31 +247,25 @@ char **mx_parse_env_args(t_global **hd) {
         return NULL;
     }
     else if(mx_strcmp((*hd)->new->av[1], "-i") == 0) {
-        if(!(*hd)->new->av[2])          //якщо немає аргументів після 'і' тоді нічого не робимо 
-            return NULL;
-        else {
-            new_env = fill_new_env(hd, &i);     //заповнюємо новий масив із введених змінних
-            if((*hd)->new->av[i]) {             //якщо далі є команда яку потрібно виконати тоді 
-                reparse_input_for_env(hd, i);   //передаємо їй новий масив і виконуємо цю команду в execve()
-                return new_env;
-            }
-            else {                              //якщо команди немає, тоді просто виводимо
-                mx_print_env(new_env);          //введені користувачем змінні
-                mx_del_strarr(&new_env);
-                return NULL;
-            }
-        }
+        new_env = i_flag_env(hd);
+        if(new_env != NULL)
+            return new_env;
+        return NULL;
     }
     else if(mx_strcmp((*hd)->new->av[1], "-u") == 0) {
-        mx_printstr("Опрацьовуємо флаг -у\n");
+        new_env = u_flag_env(hd);
+        if(new_env != NULL)
+            return new_env;
         return NULL;
     }
     else if(mx_strcmp((*hd)->new->av[1], "-P") == 0){
-        mx_printstr("Опрацьовуємо флаг -Р\n");
+        new_env = p_flag_env(hd);
+        if(new_env != NULL)
+            return new_env;
         return NULL;
     }
     else {
-        reparse_input_for_env(hd, 1);
+        reparse_input_for_env(hd, 1, NULL);
         new_env = mx_env_copy();
         return new_env;
     }
