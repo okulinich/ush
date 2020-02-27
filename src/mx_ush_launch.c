@@ -66,10 +66,13 @@ int mx_ush_launch(t_global *hd) {
         */
 
         if((res = func_exec(hd)) == 1) {
+            //system("leaks -q ush");
             exit(1);
         }
-        if(res == 127)
+        if(res == 127) {
+            //system("leaks -q ush");
             exit(0);
+        }
     }
     // if(pid < 0)
         // error

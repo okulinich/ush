@@ -9,15 +9,27 @@ t_lst *mx_ush_read_line(t_cmd_history **hist) {
 
     line = noncanon_read_line(hist);
 
-    av = mx_ush_split_line(line);      /* розділяємо строку на токени  */
+    av = mx_ush_split_line(line, NULL);      /* розділяємо строку на токени  */
 
     while (av[i] != NULL) {
         if (mx_is_command(av[i])) {         /* якшо строка це команда, тоді додаємо */
                                             /* команду в список */
             tmp = push_back(&head, av[i]);
-            while(av[++i] && strcmp(av[i], "&&") != 0) {   /* доки строка не команда -> записуємо */
+            while(av[++i] && strcmp(av[i], "&&") != 0 && strcmp(av[i], ";")) {   /* доки строка не команда -> записуємо */
                 add_new_arg(tmp, av[i]);                            /* строку як аргумент до команди */
             }
+            while(av[i] && (strcmp(av[i], "&&") == 0 || strcmp(av[i], ";") == 0))      //пропускаємо символи що розділяють команди
+                i++;
+        }
+        else if (mx_get_char_index(av[i], ';') >= 0 || strstr(av[i], "&&") != NULL) {
+            tmp = mx_additional_parsing(&head, av[i]);
+            if(tmp != NULL) {       //якщо аргумент закінчується командою яка може приймати аргументи або флаги
+                while(av[++i] && strcmp(av[i], "&&") != 0 && strcmp(av[i], ";")) {   /* доки строка не команда -> записуємо */
+                    add_new_arg(tmp, av[i]);                            /* строку як аргумент до команди */
+                }
+            }
+            else                                                    //інакше - йдемо далі по аргументах
+                ++i;
         }
         else {
             push_back(&head, av[i]);
@@ -28,6 +40,19 @@ t_lst *mx_ush_read_line(t_cmd_history **hist) {
     free(line);
     free(av);
     return head;
+}
+
+t_lst *mx_additional_parsing(t_lst **head, char *arg) {
+    t_lst *tmp = NULL;
+    char **tokens = mx_ush_split_line(arg, ";");
+
+    for(int i = 0; tokens[i]; i++)
+        tmp = push_back(head, tokens[i]);
+    free(tokens);
+    if(mx_is_command(tmp->cmd) && arg[strlen(arg) - 1] != ';')
+        return tmp;
+    else
+        return NULL;
 }
 
 bool mx_is_command(char *str) {

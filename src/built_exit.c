@@ -3,8 +3,10 @@
 int mx_exit(t_lst *h) {
     int flag = 0;
 
-    if (!h->av[1])
+    if (!h->av[1]) {
+        //system("leaks -q ush");
         exit(0);
+    }
     for (unsigned int i = 0; i < strlen(h->av[1]); i++)
         if (!isnumber(h->av[1][i])) {
             fprintf(stderr, "%s\nush: %s: %s: numeric argument required\n",
@@ -16,9 +18,11 @@ int mx_exit(t_lst *h) {
                 h->av[0], h->av[0]); //  не делать exit
         flag = 1;
     }
-    system("leaks -q ush");
-    if (!flag)
+    //system("leaks -q ush");
+    if (!flag) {
+        //system("leaks -q ush");
         exit(atoi(h->av[1]));
+    }
     return 1;
 }
 
