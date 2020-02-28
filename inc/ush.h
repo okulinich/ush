@@ -101,6 +101,8 @@ void mx_print_env(char **env);
 char **mx_parse_env_args(t_global **hd);
 //функція виконує додатковий парсинг якщо в аргументі міститься ;
 t_lst *mx_additional_parsing(t_lst **head, char *arg);
+//функція виводить помилку usage для env
+void mx_usage_env(char *flag);
 
 // ailchuk
 // void mx_exit(t_lst *h); // new ver

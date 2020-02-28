@@ -203,7 +203,7 @@ char **i_flag_env(t_global **hd) {
                 i = 4;
             }
             else {
-                mx_printstr("Error!!!!\n");
+                mx_usage_env("P");
                 return NULL;
             }
         }
@@ -223,7 +223,7 @@ char **u_flag_env(t_global **hd) {
     char **new_env;
 
     if(!(*hd)->new->av[2]) {         //якщо немає аргументів після 'u' тоді виводимо usage 
-        mx_printstr("USAGE:\n");
+        mx_usage_env("u");
         return NULL;
     }
     else {
@@ -245,7 +245,7 @@ char **p_flag_env(t_global **hd) {
     char *folder_to_search = NULL;
 
     if(!(*hd)->new->av[2]) {         //якщо немає аргументів після '-P' тоді виводимо usage 
-        mx_printstr("USAGE:\n");
+        mx_usage_env("P");
         return NULL;
     }
     else {
