@@ -1,6 +1,6 @@
 NAME	=	ush
 
-CFLG	=	-std=c11 $(addprefix -W, all extra error pedantic) -g
+CFLG	=	-std=c11 $(addprefix -W, all extra pedantic) -g
 
 SRCD	=	src
 INCD	=	inc
@@ -16,7 +16,7 @@ INCS	=	$(addprefix $(INCD)/, $(INC))
 SRC		=	test_main.c canon.c input_parser.c lst_funcs.c built_exit.c \
 			built_pwd.c built_env.c history_and_backspace.c left_right_key.c \
 			mx_ush_loop.c mx_ush_execute.c mx_ush_launch.c mx_ush_split_line.c \
-			
+			built_echo.c built_export.c
 
 SRCS	=	$(addprefix $(SRCD)/, $(SRC))
 OBJS	=	$(addprefix $(OBJD)/, $(SRC:%.c=%.o))

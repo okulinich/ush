@@ -76,3 +76,29 @@ void push_front_history(t_cmd_history **head, char *line) {
         (*head)->prev = new_item;
     *head = new_item;
 }
+
+char **init_vars() {
+    char **str = (char **)malloc(sizeof(char *));
+    str[1] = NULL;
+    return str;
+}
+
+void delete_global(t_global *head) {
+    if(head) {
+        for(int i = 0; head->vars[i]; i++) {
+            free(head->vars[i]);
+        }
+        free(head->vars);
+        free(head);
+    }
+}
+
+void add_local_var(t_global **hd, char *str) {
+    int i = 0;
+
+    while((*hd)->vars[i])
+        i++;
+    (*hd)->vars = realloc((*hd)->vars, (i + 2) * sizeof(char *));
+    (*hd)->vars[i] = mx_strdup(str);
+    (*hd)->vars[i + 1] = NULL;
+}

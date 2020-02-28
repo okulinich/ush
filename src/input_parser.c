@@ -1,6 +1,6 @@
 #include "ush.h"
 
-t_lst *mx_ush_read_line(t_cmd_history **hist) {
+t_lst *mx_ush_read_line(t_cmd_history **hist, t_global **hd) {
     char *line = NULL;
     char **av = NULL;
     t_lst *head = NULL;
@@ -30,6 +30,10 @@ t_lst *mx_ush_read_line(t_cmd_history **hist) {
             }
             else                                                    //інакше - йдемо далі по аргументах
                 ++i;
+        }
+        else if(mx_get_char_index(av[i], '=') > 0 && mx_get_char_index(av[i], '=') < mx_strlen(av[i]) - 1) {
+            add_local_var(hd, av[i]);             //якщо в строці знайдено = і воно не на першій або останній
+            ++i;                                       //позиціях, тоді опрацьовуємо строку як 'змінна'='значення'
         }
         else {
             push_back(&head, av[i]);

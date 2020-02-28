@@ -23,31 +23,31 @@ static int print_exec_error(t_lst *new) {
     return 127;
 }
 
-static int func_exec(t_global *hd) {
+static int func_exec(t_global *hd, t_lst *head) {
     int status = 0;
     char **new_env;
 
-    if (mx_strcmp(hd->new->cmd, "env") == 0) {
+    if (mx_strcmp(head->cmd, "env") == 0) {
         new_env = mx_parse_env_args(&hd);       //функція повертає NULL якщо в env не передано ніяких команд
         if(new_env == NULL)                     //інакше - повертає масив змінних среди
             return 1;
         else
-            status = execve(hd->new->cmd, hd->new->av, new_env); //запускаємо env з заданим набором змінних
+            status = execve(head->cmd, head->av, new_env); //запускаємо env з заданим набором змінних
         mx_del_strarr(&new_env);
         printf("****1\t %d\n", status);
     }
     else {
-        status = execvp(hd->new->cmd, hd->new->av); // МОЖЕТ ЛУЧШЕ execvp? при таком случае работает лс и тд юзаємо с новими аргументами середи
+        status = execvp(head->cmd, head->av); // МОЖЕТ ЛУЧШЕ execvp? при таком случае работает лс и тд юзаємо с новими аргументами середи
         printf("****2\t %d\n", status);
         if (status == -1) {
-            print_exec_error(hd->new);
+            print_exec_error(head);
         }
     }
 
     return status;
 }
 
-int mx_ush_launch(t_global *hd) {
+int mx_ush_launch(t_global *hd, t_lst *head) {
     pid_t pid;          //proccess id
     pid_t wpid;         //
     int status;
@@ -65,7 +65,7 @@ int mx_ush_launch(t_global *hd) {
             p -> замість повного шляху до команди ми передаємо тільки її імя
         */
 
-        if((res = func_exec(hd)) == 1) {
+        if((res = func_exec(hd, head)) == 1) {
             //system("leaks -q ush");
             exit(1);
         }
