@@ -35,3 +35,15 @@ void mx_usage_env(char *flag) {
     mx_printerr("\nusage: env [-i] [-P utilpath] [-u name]\n");
     mx_printerr("[name=value ...] [utility [argument ...]]\n");
 }
+
+char *mx_get_env_var(char **env, char *var) {   // возвращает ключ переменной который ты ищешь в массиве ЕНВ
+	int	var_len;
+
+	var_len = strlen(var);
+	while (env && *env)
+		if (!strncmp(var, *env, var_len) && (*env + var_len))
+			return (*env + var_len + 1);
+		else
+			++env;
+	return NULL;
+}

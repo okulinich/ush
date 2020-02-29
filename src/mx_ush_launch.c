@@ -1,27 +1,27 @@
 #include "ush.h"
 
-bool mx_match(char *src, char *regex) {
-    regex_t reg;
-    int result;
+// bool mx_match(char *src, char *regex) {
+//     regex_t reg;
+//     int result;
 
-    regcomp(&reg, regex, REG_EXTENDED);
-    result = regexec(&reg, src, 0, NULL, 0);
-    regfree(&reg);
-    return result == 0;
-}
+//     regcomp(&reg, regex, REG_EXTENDED);
+//     result = regexec(&reg, src, 0, NULL, 0);
+//     regfree(&reg);
+//     return result == 0;
+// }
 
-static int print_exec_error(t_lst *new) {
-    if (!mx_match(new->cmd, "/")) {
-        fprintf(stderr, "ush: %s: Command not found\n", new->cmd);
-        return 127;
-    }
-    else {
-        for (int i = 0; new->av[i]; i++)
-            if (mx_match(new->av[i], "/"))
-                fprintf(stderr, "ush: %s: No such file or SUKA directory\n", new->av[i]);
-    }
-    return 127;
-}
+// static int print_exec_error(t_lst *new) {
+//     if (!mx_match(new->cmd, "/")) {
+//         fprintf(stderr, "ush: %s: Command not found\n", new->cmd);
+//         return 127;
+//     }
+//     else {
+//         for (int i = 0; new->av[i]; i++)
+//             if (mx_match(new->av[i], "/"))
+//                 fprintf(stderr, "ush: %s: No such file or SUKA directory\n", new->av[i]);
+//     }
+//     return 127;
+// }
 
 static int func_exec(t_global *hd, t_lst *head) {
     int status = 0;
@@ -34,14 +34,9 @@ static int func_exec(t_global *hd, t_lst *head) {
         else
             status = execve(head->cmd, head->av, new_env); //запускаємо env з заданим набором змінних
         mx_del_strarr(&new_env);
-        printf("****1\t %d\n", status);
     }
     else {
         status = execvp(head->cmd, head->av); // МОЖЕТ ЛУЧШЕ execvp? при таком случае работает лс и тд юзаємо с новими аргументами середи
-        printf("CMd = %s\tARG1 = %s\n", head->cmd, head->av[1]);
-        if (status == -1) {
-            print_exec_error(head);
-        }
     }
 
     return status;

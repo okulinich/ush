@@ -1,27 +1,33 @@
 #include "ush.h"
 
-int mx_exit(t_lst *h) {
+int mx_exit(t_global *hd) {
     int flag = 0;
 
-    if (!h->av[1]) {
-        //system("leaks -q ush");
+    if (!hd->new->av[1]) {
+        mx_del_strarr(&hd->env);
+        mx_del_strarr(&hd->new->av);
+        mx_strdel(&hd->new->cmd);
+        // mx_strdel(&hd->pwd);
+        free(hd);
+        system("leaks -q ush");
         exit(0);
     }
-    for (unsigned int i = 0; i < strlen(h->av[1]); i++)
-        if (!isnumber(h->av[1][i])) {
+    for (unsigned int i = 0; i < strlen(hd->new->av[1]); i++)
+        if (!isnumber(hd->new->av[1][i])) {
             fprintf(stderr, "%s\nush: %s: %s: numeric argument required\n",
-                    h->av[0], h->av[0], h->av[1]);
+                    hd->new->av[0], hd->new->av[0], hd->new->av[1]);
             exit(255);
         }
-    if (mx_arr_size(h->av) > 2) {
+    if (mx_arr_size(hd->new->av) > 2) {
         fprintf(stderr, "%s\nush: %s: too many arguments\n",
-                h->av[0], h->av[0]); //  не делать exit
+                hd->new->av[0], hd->new->av[0]); //  не делать exit
         flag = 1;
     }
     //system("leaks -q ush");
     if (!flag) {
-        //system("leaks -q ush");
-        exit(atoi(h->av[1]));
+        free(hd);
+        system("leaks -q ush");
+        exit(atoi(hd->new->av[1]));
     }
     return 1;
 }

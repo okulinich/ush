@@ -118,15 +118,10 @@ bool find_var_in_str(char *big, char *little);
 int mx_export(t_global *hd, t_lst *head);
 
 // ailchuk
-// void mx_exit(t_lst *h); // new ver
-int mx_exit(t_lst *h);
-int mx_builtin_pwd(t_lst *list);
-// t_envir *mx_copy_env(char **environ);
-// t_envir *mx_create_env(char *env);           // create node
-// void mx_pushf_env(t_envir **ptr, char *env); // push front node
-// void mx_pushb_env(t_envir **ptr, char *env); // push back node
-// void mx_built_env(t_lst *head, t_envir *a);
-// void mx_print_env(t_envir **a);
+int mx_exit(t_global *hd);
+int mx_builtin_pwd(t_global *hd);
 char **mx_env_copy(void); // копирует все из env
+char *mx_get_env_var(char **env, char *var);   // возвращает ключ переменной который ты ищешь в массиве ЕНВ
+
 
 #endif
