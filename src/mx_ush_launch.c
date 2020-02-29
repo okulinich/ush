@@ -38,7 +38,7 @@ static int func_exec(t_global *hd, t_lst *head) {
     }
     else {
         status = execvp(head->cmd, head->av); // МОЖЕТ ЛУЧШЕ execvp? при таком случае работает лс и тд юзаємо с новими аргументами середи
-        printf("****2\t %d\n", status);
+        printf("CMd = %s\tARG1 = %s\n", head->cmd, head->av[1]);
         if (status == -1) {
             print_exec_error(head);
         }

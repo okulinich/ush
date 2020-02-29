@@ -8,9 +8,15 @@ int mx_find_builtin(t_global *hd, t_lst *head) {
     if (mx_strcmp(head->cmd, "env") == 0)
         return mx_ush_launch(hd, head); // ret 1
     if(mx_strcmp(head->cmd, "echo") == 0)
-        return mx_echo(hd);
+        return mx_echo(hd, head);
     if(mx_strcmp(head->cmd, "export") == 0)
-        return mx_export(hd);
+        return mx_export(hd, head);
+    if(mx_strcmp(head->cmd, "cd") == 0) {
+        mx_printstr("HELLO");
+        mx_print_strarr(head->av, "\n");
+        return 1;
+    }
+    
     return 0;
 }
 

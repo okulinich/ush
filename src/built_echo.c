@@ -15,23 +15,23 @@ static char *search_for_var(t_global *hd, char *str) {
 }
 
 
-int mx_echo(t_global *hd) {
+int mx_echo(t_global *hd, t_lst *head) {
     char *str;
 
-    if(!hd->new->av[1])
+    if(!head->av[1])
         mx_printstr("\n");
     else {
-        for(int i = 1; hd->new->av[i]; i++) {
-            if(hd->new->av[i][0] == '$') {
-                str = search_for_var(hd, hd->new->av[i]);
+        for(int i = 1; head->av[i]; i++) {
+            if(head->av[i][0] == '$') {
+                str = search_for_var(hd, head->av[i]);
                 if(str != NULL) {
                     mx_printstr(str);
                 }
             }
             else {
-                mx_printstr(hd->new->av[i]);
+                mx_printstr(head->av[i]);
             }
-            if(hd->new->av[i + 1])
+            if(head->av[i + 1])
                 mx_printstr(" ");
         }
         mx_printstr("\n");

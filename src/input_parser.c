@@ -15,23 +15,23 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global **hd) {
         if (mx_is_command(av[i])) {         /* якшо строка це команда, тоді додаємо */
                                             /* команду в список */
             tmp = push_back(&head, av[i]);
-            while(av[++i] && strcmp(av[i], "&&") != 0 && strcmp(av[i], ";")) {   /* доки строка не команда -> записуємо */
+            while(av[++i] && strcmp(av[i], ";") != 0 && mx_get_char_index(av[i], ';') <= 0) {   /* доки строка не команда -> записуємо */
                 add_new_arg(tmp, av[i]);                            /* строку як аргумент до команди */
             }
-            while(av[i] && (strcmp(av[i], "&&") == 0 || strcmp(av[i], ";") == 0))      //пропускаємо символи що розділяють команди
+            while(av[i] && strcmp(av[i], ";") == 0)      //пропускаємо символи що розділяють команди
                 i++;
         }
-        else if (mx_get_char_index(av[i], ';') >= 0 || strstr(av[i], "&&") != NULL) {
+        else if (mx_get_char_index(av[i], ';') >= 0) {
             tmp = mx_additional_parsing(&head, av[i]);
             if(tmp != NULL) {       //якщо аргумент закінчується командою яка може приймати аргументи або флаги
-                while(av[++i] && strcmp(av[i], "&&") != 0 && strcmp(av[i], ";")) {   /* доки строка не команда -> записуємо */
+                while(av[++i] && strcmp(av[i], ";") != 0) {   /* доки строка не команда -> записуємо */
                     add_new_arg(tmp, av[i]);                            /* строку як аргумент до команди */
                 }
             }
-            else                                                    //інакше - йдемо далі по аргументах
+            else                                                   //інакше - йдемо далі по аргументах
                 ++i;
         }
-        else if(mx_get_char_index(av[i], '=') > 0 && mx_get_char_index(av[i], '=') < mx_strlen(av[i]) - 1) {
+        else if(mx_get_char_index(av[i], '=') > 0) {
             add_local_var(hd, av[i]);             //якщо в строці знайдено = і воно не на першій або останній
             ++i;                                       //позиціях, тоді опрацьовуємо строку як 'змінна'='значення'
         }
@@ -48,15 +48,20 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global **hd) {
 
 t_lst *mx_additional_parsing(t_lst **head, char *arg) {
     t_lst *tmp = NULL;
-    char **tokens = mx_ush_split_line(arg, ";");
-
-    for(int i = 0; tokens[i]; i++)
+    char *temp = mx_strdup(arg);                        //копія аргументу для того щоб перевірити чи є в кінці ;
+    char **tokens = mx_ush_split_line(arg, ";");        //щоб розуміти чи потрібно очікувати далі аргументи до команди
+    for(int i = 0; tokens[i]; i++) {
         tmp = push_back(head, tokens[i]);
+    }
     free(tokens);
-    if(mx_is_command(tmp->cmd) && arg[strlen(arg) - 1] != ';')
+    if(mx_is_command(tmp->cmd) && temp[strlen(temp) - 1] != ';') {
+        free(temp);
         return tmp;
-    else
+    }
+    else {
+        free(temp);
         return NULL;
+    }
 }
 
 bool mx_is_command(char *str) {

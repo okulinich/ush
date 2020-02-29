@@ -111,11 +111,11 @@ void add_local_var(t_global **hd, char *str);
 //фрішить глобальну структуру
 void delete_global(t_global *head);
 //реалізація вбудованої команди echo
-int mx_echo(t_global *hd);
+int mx_echo(t_global *hd, t_lst *head);
 ////функція перевіряє чи менша строка входить в більшу (до знака = в більшій)
 bool find_var_in_str(char *big, char *little);
 //функція для експортування змінних в ENV
-int mx_export(t_global *hd);
+int mx_export(t_global *hd, t_lst *head);
 
 // ailchuk
 // void mx_exit(t_lst *h); // new ver
