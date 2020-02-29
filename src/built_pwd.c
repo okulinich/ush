@@ -31,21 +31,34 @@
 //     return 0;
 // }
 
-int mx_builtin_pwd(t_global *hd) { // сделать usage!!  переделать парсер фалагов !!!!!!!! (примеры pwd w, pwd -qwe, pwd 123, pwd 213)
+int mx_builtin_pwd(t_global *hd, t_lst *head) { // сделать usage!!  переделать парсер фалагов !!!!!!!! (примеры pwd w, pwd -qwe, pwd 123, pwd 213)
     // bool flag = 0;
     char *pwd = mx_get_env_var(hd->env, "PWD");
-    char *tmp = NULL;
+    // char *tmp = NULL;
 
     // if (!parse_flags(hd->new->av, &flag)) {
-    if (hd->new->av[1] != NULL) {
-        if (strcmp(hd->new->av[1], "P")) {
-        tmp = realpath(pwd, NULL);
-        printf("IF:%s\n", tmp);
-        mx_strdel(&tmp);
-        }
+    if (head->av[1] == NULL) {
+        printf("NO FLAGS:%s\n", pwd);
     }
-    else
-        printf("ELSE:%s\n", pwd);
-    printf("\nbuiltin\n");
+    if (mx_strcmp(head->av[1], "-P") == 0) {
+        printf("IF P:%s\n", pwd); // logical -> use PWD from environment, even if it contains symlinks
+    }
+    else if (mx_strcmp(head->av[1], "-L") == 0) {
+        printf("IF L:%s\n", pwd);
+        mx_strdel(&pwd);
+    }
+    else {
+        printf("usage: pwd [-L | -P]\n");
+        // mx_strdel(&pwd);
+        mx_strdel(&head->cmd);
+        mx_del_strarr(&head->av);
+
+    }
+    // if (strcmp(hd->new->av[1], "P")) {
+    //     tmp = realpath(pwd, NULL);
+    //     printf("IF:%s\n", tmp);
+    //     mx_strdel(&tmp);
+    //     }
+    printf("\n\t\tbuiltin pwd\n");
     return 1;
 }
