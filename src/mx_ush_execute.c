@@ -12,9 +12,7 @@ int mx_find_builtin(t_global *hd, t_lst *head) {
     if(mx_strcmp(head->cmd, "export") == 0)
         return mx_export(hd, head);
     if(mx_strcmp(head->cmd, "cd") == 0) {
-        mx_printstr("HELLO");
-        mx_print_strarr(head->av, "\n");
-        return 1;
+        return mx_cd(head);
     }
     
     return 0;
