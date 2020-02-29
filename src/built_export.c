@@ -16,7 +16,7 @@ static char *search_for_var(t_global *hd, char *str) {
 }
 
 //якщо знаходить змінну повертає *=value* інакше = 0
-static char *search_for_var_in_env(t_global *hd, char *str) {
+static char *ssearch_for_var_in_env(t_global *hd, char *str) {
     for(int i = 0; hd->env[i]; i++) {
         if(find_var_in_str(hd->env[i], str)) {
             return &hd->env[i][mx_strlen(str)];
@@ -30,7 +30,7 @@ static void add_var_to_env(char *name, char *value, t_global *hd) {
     char *name_for_search = mx_strjoin(name, "=");
     int i;
 
-    if(search_for_var_in_env(hd, name)) {
+    if(ssearch_for_var_in_env(hd, name)) {
         //mx_printstr("replace var\n");
         for(i = 0; strstr(hd->env[i], name_for_search) == NULL; i++) ;
         free(hd->env[i]);
@@ -49,21 +49,43 @@ static void add_var_to_env(char *name, char *value, t_global *hd) {
     free(new_var);
 }
 
+static void add_str_to_env(t_global *hd, t_lst *head, int j) {
+    int i = 0;
+    char *var_name = mx_strndup(head->av[j], mx_get_char_index(head->av[j], '='));
+
+    i = search_for_var_in_env(hd, var_name);
+    if(i != -1) {
+        free(hd->vars[i]);
+        hd->vars[i] = mx_strdup(head->av[j]);
+    }
+    else {
+        i = search_for_var_in_env(hd, "_=");
+        hd->env = realloc(hd->env, (i + 3) * sizeof(char *));
+        hd->env[i + 1] = mx_strdup(hd->env[i]);
+        hd->env[i + 2] = NULL;
+        free(hd->env[i]);
+        hd->env[i] = mx_strdup(head->av[j]);
+    }
+    free(var_name);
+}
+
 int mx_export(t_global *hd, t_lst *head) {
     char *new_var = NULL;
 
-    if(!head->av[1])
-        return 1;
-    else if(mx_get_char_index(head->av[1], '=') < 0) {  //якщо в строці немає =
-        new_var = search_for_var(hd, head->av[1]);
-        if(new_var) {                           //якщо змінну знайдено в масиві env або в масиві змінних->
-            add_var_to_env(head->av[1], new_var, hd);   //експортуємо її в нове значення в env
-        }
-        else
+    for(int i = 1; head->av[i]; i++) {
+        if(!head->av[i])
             return 1;
-    }
-    else {                                              //якщо = є
-        mx_printstr("not yet realized\n");
+        else if(mx_get_char_index(head->av[i], '=') < 0) {  //якщо в строці немає =
+            new_var = search_for_var(hd, head->av[i]);
+            if(new_var) {                           //якщо змінну знайдено в масиві env або в масиві змінних->
+                add_var_to_env(head->av[i], new_var, hd);   //експортуємо її в нове значення в env
+            }
+            else
+                return 1;
+        }
+        else {                                              //якщо = є
+            add_str_to_env(hd, head, i);
+        }
     }
     return 1;
 }

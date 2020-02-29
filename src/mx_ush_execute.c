@@ -11,10 +11,10 @@ int mx_find_builtin(t_global *hd, t_lst *head) {
         return mx_echo(hd, head);
     if(mx_strcmp(head->cmd, "export") == 0)
         return mx_export(hd, head);
-    if(mx_strcmp(head->cmd, "cd") == 0) {
+    if(mx_strcmp(head->cmd, "cd") == 0)
         return mx_cd(head);
-    }
-    
+    if(mx_strcmp(head->cmd, "unset") == 0)
+        return mx_unset(hd, head);
     return 0;
 }
 

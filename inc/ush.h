@@ -118,7 +118,12 @@ bool find_var_in_str(char *big, char *little);
 int mx_export(t_global *hd, t_lst *head);
 //вбудована функція cd
 int mx_cd(t_lst *head);
-
+//функція приймає ім'я змінної і шукає її перше входження в nev(до =) і повертає індекс
+int search_for_var_in_env(t_global *hd, char *str);
+//те саме що і верхня тілкьки з масивом vars
+int search_for_var_in_vars(t_global *hd, char *str);
+//видаляє змінні із env та var
+int mx_unset(t_global *hd, t_lst *head);
 
 
 // ailchuk
