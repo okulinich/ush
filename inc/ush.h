@@ -128,9 +128,8 @@ int mx_unset(t_global *hd, t_lst *head);
 
 // ailchuk
 int mx_exit(t_global *hd);
-int mx_builtin_pwd(t_global *hd);
+int mx_builtin_pwd(t_global *hd, t_lst *head);
 char **mx_env_copy(void); // копирует все из env
 char *mx_get_env_var(char **env, char *var);   // возвращает ключ переменной который ты ищешь в массиве ЕНВ
-
 
 #endif
