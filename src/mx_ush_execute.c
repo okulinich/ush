@@ -2,9 +2,9 @@
 
 int mx_find_builtin(t_global *hd, t_lst *head) {
     if (mx_strcmp(head->cmd, "pwd") == 0)
-        return mx_builtin_pwd(hd->new); // ret 1
+        return mx_builtin_pwd(hd); // ret 1
     if (mx_strcmp(head->cmd, "exit") == 0)
-        return mx_exit(head); // ret 1
+        return mx_exit(hd); // ret 1
     if (mx_strcmp(head->cmd, "env") == 0)
         return mx_ush_launch(hd, head); // ret 1
     if(mx_strcmp(head->cmd, "echo") == 0)
