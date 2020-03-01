@@ -35,6 +35,7 @@ static void add_var_to_env(char *name, char *value, t_global *hd) {
         for(i = 0; strstr(hd->env[i], name_for_search) == NULL; i++) ;
         free(hd->env[i]);
         hd->env[i] = mx_strdup(new_var);
+        setenv(name, value, 1);
     }
     else {
         //mx_printstr("add new var\n");
@@ -44,6 +45,7 @@ static void add_var_to_env(char *name, char *value, t_global *hd) {
         hd->env[i + 2] = NULL;
         free(hd->env[i]);
         hd->env[i] = mx_strdup(new_var);
+        setenv(name, value, 1);
     }
     free(name_for_search);
     free(new_var);
