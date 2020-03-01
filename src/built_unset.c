@@ -17,6 +17,7 @@ int mx_unset(t_global *hd, t_lst *head) {
             hd->env = realloc(hd->env, sizeof(char *) * j + 1);
             var_name = mx_strndup(var_name, mx_get_char_index(var_name, '='));
             unsetenv(var_name);
+            free(var_name);
         }
         index = search_for_var_in_vars(hd, var_name);
         if(index != -1) {
