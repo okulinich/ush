@@ -7,16 +7,18 @@ int mx_exit(t_global *hd) {
         mx_del_strarr(&hd->env);
         mx_del_strarr(&hd->new->av);
         mx_strdel(&hd->new->cmd);
-        // mx_strdel(&hd->pwd);
+        mx_strdel(&hd->new->pwd);
         free(hd);
-        system("leaks -q ush");
         exit(0);
+        system("leaks -q ush");
+        return 1;
     }
     for (unsigned int i = 0; i < strlen(hd->new->av[1]); i++)
         if (!isnumber(hd->new->av[1][i])) {
             fprintf(stderr, "%s\nush: %s: %s: numeric argument required\n",
                     hd->new->av[0], hd->new->av[0], hd->new->av[1]);
             exit(255);
+            return 1;
         }
     if (mx_arr_size(hd->new->av) > 2) {
         fprintf(stderr, "%s\nush: %s: too many arguments\n",
@@ -26,8 +28,8 @@ int mx_exit(t_global *hd) {
     //system("leaks -q ush");
     if (!flag) {
         free(hd);
-        system("leaks -q ush");
         exit(atoi(hd->new->av[1]));
+        system("leaks -q ush");
     }
     return 1;
 }
