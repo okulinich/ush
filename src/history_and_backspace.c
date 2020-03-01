@@ -35,8 +35,13 @@ void backspace(char ch, char **line, int *i) {
         return;
     }
     move_left[0] = ch;
-    mx_printstr(move_left);
-    mx_printchar(' ');
+    if((*line)[*i - 1] == '\t')
+        for(int i = 0; i < 5; i++)
+            mx_printstr(move_left);
+    else {
+        mx_printstr(move_left);
+        mx_printchar(' ');
+    }
     if(*i == prev_len) {
         (*line)[prev_len - 1] = '\0';
         (*i)--;
