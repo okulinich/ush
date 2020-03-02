@@ -13,6 +13,7 @@
 #include <signal.h>
 #include <errno.h>
 #include <regex.h>
+#include <limits.h>
 
 #define BUFSIZE 1024
 #define DELIMITERS "\t\r\n\a "
