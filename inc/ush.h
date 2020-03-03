@@ -25,6 +25,8 @@
 #define LOOP_BREAK 1
 #define RETURN_EMPTY 2
 #define LOOP_CONTINUE 3
+#define MX_WHITE "\033[30;48;5;231m"
+#define MX_NORM "\033[0m"
 
 // ctrl + z = 26
 // ctrl + c = 3
