@@ -32,20 +32,18 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global **hd) {
 //має вийти наступна конструкція: {ls} {-a} {-l} {src} {;} {cd} {inc} {;} {pwd}
 
 
-char *write_before_delim(char *str, int j) {
-    char *s = mx_strnew(j);
-    bool flag = false;
+char *bad_strdup(char *str, int i) {
+    int j = 0;
 
-    for(int i = 0; i < j; i++) {
-        flag = true;
-        s[i] = str[i];
+    if(mx_get_char_index(str, ' ') < 0)
+        return mx_strndup(str, i);
+    else {
+        j = mx_strlen(str) - 1;
+        while(str[j] != ' ')
+            j--;
+        return mx_strndup(&str[j + 1], i - j - 1);
     }
-    if(flag)
-        return s;
-    else
-        return "";
 }
-
 //функція повертає масив строк поділених по делімітеру у вигляді {ls} {;} {pwd} {NULL}
 static char **split_to_substr(int *num_of_substr, char c, char *str) {
     char **str_arr = (char **)malloc(sizeof(char *) * 256);
@@ -54,7 +52,7 @@ static char **split_to_substr(int *num_of_substr, char c, char *str) {
     str_arr[substr] = NULL;
     for(int i = 0; str[i] != '\0'; i++) {
         if(str[i] == c) {
-            str_arr[substr] = mx_strndup(str, i);
+            str_arr[substr] = bad_strdup(str, i);
             if(mx_strlen(str_arr[substr]) == 0) {
                 str_arr[substr] = mx_strdup(";");
                 substr++;
@@ -70,7 +68,7 @@ static char **split_to_substr(int *num_of_substr, char c, char *str) {
                 break;
             }
             else
-                str[i] = '\0';
+                str[i] = ' ';
         }
     }
     *num_of_substr = substr;
