@@ -7,10 +7,9 @@ int mx_exit(t_global *hd) {
         mx_del_strarr(&hd->env);
         mx_del_strarr(&hd->new->av);
         mx_strdel(&hd->new->cmd);
-        mx_strdel(&hd->new->pwd);
         free(hd);
-        exit(0);
         system("leaks -q ush");
+        exit(0);
         return 1;
     }
     for (unsigned int i = 0; i < strlen(hd->new->av[1]); i++)
@@ -28,8 +27,8 @@ int mx_exit(t_global *hd) {
     //system("leaks -q ush");
     if (!flag) {
         free(hd);
-        exit(atoi(hd->new->av[1]));
         system("leaks -q ush");
+        exit(atoi(hd->new->av[1]));
     }
     return 1;
 }

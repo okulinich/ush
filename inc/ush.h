@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <regex.h>
 #include <limits.h>
+#include <sys/stat.h>
 
 #define BUFSIZE 1024
 #define DELIMITERS "\t\r\n\a "
@@ -48,7 +49,6 @@ typedef struct s_lst {
     char *cmd; //"ls"
     char **av; //{ "ls" , "-la", "src", null}
     struct s_lst *next;
-    char *pwd;
 } t_lst;
 
 typedef struct s_cmd_history {
@@ -134,5 +134,11 @@ int mx_exit(t_global *hd);
 int mx_builtin_pwd(t_global *hd, t_lst *head);
 char **mx_env_copy(void); // копирует все из env
 char *mx_get_env_var(char **env, char *var);   // возвращает ключ переменной который ты ищешь в массиве ЕНВ
+void mx_set_env_var(char *key, char *value, char ***env); // PWD, /usr/ailchuk env меняет енв
+void mx_cd_sflags(char *av, char **env);
+void mx_setenv_correct_path(); // for cd_sflags;
+void mx_cd_with_flags(char *av, char **env, char flag);
+void mx_cd_lflags(char *av, char **env, char flag);
+void mx_setenv_correct_path();
 
 #endif
