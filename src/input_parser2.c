@@ -6,21 +6,49 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global **hd) {
     char *line = NULL;
     char **av = NULL;
     t_lst *head = NULL;
-    //t_lst *tmp = NULL;
+    t_lst *tmp = NULL;
     int i = 0;
+    bool semicolon = true;
 
     line = noncanon_read_line(hist);
 
     av = mx_ush_split_line(line, NULL);      /* розділяємо строку на токени  */
 
-    while (av[i++] != NULL) {
-        split_by_delimiter(&av);            /* ділимо кожну строку на підстроки */
-    }                                       /* по крапці з комою */
+    while(av[i++] != NULL)                  /* ділимо кожну строку на підстроки */
+        split_by_delimiter(&av);            /* по крапці з комою */
+    i = 0;
+    for(int j = 0; av[j]; j++) {
+        if(mx_strcmp(av[j], ";") == 0) {     
+            semicolon = true;
+            continue;
+        }
+        else if(mx_strcmp(av[j], "") == 0)
+            continue;
+        else {
+            if(semicolon) {
+                tmp = push_back(&head, av[j]);
+                semicolon = false;
+            }
+            else
+                add_new_arg(tmp, av[j]);
+        }
+    }
+
+    /////////////////////*DEBUG BLOCK*//////////////////////
+    // for(int i = 0; av[i]; i++) {
+    //     printf("token #%d = *%s*\n", i, av[i]);
+    // }
+    // for(; head; head = head->next) {
+    //     printf("cmd = %s\n", head->cmd);
+    //     for(int j = 0; head->av[j]; j++)
+    //         printf("arg #%i = %s\n",j, head->av[j]);
+    //     printf("\n");
+    // }
+    ////////////////////////////////////////////////////////
 
     hd = NULL;
     free(line);
-    free(av);
-    exit(0);
+    mx_del_strarr(&av);
     return head;
 }
 
@@ -54,6 +82,7 @@ static char **split_to_substr(int *num_of_substr, char c, char *str) {
         if(str[i] == c) {
             str_arr[substr] = bad_strdup(str, i);
             if(mx_strlen(str_arr[substr]) == 0) {
+                free(str_arr[substr]);
                 str_arr[substr] = mx_strdup(";");
                 substr++;
             }
@@ -74,29 +103,85 @@ static char **split_to_substr(int *num_of_substr, char c, char *str) {
     *num_of_substr = substr;
     str_arr[substr] = NULL;
 
-    for(int i = 0; i < substr; i++) {
-        printf("#%i -> %s\n", i, str_arr[i]);
-    }
     return str_arr;
 }
 
+void mx_replace_arg_with_arr(char ***av, int indx, char **str_arr) {
+    int least_size = 0;
+    char **least;
+    char **new_av = NULL;
+    int str_arr_size;
+
+    //printf("\nReplacing *%s* with array that starts on %s\n", (*av)[indx], str_arr[0]);
+    if((*av)[indx + 1])
+        for(int i = indx + 1; (*av)[i] != NULL; i++) 
+            if(strlen((*av)[i]) > 0)
+                least_size++;
+    if(least_size > 0) {
+        //printf("least_size = %i\n", least_size);
+        least = (char **)malloc(sizeof(char *) * least_size + 1);
+        for(int i = 0; i < least_size; i++)
+            least[i] = mx_strdup((*av)[indx + 1 + i]);
+        least[least_size] = NULL;
+        // printf("*****************\n");
+        // for(int i = 0; i < least_size; i++)
+        //     printf("least #%i = %s\t", i, least[i]);
+        // printf("\n*****************\n");
+    }
+    else
+        least_size = 0;
+    for(str_arr_size = 0; str_arr[str_arr_size]; str_arr_size++) ;
+    // printf("str_arr_size = %i\n", str_arr_size);
+    new_av = (char **)malloc(sizeof(char *) * (str_arr_size + least_size + indx + 1));
+    // printf("least + indx = %i\ntotal size = %i\n", least_size + indx, str_arr_size + least_size + indx);
+    // if(least_size > 0)
+    //     printf("saved args from %s to %s\n", least[0], least[least_size - 1]);
+    
+    for(int i = 0; i < indx; i++)
+        new_av[i] = mx_strdup((*av)[i]);
+    for(int i = 0; i < str_arr_size; i++)
+        new_av[indx + i] = mx_strdup(str_arr[i]);
+    if(least_size > 0)
+        for(int i = 0; i < least_size; i++) {
+            new_av[str_arr_size + indx + i] = mx_strdup(least[i]);
+            // printf("item #%i should == %s\n", str_arr_size + indx + i, least[i]);
+        }
+    // printf("assigning to item #%i = NULL\n", str_arr_size + least_size + indx);
+    new_av[str_arr_size + least_size + indx] = NULL;
+    // printf("RES arr:\n");
+    // for(int i = 0; new_av[i]; i++)
+    //     printf("%s\n", new_av[i]);
+    // printf("\n\n");
+    mx_del_strarr(av);
+    if(least_size > 0)
+        mx_del_strarr(&least);
+    *av = new_av;
+}
+
+int mx_get_substring_index(char **arr, char *str) {
+    for(int i = 0; arr[i]; i++)
+        if(mx_strcmp(arr[i], str) == 0)
+            return i;
+    return -1;
+}
+
 void split_by_delimiter(char ***av) {
-    int indx;
     int num_of_substr = 0;
     char **substrings = NULL;
 
     for(int i = 0; (*av)[i]; i++) {
-        indx = mx_get_char_index((*av)[i], ';');
-        substrings = split_to_substr(&num_of_substr, ';', (*av)[i]);
-        // if(substrings != NULL) {    //якщо є ; - додаємо масив строк що повернула функція в основний масив аргументів
-        //     for(int j = 0; substrings[j]; j++) {
-        //         mx_printstr(substrings[j]);
-        //         mx_printstr("\t");
-        //     }
-        //     printf("\namount = %i\n", num_of_substr);
-        // }
+        if(mx_get_char_index((*av)[i], ';') >= 0 && mx_strcmp((*av)[i], ";") != 0) {
+            substrings = split_to_substr(&num_of_substr, ';', (*av)[i]);
+            if ((!substrings || substrings[0] != NULL))  /*якщо є ; - додаємо масив строк що повернула функція в основний масив аргументів*/ {
+                // printf("peredajemo str indx= %i\n", mx_get_substring_index(*av, (*av)[i]));
+                mx_replace_arg_with_arr(av, mx_get_substring_index(*av, (*av)[i]), substrings);
+            }
+            mx_del_strarr(&substrings);
+            substrings = NULL;
+        }
         //якщо немає ; - пропускаємо 
     }
+
 }
 
 bool mx_is_command(char *str) {

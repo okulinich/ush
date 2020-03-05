@@ -8,7 +8,7 @@ char **mx_ush_split_line(char *line, char *delim) {
 
     token = strtok(line, delim == NULL ? DELIMITERS : delim);
     while(token) {
-        tokens[pos] = token;                                  //записуємо кожне слово в масив
+        tokens[pos] = mx_strdup(token);                                  //записуємо кожне слово в масив
         pos++;
         if(pos >= buf_size) {                           //розширюємо масив слів якшо потрібно
             buf_size += BUFSIZE;
