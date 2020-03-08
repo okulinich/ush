@@ -1,24 +1,33 @@
 #include "ush.h"
 
-static int flags_from_line(char *str) {
+/* 
+* -1 - not flagline
+*/
+static int get_flags_from_line(char *str) {
     int i = 0;
     int flags = 0;
 
-    if (str[i + 1] == '\0')
+    if (str[i + 1] == '\0') 
         return 4; // - flag
     while(str[++i]) {
-        if (str[i] == 's')
+        if (str[i] == 's') 
             flags |= 1;
-        else if (str[i] == 'P')
+        else if (str[i] == 'P') 
             flags |= 2;
-        else
+        else {
             return -1;
+        }
     }
     return flags;
 }
 
-static int i_flags(char **argv, int *i) {
-   int flags = 0;
+/* 
+* 1-st bit -> -s
+* 2-nd bit -> -P
+* 3-rd bit -> -
+*/
+static int get_flags(char **argv, int *i) {
+    int flags = 0;
 
     while(argv[++(*i)]) {
         if (mx_strcmp(argv[(*i)], "--") == 0) {
@@ -27,7 +36,7 @@ static int i_flags(char **argv, int *i) {
         }
         if (argv[(*i)][0] != '-')
             return flags;
-        int curr = flags_from_line(argv[*i]);
+        int curr = get_flags_from_line(argv[*i]);
         if (curr == -1)
             return 0;
         flags |= curr;
@@ -35,38 +44,58 @@ static int i_flags(char **argv, int *i) {
     i--;
     return flags;
 }
-/*
-    -1 = no flags from line
-    - = 4 bit;
-    -- = 0 bit;
-    -s = 1 bit;
-    -P = 2 bit;
-*/
-/////////// flags !!!
+
+int mx_chdir_p(char *path, char flags) {
+    if (path == 0)
+        return 0;
+    setenv("OLDPWD", getenv("PWD"), 1);
+    if (chdir(path) == -1) {
+        if ((flags & 1) == 0)
+            fprintf(stderr, "cd: %s: %s\n", strerror(errno), path);
+        return 1;
+    }
+    setenv("PWD", getcwd(NULL, 0), 1);
+    return 0;
+}
+
+
+static int cd(char **argv) {
+    int i = 0;
+    int flags = get_flags(argv, &i);
+    char *path = (flags & 4) ? getenv("OLDPWD") : (argv[i] ? argv[i]
+        : getenv("HOME"));
+    int status = 0;
+
+    if (mx_islink(path) && (flags & 1) && (flags & 2) == 0) {
+        fprintf(stderr, "cd: not a directory: %s\n", argv[i]);
+        return 1;
+    }
+    if (flags & 2)
+        status = mx_chdir_p(path, flags);
+    else
+        status = mx_chdir_l(path, flags);
+    return 1;
+}
+
+// static char **getav(char **av) {
+//     char **res = NULL;
+//     int j = 0;
+
+//     if (!av)
+//         return NULL;
+//     res = (char **)malloc((mx_arr_size(av)) * sizeof(char *));
+//     for (int i = 1; av[i]; i++, j++)
+//         res[j] = strdup(av[i]);
+//     res[j] = NULL;
+//     return res;
+// }
 
 int	mx_cd(t_global *s, t_lst *h) {
-    int i = 0;
-    char flags = i_flags(h->av, &i);
-
-                mx_printint(flags);
-                if (h->av[i])
-                    mx_printstr(h->av[i]);
-        if (flags == 0) {
-            mx_cd_sflags(h->av[i], s->env);
-            // system("leaks -q ush");
-            // exit (1);
-        }
-        else {
-            mx_cd_lflags(h->av[i], s->env, flags);
-        }
-        // else {
-            // if (mx_is_link(h->av[1]) && (flags & 1) && (flags & 2) == 0) {
-                // fprintf(stderr, "cd: not a directory: %s\n", h->av[1]);
-                // return 1; // for -P -s !!!!!!!!!!!!!!!!!!!!!!!
-                // mx_cd_flags
-        // }
-    // }
-    // system("leaks -q ush");
-    // exit (1);
-	return 1;
+    int status = cd(h->av);
+    // int status = cd(h->av, s);
+    // status = cd(h->av);
+    mx_del_strarr(&s->env);
+    // s->env = NULL;
+    s->env = mx_env_copy();
+    return status;
 }
