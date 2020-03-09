@@ -45,21 +45,6 @@ static int get_flags(char **argv, int *i) {
     return flags;
 }
 
-int mx_chdir_p(char *path, char flags, t_dirs *d) {
-    if (path == 0)
-        return 0;
-    setenv("OLDPWD", d->pwd, 1);
-    d->oldpwd = d->pwd;
-    if (chdir(path) == -1) {
-        if ((flags & 1) == 0)
-            fprintf(stderr, "cd: %s: %s\n", strerror(errno), path);
-        return 1;
-    }
-    d->pwd = getcwd(NULL, 0);
-    setenv("PWD", d->pwd, 1);
-    return 0;
-}
-
 static int cd(char **argv, t_dirs *d) {
     int i = 0;
     int flags = get_flags(argv, &i);
@@ -72,14 +57,15 @@ static int cd(char **argv, t_dirs *d) {
         path = argv[i] ? strdup(argv[i]) : strdup(d->home);
     if (mx_islink(path) && (flags & 1) && (flags & 2) == 0) {
         fprintf(stderr, "cd: not a directory: %s\n", argv[i]);
+        mx_strdel(&path);
         return 1;
     }
     if (flags & 2)
-        status = mx_chdir_p(path, flags, d);
+        status = mx_cd_p(path, flags, d);
     else
-        status = mx_chdir_l(path, flags, d);
+        status = mx_cd_l(path, flags, d);
     mx_strdel(&path);
-    return 1;
+    return status;
 }
 
 static t_dirs *initpwd() {
@@ -95,9 +81,9 @@ int	mx_cd(t_global *s, t_lst *h) {
     t_dirs *d = initpwd();
     int status = cd(h->av, d);
     
-    free(d);
     mx_del_strarr(&s->env);
     s->env = mx_env_copy();
+    free(d);
     // system("leaks -q ush");
     // exit(1);
     return status;

@@ -142,7 +142,9 @@ int mx_builtin_pwd(t_global *hd, t_lst *head);
 char **mx_env_copy(void); // копирует все из env
 char *mx_get_env_var(char **env, char *var);   // возвращает ключ переменной который ты ищешь в массиве ЕНВ
 void mx_set_env_var(char *key, char *value, char ***env); // PWD, /usr/ailchuk env меняет енв
-int mx_chdir_l(char *path, char flags, t_dirs *d);
-
+int mx_cd_p(char *path, char flags, t_dirs *d);
+int mx_cd_l(char *path, char flags, t_dirs *d);
+char *mx_add_one_slash(char *path, char *new_part);
+char *mx_del_last_slash(char *path);
 
 #endif

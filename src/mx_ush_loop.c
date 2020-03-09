@@ -11,6 +11,8 @@ void mx_ush_loop(t_global *hd) {
         for ( ; hd->new; hd->new = hd->new->next) {
             status = mx_ush_execute(hd, hd->new);                 //виконуємо команди
         }
+        // system("leaks -q ush");
+        // // exit(1);
         delete_list(root);
     }
     delete_history(hist);
