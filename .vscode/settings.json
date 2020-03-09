@@ -1,4 +1,5 @@
 {
+    "editor.rulers": [79],
     "files.associations": {
         "ush.h": "c",
         "libmx.h": "c"
