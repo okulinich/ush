@@ -23,7 +23,7 @@ char *mx_add_one_rank(char *path, char *new_part) {
     return new_path;
 }
 
-char* mx_del_last_rank(char *path) {
+char *mx_del_last_rank(char *path) {
     char *new_path = 0;
     int len = mx_strlen(path);
     int i = len;
@@ -37,9 +37,9 @@ char* mx_del_last_rank(char *path) {
     return new_path;
 }
 
-static char *get_new_pwd(char *path) {
+static char *get_new_pwd(char *path, t_dirs *d) {
     char **tokens = mx_strsplit(path, '/');
-    char *tmp_pwd = path[0] == '/' ? mx_strdup("/") : mx_strdup(getenv("PWD"));
+    char *tmp_pwd = path[0] == '/' ? mx_strdup("/") : mx_strdup(d->pwd);
     char *res = 0;
 
     for (int i = 0; tokens[i]; i++)
@@ -60,22 +60,26 @@ static char *get_new_pwd(char *path) {
     return res;
 }
 
-int mx_chdir_l(char *path, char flags) {
+int mx_chdir_l(char *path, char flags, t_dirs *d) {
     char *new_pwd = 0;
 
     if (path == 0)
         return 0;
     if (mx_strcmp(path, "~") == 0)
-        new_pwd = getenv("HOME");
+        new_pwd = strdup(d->home);
     else 
-        new_pwd = get_new_pwd(path);
-    setenv("OLDPWD", getenv("PWD"), 1);
+        new_pwd = get_new_pwd(path, d);
+    d->oldpwd = d->pwd;
+    setenv("OLDPWD", d->pwd, 1);
     if (chdir(new_pwd) == -1) {
         if ((flags & 1) == 0)
         fprintf(stderr, "cd: %s: %s\n", strerror(errno), new_pwd);
         free(new_pwd);
         return 1;
     }
-    setenv("PWD", new_pwd, 1);
+    d->pwd = new_pwd;
+    setenv("PWD", d->pwd, 1);
+    // mx_strdel(&new_pwd);
+    free(new_pwd);
     return 1;
 }

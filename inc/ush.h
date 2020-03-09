@@ -45,23 +45,30 @@
 // right[1] = 91
 // right[2] = 67
 
+typedef struct s_dirs {
+    char *pwd;
+    char *oldpwd;
+    char *home;
+}   t_dirs;
+
+
 typedef struct s_lst {
     char *cmd; //"ls"
     char **av; //{ "ls" , "-la", "src", null}
     struct s_lst *next;
-} t_lst;
+}   t_lst;
 
 typedef struct s_cmd_history {
     char *user_input;
     struct s_cmd_history *next;
     struct s_cmd_history *prev;
-} t_cmd_history;
+}   t_cmd_history;
 
 typedef struct s_global {
     t_lst *new;
     char **env;
     char **vars;
-} t_global;
+}   t_global;
 
 
 // core
@@ -135,7 +142,7 @@ int mx_builtin_pwd(t_global *hd, t_lst *head);
 char **mx_env_copy(void); // копирует все из env
 char *mx_get_env_var(char **env, char *var);   // возвращает ключ переменной который ты ищешь в массиве ЕНВ
 void mx_set_env_var(char *key, char *value, char ***env); // PWD, /usr/ailchuk env меняет енв
-int mx_chdir_l(char *path, char flags);
+int mx_chdir_l(char *path, char flags, t_dirs *d);
 
 
 #endif
