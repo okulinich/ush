@@ -136,6 +136,8 @@ int search_for_var_in_vars(t_global *hd, char *str);
 int mx_unset(t_global *hd, t_lst *head);
 //розділяє строку по лапках
 char **mx_split_by_quotes(char *line);
+//додає або замінює змінну в env масиві
+void add_var_to_env(char *name, char *value, t_global *hd);
 
 
 // ailchuk

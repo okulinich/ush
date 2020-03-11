@@ -25,7 +25,7 @@ static char *ssearch_for_var_in_env(t_global *hd, char *str) {
     return NULL;
 }
 
-static void add_var_to_env(char *name, char *value, t_global *hd) {
+void add_var_to_env(char *name, char *value, t_global *hd) {
     char *new_var = mx_strjoin(name, value);
     char *name_for_search = mx_strjoin(name, "=");
     int i;

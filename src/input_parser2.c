@@ -41,7 +41,7 @@ t_lst *mx_ush_read_line(t_cmd_history **hist) {
 
     av = mx_split_by_quotes(line);              //розбиваємо стркоу по лапках
     if(av && mx_strcmp(av[0], "ERROR") == 0) {  //якщо лапки не закриті - видаємо помилку
-        mx_printerr("ush: ERROR: add quotational mark at the end!\n");
+        mx_printerr("ush: ERROR: Odd number of quotes.\n");
         free(av);
     }
     else if(av) {
