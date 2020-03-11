@@ -2,53 +2,74 @@
 
 void split_by_delimiter(char ***av);
 
-t_lst *mx_ush_read_line(t_cmd_history **hist, t_global **hd) {
-    char *line = NULL;
-    char **av = NULL;
-    t_lst *head = NULL;
-    t_lst *tmp = NULL;
-    int i = 0;
+void fill_cmd_list(char **global, t_lst **head) {
     bool semicolon = true;
+    t_lst *tmp = NULL;
 
-    line = noncanon_read_line(hist);
-
-    av = mx_ush_split_line(line, NULL);      /* розділяємо строку на токени  */
-
-    while(av[i++] != NULL)                  /* ділимо кожну строку на підстроки */
-        split_by_delimiter(&av);            /* по крапці з комою */
-    i = 0;
-    for(int j = 0; av[j]; j++) {
-        if(mx_strcmp(av[j], ";") == 0) {     
+    for(int j = 0; global[j]; j++) {
+        if(mx_strcmp(global[j], ";") == 0) {     
             semicolon = true;
             continue;
         }
-        else if(mx_strcmp(av[j], "") == 0)
+        else if(mx_strcmp(global[j], "") == 0)
             continue;
         else {
             if(semicolon) {
-                tmp = push_back(&head, av[j]);
+                tmp = push_back(head, global[j]);
                 semicolon = false;
             }
             else
-                add_new_arg(tmp, av[j]);
+                add_new_arg(tmp, global[j]);
         }
     }
+}
 
-    /////////////////////*DEBUG BLOCK*//////////////////////
-    // for(int i = 0; av[i]; i++) {
-    //     printf("token #%d = *%s*\n", i, av[i]);
-    // }
-    // for(; head; head = head->next) {
-    //     printf("cmd = %s\n", head->cmd);
-    //     for(int j = 0; head->av[j]; j++)
-    //         printf("arg #%i = %s\n",j, head->av[j]);
-    //     printf("\n");
-    // }
-    ////////////////////////////////////////////////////////
+// - ділимо строку по лапках
+// - у випадку якщо лапки не закриті - видаємо помилку
+// - токени які не були заключені в лапки - ділимо по спейс-симловах
+// - а потім ділимо по крапці з комою
+t_lst *mx_ush_read_line(t_cmd_history **hist) {
+    char *line = NULL;
+    char **av = NULL;
+    char **global;
+    int gl_i = 0;
+    char **temp;
+    t_lst *head = NULL;
+    int i = 0;
 
-    hd = NULL;
+    line = noncanon_read_line(hist);
+
+    av = mx_split_by_quotes(line);              //розбиваємо стркоу по лапках
+    if(av && mx_strcmp(av[0], "ERROR") == 0) {  //якщо лапки не закриті - видаємо помилку
+        mx_printerr("ush: ERROR: add quotational mark at the end!\n");
+        free(av);
+    }
+    else if(av) {
+        global = (char **)malloc(sizeof(char *) * BUFSIZE);
+        for(i = 0; av[i] != NULL; i++) {
+            if(av[i][0] == '\'' || av[i][0] == '\"')        //токен в лапках розглядаємо як суцільний аргумент
+                global[gl_i++] = mx_strndup(&av[i][1], strlen(av[i]) - 2);
+            else {
+                temp = mx_ush_split_line(av[i], NULL);      //токен не в лапках ділимо на підстроки
+                split_by_delimiter(&temp);
+                for(int j = 0; temp[j] != NULL; j++)
+                    global[gl_i++] = mx_strdup(temp[j]);
+                mx_del_strarr(&temp);
+            }
+        }
+        fill_cmd_list(global, &head);
+        mx_del_strarr(&global);
+    }
+    else {
+        av = mx_ush_split_line(line, NULL);      /* розділяємо строку на токени  */
+        split_by_delimiter(&av);                /* по крапці з комою */
+        i = 0;
+        fill_cmd_list(av, &head);
+    }
+
     free(line);
-    mx_del_strarr(&av);
+    if(mx_strcmp(av[0], "ERROR") != 0)
+        mx_del_strarr(&av);
     return head;
 }
 
@@ -112,30 +133,20 @@ void mx_replace_arg_with_arr(char ***av, int indx, char **str_arr) {
     char **new_av = NULL;
     int str_arr_size;
 
-    //printf("\nReplacing *%s* with array that starts on %s\n", (*av)[indx], str_arr[0]);
     if((*av)[indx + 1])
         for(int i = indx + 1; (*av)[i] != NULL; i++) 
             if(strlen((*av)[i]) > 0)
                 least_size++;
     if(least_size > 0) {
-        //printf("least_size = %i\n", least_size);
         least = (char **)malloc(sizeof(char *) * least_size + 1);
         for(int i = 0; i < least_size; i++)
             least[i] = mx_strdup((*av)[indx + 1 + i]);
         least[least_size] = NULL;
-        // printf("*****************\n");
-        // for(int i = 0; i < least_size; i++)
-        //     printf("least #%i = %s\t", i, least[i]);
-        // printf("\n*****************\n");
     }
     else
         least_size = 0;
     for(str_arr_size = 0; str_arr[str_arr_size]; str_arr_size++) ;
-    // printf("str_arr_size = %i\n", str_arr_size);
     new_av = (char **)malloc(sizeof(char *) * (str_arr_size + least_size + indx + 1));
-    // printf("least + indx = %i\ntotal size = %i\n", least_size + indx, str_arr_size + least_size + indx);
-    // if(least_size > 0)
-    //     printf("saved args from %s to %s\n", least[0], least[least_size - 1]);
     
     for(int i = 0; i < indx; i++)
         new_av[i] = mx_strdup((*av)[i]);
@@ -144,14 +155,8 @@ void mx_replace_arg_with_arr(char ***av, int indx, char **str_arr) {
     if(least_size > 0)
         for(int i = 0; i < least_size; i++) {
             new_av[str_arr_size + indx + i] = mx_strdup(least[i]);
-            // printf("item #%i should == %s\n", str_arr_size + indx + i, least[i]);
         }
-    // printf("assigning to item #%i = NULL\n", str_arr_size + least_size + indx);
     new_av[str_arr_size + least_size + indx] = NULL;
-    // printf("RES arr:\n");
-    // for(int i = 0; new_av[i]; i++)
-    //     printf("%s\n", new_av[i]);
-    // printf("\n\n");
     mx_del_strarr(av);
     if(least_size > 0)
         mx_del_strarr(&least);

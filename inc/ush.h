@@ -76,7 +76,7 @@ void mx_ush_loop(t_global *hd);
 int mx_ush_execute(t_global *hd, t_lst *head);
 int mx_ush_launch(t_global *hd, t_lst *head);
 char **mx_ush_split_line(char *line, char *delim);
-t_lst *mx_ush_read_line(t_cmd_history **hist, t_global **hd);
+t_lst *mx_ush_read_line(t_cmd_history **hist);
 
 //зчитування, парсинг строки, формування списку команд для виконання
 t_lst *lsh_read_line(t_cmd_history **hist);
@@ -134,6 +134,8 @@ int search_for_var_in_env(t_global *hd, char *str);
 int search_for_var_in_vars(t_global *hd, char *str);
 //видаляє змінні із env та var
 int mx_unset(t_global *hd, t_lst *head);
+//розділяє строку по лапках
+char **mx_split_by_quotes(char *line);
 
 
 // ailchuk
