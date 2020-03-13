@@ -15,6 +15,7 @@
 #include <regex.h>
 #include <limits.h>
 #include <sys/stat.h>
+#include <dirent.h>
 
 #define BUFSIZE 1024
 #define DELIMITERS "\t\r\n\a "
@@ -138,6 +139,10 @@ int mx_unset(t_global *hd, t_lst *head);
 char **mx_split_by_quotes(char *line);
 //додає або замінює змінну в env масиві
 void add_var_to_env(char *name, char *value, t_global *hd);
+//built-in which command
+int mx_which(t_global *hd, t_lst *head);
+//якщо знаходить змінну повертає *=value* інакше = 0
+char *ssearch_for_var_in_env(t_global *hd, char *str);
 
 
 // ailchuk
