@@ -1,27 +1,27 @@
 #include "ush.h"
 
-// bool mx_match(char *src, char *regex) {
-//     regex_t reg;
-//     int result;
+bool mx_match(char *src, char *regex) {
+    regex_t reg;
+    int result;
 
-//     regcomp(&reg, regex, REG_EXTENDED);
-//     result = regexec(&reg, src, 0, NULL, 0);
-//     regfree(&reg);
-//     return result == 0;
-// }
+    regcomp(&reg, regex, REG_EXTENDED);
+    result = regexec(&reg, src, 0, NULL, 0);
+    regfree(&reg);
+    return result == 0;
+}
 
-// static int print_exec_error(t_lst *new) {
-//     if (!mx_match(new->cmd, "/")) {
-//         fprintf(stderr, "ush: %s: Command not found\n", new->cmd);
-//         return 127;
-//     }
-//     else {
-//         for (int i = 0; new->av[i]; i++)
-//             if (mx_match(new->av[i], "/"))
-//                 fprintf(stderr, "ush: %s: No such file or SUKA directory\n", new->av[i]);
-//     }
-//     return 127;
-// }
+static int print_exec_error(t_lst *new) {
+    if (!mx_match(new->cmd, "/")) {
+        fprintf(stderr, "ush: %s: Command not found\n", new->cmd);
+        return 127;
+    }
+    else {
+        for (int i = 0; new->av[i]; i++)
+            if (mx_match(new->av[i], "/"))
+                fprintf(stderr, "ush: %s: No such file or directory\n", new->av[i]);
+    }
+    return 127;
+}
 
 static int func_exec(t_global *hd, t_lst *head) {
     int status = 0;
@@ -64,9 +64,11 @@ int mx_ush_launch(t_global *hd, t_lst *head) {
             //system("leaks -q ush");
             exit(1);
         }
-        if(res == 127) {
-            //system("leaks -q ush");
-            exit(0);
+        if (res < 0) {
+            print_exec_error(head);
+            mx_strdel(&head->cmd);
+            exit(127);
+            return 127;
         }
     }
     // if(pid < 0)
