@@ -71,8 +71,6 @@ int mx_ush_launch(t_global *hd, t_lst *head) {
             return 127;
         }
     }
-    // if(pid < 0)
-        // error
     wpid = waitpid(pid, &status, WUNTRACED);
     return 1;
 }
