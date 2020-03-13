@@ -51,8 +51,18 @@ static int cd(char **argv, t_dirs *d) {
     char *path = NULL;
     int status = 0;
 
+    // if (flags & 4) {
+        // if (d->oldpwd == NULL) {
+        //     mx_printerr("ush: cd: OLDPWD not set\n");
+        //     return 1;
+        // }
+        // else {
+            // path = strdup(d->oldpwd);
+        //     printf("%s\n", path);
+        // }
+    // } 
     if (flags & 4)
-        path = strdup(d->oldpwd);
+        path = strdup(d->oldpwd); 
     else
         path = argv[i] ? strdup(argv[i]) : strdup(d->home);
     if (mx_islink(path) && (flags & 1) && (flags & 2) == 0) {
@@ -78,9 +88,10 @@ static t_dirs *initpwd() {
 }
 
 int	mx_cd(t_global *s, t_lst *h) {
+    int status = 0;
     t_dirs *d = initpwd();
-    int status = cd(h->av, d);
     
+    status = cd(h->av, d);
     mx_del_strarr(&s->env);
     s->env = mx_env_copy();
     free(d);

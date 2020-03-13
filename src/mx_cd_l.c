@@ -38,10 +38,7 @@ int mx_cd_l(char *path, char flags, t_dirs *d) {
 
     if (path == 0)
         return 1;
-    if (mx_strcmp(path, "~") == 0)
-        new_pwd = strdup(d->home);
-    else 
-        new_pwd = get_new_pwd(path, d);
+    new_pwd = mx_strcmp(path, "~") == 0 ? strdup(d->home) : get_new_pwd(path, d);
     d->oldpwd = d->pwd;
     setenv("OLDPWD", d->pwd, 1);
     if (chdir(new_pwd) == -1) {
