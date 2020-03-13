@@ -60,7 +60,7 @@ static int cd(char **argv, t_dirs *d) {
             // path = strdup(d->oldpwd);
         //     printf("%s\n", path);
         // }
-    // } 
+    // } тут в аудитор не влажу, но надо будет добавить это !!!
     if (flags & 4)
         path = strdup(d->oldpwd); 
     else
