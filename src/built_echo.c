@@ -119,7 +119,7 @@ static void parse_flags(bool *no_new_line, bool *escape_off, t_lst *head, int *i
 int mx_echo(t_global *hd, t_lst *head) {
     char *str;
     bool no_new_line = false;
-    bool escape_off = false;
+    bool escape_off = true;
     int i = 1;
 
     if(!head->av[1])
@@ -139,12 +139,9 @@ int mx_echo(t_global *hd, t_lst *head) {
             if(head->av[i + 1])
                 mx_printstr(" ");
         }
-        if(no_new_line) {
-            mx_printstr(MX_WHITE);
-            mx_printstr("%");
-            mx_printstr(MX_NORM);
+        if(!no_new_line) {
+            mx_printstr("\n");
         }
-        mx_printstr("\n");
     }
     return 1;
 }
