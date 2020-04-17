@@ -61,12 +61,12 @@ int mx_ush_launch(t_global *hd, t_lst *head) {
         */
 
         if((res = func_exec(hd, head)) == 1) {
-            //system("leaks -q ush");
+            //system("leaks -q ush"););
             exit(1);
         }
         if (res < 0) {
             print_exec_error(head);
-            mx_strdel(&head->cmd);
+            mx_strdel(&head->cmd);      //??????
             exit(127);
             return 127;
         }
