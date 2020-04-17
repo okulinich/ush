@@ -45,22 +45,10 @@ static int get_flags(char **argv, int *i) {
     return flags;
 }
 
-static int cd(char **argv, t_dirs *d) {
-    int i = 0;
-    int flags = get_flags(argv, &i);
+static int cd(char **argv, t_dirs *d, int flags, int i) {
     char *path = NULL;
     int status = 0;
 
-    // if (flags & 4) {
-        // if (d->oldpwd == NULL) {
-        //     mx_printerr("ush: cd: OLDPWD not set\n");
-        //     return 1;
-        // }
-        // else {
-            // path = strdup(d->oldpwd);
-        //     printf("%s\n", path);
-        // }
-    // } тут в аудитор не влажу, но надо будет добавить это !!!
     if (flags & 4)
         path = strdup(d->oldpwd); 
     else
@@ -90,8 +78,18 @@ static t_dirs *initpwd() {
 int	mx_cd(t_global *s, t_lst *h) {
     int status = 0;
     t_dirs *d = initpwd();
+    int i = 0;
+    int flags = get_flags(h->av, &i);
     
-    status = cd(h->av, d);
+    if (flags & 4) {
+        if (d->oldpwd == NULL) {
+            mx_printerr("ush: cd: OLDPWD not set\n");
+            return 1;
+        }
+        else
+            printf("%s\n", d->oldpwd);
+    }  
+    status = cd(h->av, d, flags, i);
     mx_del_strarr(&s->env);
     s->env = mx_env_copy();
     free(d);

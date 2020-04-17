@@ -33,12 +33,27 @@ static char *get_new_pwd(char *path, t_dirs *d) {
     return res;
 }
 
+static char *pwd(char *path, t_dirs *d) {
+    int len = mx_strlen(path);
+    char *new_path = mx_strnew(len);
+    char *ret = NULL;
+
+    for (int i = 1, j = 0; i < len; i++, j++)
+        new_path[j] = path[i];
+    ret = mx_strjoin(d->home, new_path);
+    mx_strdel(&new_path);
+    return ret;
+}
+
 int mx_cd_l(char *path, char flags, t_dirs *d) {
     char *new_pwd = 0;
 
     if (path == 0)
         return 1;
-    new_pwd = mx_strcmp(path, "~") == 0 ? strdup(d->home) : get_new_pwd(path, d);
+    if (path[0] == '~' && path[1] == '/')
+        new_pwd = pwd(path, d);
+    else
+        new_pwd = mx_strcmp(path, "~") == 0 ? strdup(d->home) : get_new_pwd(path, d);
     d->oldpwd = d->pwd;
     setenv("OLDPWD", d->pwd, 1);
     if (chdir(new_pwd) == -1) {
