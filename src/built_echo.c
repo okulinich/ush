@@ -114,6 +114,11 @@ static void parse_flags(bool *no_new_line, bool *escape_off, t_lst *head, int *i
                 *escape_off = true;
                 (*i)++;
             }
+            else if(mx_strcmp(head->av[j], "-ne") == 0 || mx_strcmp(head->av[j], "-en") == 0) {
+                *no_new_line = true;
+                *escape_off = false;
+                (*i)++;
+            }
         }
         else
             flag = false;
@@ -131,7 +136,11 @@ int mx_echo(t_global *hd, t_lst *head) {
     else {
         parse_flags(&no_new_line, &escape_off, head, &i);
         for(; head->av[i]; i++) {
-            if(head->av[i][0] == '$') {
+            if(mx_strcmp(head->av[i], "$?") == 0) {
+                mx_printint(hd->last_exit_status);
+                hd->last_exit_status = 0;
+            }
+            else if(head->av[i][0] == '$') {
                 str = search_for_var(hd, head->av[i]);
                 if(str != NULL) {
                     mx_printstr(str);

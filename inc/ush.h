@@ -69,6 +69,7 @@ typedef struct s_global {
     t_lst *new;
     char **env;
     char **vars;
+    int last_exit_status;
 }   t_global;
 
 

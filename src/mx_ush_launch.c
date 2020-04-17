@@ -72,5 +72,6 @@ int mx_ush_launch(t_global *hd, t_lst *head) {
         }
     }
     wpid = waitpid(pid, &status, WUNTRACED);
+    hd->last_exit_status = WEXITSTATUS(status);
     return 1;
 }
