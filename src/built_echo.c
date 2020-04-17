@@ -28,8 +28,10 @@ static char *search_for_var(t_global *hd, char *str) {
 // \v вертикальная табуляция
 
 static void print_with_escape(char *str) {
+
     for(int i = 0; i < mx_strlen(str); i++) {
-        if(str[i] == '\\' && str[i + 1]) {
+        if(str[i] == '\\' && (i + 1) < mx_strlen(str)
+            && str[i + 1] != '\0') {
             switch(str[i + 1]) {
                 case '\'':
                     mx_printchar('\'');
@@ -79,6 +81,8 @@ static void print_with_escape(char *str) {
                     mx_printchar('\v');
                     i++;
                     break;
+                default:
+                    mx_printchar(str[i]);
             }
         }
         else
@@ -102,8 +106,8 @@ static void parse_flags(bool *no_new_line, bool *escape_off, t_lst *head, int *i
                 (*i)++;
             }
             else if(mx_strcmp(head->av[j], "-e") == 0 || mx_strcmp(head->av[j], "-eE") == 0 || mx_strcmp(head->av[j], "-Ee") == 0) {
+                *escape_off = false;
                 (*i)++;
-                continue;
             }
             else if(mx_strcmp(head->av[j], "-nE") == 0 || mx_strcmp(head->av[j], "-En") == 0) {
                 *no_new_line = true;
@@ -117,7 +121,7 @@ static void parse_flags(bool *no_new_line, bool *escape_off, t_lst *head, int *i
 }
 
 int mx_echo(t_global *hd, t_lst *head) {
-    char *str;
+    char *str = NULL;
     bool no_new_line = false;
     bool escape_off = true;
     int i = 1;
