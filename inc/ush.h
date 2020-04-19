@@ -157,4 +157,6 @@ int mx_cd_l(char *path, char flags, t_dirs *d);
 char *mx_add_one_slash(char *path, char *new_part);
 char *mx_del_last_slash(char *path);
 
+void mx_handler(); // signals
+
 #endif

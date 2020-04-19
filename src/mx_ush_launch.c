@@ -59,7 +59,8 @@ int mx_ush_launch(t_global *hd, t_lst *head) {
             v -> ми передаємо вектор (масив строк)
             p -> замість повного шляху до команди ми передаємо тільки її імя
         */
-
+        signal(SIGINT, SIG_DFL);
+        signal(SIGTSTP, SIG_DFL);
         if((res = func_exec(hd, head)) == 1) {
             //system("leaks -q ush"););
             exit(1);
@@ -72,6 +73,7 @@ int mx_ush_launch(t_global *hd, t_lst *head) {
         }
     }
     wpid = waitpid(pid, &status, WUNTRACED);
+    tcsetpgrp(0, getpid());
     hd->last_exit_status = WEXITSTATUS(status);
     return 1;
 }
