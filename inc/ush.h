@@ -144,6 +144,8 @@ void add_var_to_env(char *name, char *value, t_global *hd);
 int mx_which(t_global *hd, t_lst *head);
 //якщо знаходить змінну повертає *=value* інакше = 0
 char *ssearch_for_var_in_env(t_global *hd, char *str);
+//ekranirovanie of space-symbols
+void catch_escape_seq(char *str); 
 
 
 // ailchuk

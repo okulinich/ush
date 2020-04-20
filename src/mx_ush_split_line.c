@@ -1,14 +1,44 @@
 #include "ush.h"
 
+void catch_escape_seq(char *str) {
+    char *temp = NULL;
+    int j = 0;
+
+    for(int i = 0; i < mx_strlen(str); i++) {
+        if(str[i] == '\\' && i + 1 < mx_strlen(str) && str[i + 1] != ' ') {
+            temp = mx_strdup(str);
+            j = 0;
+            for(int g = 0; g < mx_strlen(temp); g++)
+                if(g != i)
+                    str[j++] = temp[g];
+            str[j] = '\0';
+            free(temp);
+        }
+    }
+}
+
 char **mx_ush_split_line(char *line, char *delim) {
     int buf_size = BUFSIZE;
     int pos = 0;
     char **tokens = (char **)malloc(buf_size * sizeof(char *));       //масив слів із строки
     char *token;
+    int j = 0;
 
+    for(int i = 0; i < mx_strlen(line); i++)    //тимчасово замінюємо екранований спейс на _
+        if(line[i] == '\\' && i + 1 < mx_strlen(line) && line[i + 1] == ' ')
+            line[i + 1] = '_';
     token = strtok(line, delim == NULL ? DELIMITERS : delim);
     while(token) {
         tokens[pos] = mx_strdup(token);                                  //записуємо кожне слово в масив
+        for(int i = 0; i < mx_strlen(token); i++)
+            if (token[i] == '\\' && i + 1 < mx_strlen(token) && token[i + 1] == '_') {
+                tokens[pos][j++] = ' ';
+                i++;
+            }
+            else
+                tokens[pos][j++] = token[i];
+        tokens[pos][j] = '\0';
+        j = 0;
         pos++;
         if(pos >= buf_size) {                           //розширюємо масив слів якшо потрібно
             buf_size += BUFSIZE;
@@ -35,7 +65,8 @@ static int count_quotes(char *line, char *quote_type) {
         ordinar = 0;
         for(int i = 0; i < mx_strlen(line); i++)
             if(line[i] == *quote_type)
-                ordinar++;
+                if(!(i - 1 >= 0 && line[i - 1] == '\\'))
+                    ordinar++;
         if(ordinar % 2 != 0)
             return -1;
         else
@@ -67,7 +98,7 @@ char **mx_split_by_quotes(char *line) {
                     tokens[i][j++] = line[pos++];
                 else if(i != 0)
                     pos++;
-                while (line[pos] != quote_type) {
+                while (line[pos] != quote_type || (pos - 1 >= 0 && line[pos - 1] == '\\')) {
                     tokens[i][j++] = line[pos++];
                 }
                 if(i % 2 != 0)
