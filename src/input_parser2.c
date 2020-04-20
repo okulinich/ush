@@ -45,13 +45,8 @@ t_lst *mx_ush_read_line(t_cmd_history **hist) {
         free(av);
     }
     else if(av) {
-            //here should be function that takes string and catches (ekrans) escape
-        // printf("ARguments before spliting by spaces\n");
-        for(int i = 0; av[i] != NULL; i++) {
+        for(int i = 0; av[i] != NULL; i++)
              catch_escape_seq(av[i]); 
-            //printf("*%s*\n", av[i]);
-        }
-        //exit(0);
         global = (char **)malloc(sizeof(char *) * BUFSIZE);
         for(i = 0; av[i] != NULL; i++) {
             if(av[i][0] == '\'' || av[i][0] == '\"')        //токен в лапках розглядаємо як суцільний аргумент
@@ -68,11 +63,7 @@ t_lst *mx_ush_read_line(t_cmd_history **hist) {
         mx_del_strarr(&global);
     }
     else {
-        //         printf("ARguments before spliting by spaces\n");
-        catch_escape_seq(line);
-        // printf("%s\n\n", line);
-        // exit(0);
-        //here should be function that takes string and catches (ekrans) escape sequances
+        catch_escape_seq(line); //function that takes string and catches (ekrans) escape sequances
         av = mx_ush_split_line(line, NULL);      /* розділяємо строку на токени  */
         split_by_delimiter(&av);                /* по крапці з комою */
         i = 0;
