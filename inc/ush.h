@@ -70,6 +70,7 @@ typedef struct s_global {
     char **env;
     char **vars;
     int last_exit_status;
+    
 }   t_global;
 
 

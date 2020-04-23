@@ -17,6 +17,8 @@ int mx_find_builtin(t_global *hd, t_lst *head) {
         return mx_unset(hd, head);
     else if(mx_strcmp(head->cmd, "which") == 0)
         return mx_which(hd, head);
+    // else if(mx_strcmp(head->cmd, "fg") == 0)
+        // return mx_fg(hd, head);
     return 0;
 }
 
