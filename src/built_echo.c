@@ -6,11 +6,7 @@ static char *search_for_var(t_global *hd, char *str) {
             return &hd->env[i][mx_strlen(str)];
         }
     }
-    for(int i = 0; hd->vars[i]; i++) {
-        if(find_var_in_str(hd->vars[i], &str[1])) {
-            return &hd->vars[i][mx_strlen(str)];
-        }
-    }
+
     return NULL;
 }
 
