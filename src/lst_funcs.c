@@ -16,13 +16,15 @@ void delete_list(t_lst *head) {
 
     while (head) {
         free(head->cmd);
-        while(head->av[i])
-            free(head->av[i++]);
-        free(head->av);
+        mx_del_strarr(&head->av);
+        //while(head->av[++i])
+           // free(head->av[i]);//
+        //free(head->av);
         temp = head;
         head = head->next;
         free(temp);
     }
+    //free(temp);
 }
 
 void delete_history(t_cmd_history *head) {

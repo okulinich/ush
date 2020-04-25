@@ -9,7 +9,7 @@ int mx_cd_p(char *path, char flags, t_dirs *d) {
     if (chdir(path) == -1) {
         if ((flags & 1) == 0)
             fprintf(stderr, "cd: %s: %s\n", strerror(errno), path);
-        return 1;
+        return -1;
     }
     d->pwd = getcwd(NULL, 0);
     setenv("PWD", d->pwd, 1);

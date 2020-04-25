@@ -95,7 +95,7 @@ int	mx_cd(t_global *s, t_lst *h) {
         free(d);
         return -1;    
     }
-    // mx_del_strarr(&s->env);
+    mx_del_strarr(&s->env);
     s->env = mx_env_copy();
     free(d);
     return status;
