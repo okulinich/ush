@@ -4,6 +4,7 @@ void mx_ush_loop(t_global *hd) {
     t_lst *root;
     int status = 1;
     t_cmd_history *hist = NULL;
+    hd->last_exit_status = 0;
 
     while (status) {
         mx_handler();

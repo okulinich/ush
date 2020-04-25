@@ -56,7 +56,7 @@ static int cd(char **argv, t_dirs *d, int flags, int i) {
     if (mx_islink(path) && (flags & 1) && (flags & 2) == 0) {
         fprintf(stderr, "cd: not a directory: %s\n", argv[i]);
         mx_strdel(&path);
-        return 1;
+        return -1;
     }
     if (flags & 2)
         status = mx_cd_p(path, flags, d);
@@ -84,16 +84,19 @@ int	mx_cd(t_global *s, t_lst *h) {
     if (flags & 4) {
         if (d->oldpwd == NULL) {
             mx_printerr("ush: cd: OLDPWD not set\n");
-            return 1;
+            s->last_exit_status = 1;
+            return -1;
         }
         else
             printf("%s\n", d->oldpwd);
     }  
     status = cd(h->av, d, flags, i);
-    mx_del_strarr(&s->env);
+    if (status == -1) {
+        free(d);
+        return -1;    
+    }
+    // mx_del_strarr(&s->env);
     s->env = mx_env_copy();
     free(d);
-    // system("leaks -q ush");
-    // exit(1);
     return status;
 }

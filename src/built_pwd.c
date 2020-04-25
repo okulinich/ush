@@ -62,5 +62,7 @@ int mx_builtin_pwd(t_lst *head) {
         else
             pwd_default();
     }
+    if (p < 0)
+        return -1;
     return 1;
 }

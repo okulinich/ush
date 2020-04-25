@@ -23,8 +23,22 @@ int mx_find_builtin(t_global *hd, t_lst *head) {
 }
 
 int mx_ush_execute(t_global *hd, t_lst *head) {
+    int ret = -2;
+
     if (head->cmd == NULL)
         return 1;
-    return mx_find_builtin(hd, head) ? 1 : mx_ush_launch(hd, head);
+    ret = mx_find_builtin(hd, head); // 0 launch - 1 builtin
+    if (ret < 0) { // -1 error 
+        hd->last_exit_status = 1;
+        return 1;
+    }
+    else if (ret > 0) { // builtin
+        hd->last_exit_status = 0;
+        return 1;
+    }
+    else if (ret == 0)
+        ret = mx_ush_launch(hd, head);
+    return ret;
+    // return mx_find_builtin(hd, head) ? 1 : mx_ush_launch(hd, head);
     // если нашло билтин то рет 1 иначе лаунч
 }
