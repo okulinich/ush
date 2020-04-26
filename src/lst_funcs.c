@@ -12,13 +12,10 @@ t_lst *create_node(char *str) {
 
 void delete_list(t_lst *head) {
     t_lst *temp = head;
-    int i = 0;
 
     while (head) {
         free(head->cmd);
-        while(head->av[i])
-            free(head->av[i++]);
-        free(head->av);
+        mx_del_strarr(&head->av);
         temp = head;
         head = head->next;
         free(temp);
@@ -75,4 +72,64 @@ void push_front_history(t_cmd_history **head, char *line) {
     if(*head)
         (*head)->prev = new_item;
     *head = new_item;
+}
+
+char **init_vars() {
+    char **str = (char **)malloc(sizeof(char *));
+    str[1] = NULL;
+    return str;
+}
+
+void delete_global(t_global *head) {
+    if(head) {
+        for(int i = 0; head->vars[i]; i++) {
+            free(head->vars[i]);
+        }
+        free(head->vars);
+        free(head);
+    }
+}
+
+int search_for_var_in_vars(t_global *hd, char *str) {
+    for(int i = 0; hd->vars[i]; i++) {
+        if(find_var_in_str(hd->vars[i], str)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+int search_for_var_in_env(t_global *hd, char *str) {
+    for(int i = 0; hd->env[i]; i++) {
+        if(find_var_in_str(hd->env[i], str)) {
+            return i;
+        }
+    }
+    return -1;
+}
+
+void add_local_var(t_global **hd, char *str) {
+    int i = 0;
+    char *var_name = mx_strndup(str, mx_get_char_index(str, '='));
+    //printf("\nInputed str = %s\nvar name = %s\n", str, var_name);
+    
+    i = search_for_var_in_vars(*hd, var_name);
+    if(i != -1) {        //якщо змінну знайдено - заміняємо
+        free((*hd)->vars[i]);
+        (*hd)->vars[i] = mx_strdup(str);
+    }
+    i = search_for_var_in_env(*hd, var_name);
+    if(i != -1) {
+        free((*hd)->env[i]);
+        (*hd)->env[i] = mx_strdup(str);
+    }
+    else {
+        i = 0;
+        while((*hd)->vars[i])
+            i++;
+        (*hd)->vars = realloc((*hd)->vars, (i + 2) * sizeof(char *));
+        (*hd)->vars[i] = mx_strdup(str);
+        (*hd)->vars[i + 1] = NULL;
+    }
+    free(var_name);
 }

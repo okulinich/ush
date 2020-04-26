@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/stat.h>
 
 // My functions
 bool mx_isspace(char c);
@@ -65,6 +66,7 @@ char *mx_strjoin(const char *s1, const char *s2);
 char *mx_file_to_str(const char *file);
 int mx_read_line(char **lineptr, size_t buf_size, char delim, const int fd);
 char *mx_replace_substr(const char *str, const char *sub, const char *replace);
+char *mx_strdel_ch(char **ptr); // util 
 
 // Memory pack
 void *mx_memset(void *b, int c, size_t len);
@@ -92,5 +94,7 @@ void mx_pop_front(t_list **head);
 void mx_pop_back(t_list **head);
 int mx_list_size(t_list *list);
 t_list *mx_sort_list(t_list *lst, bool (*cmp)(void *, void *));
+bool mx_islink(char *file);
+char *mx_strjoin2(char *s1, char *s2);
 
 #endif

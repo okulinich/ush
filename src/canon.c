@@ -50,7 +50,7 @@ static void write_symb_to_str(int *i, char **line, char *ch, bool *errow_pressed
     free(move_left);
 }
 
-static int read_from_stdin(t_cmd_history **cur, char **line, int *i, bool *errow_pressed) {
+static int read_from_stdin(t_cmd_history **cur, char **line, int *i, bool *errow_pressed, struct termios *savetty) {
     char ch[4] = {'\0', '\0', '\0', '\0'};             //буфер для посимвольного зчитування
 
     read(0, ch, 4);
@@ -60,6 +60,14 @@ static int read_from_stdin(t_cmd_history **cur, char **line, int *i, bool *errow
         mx_printchar('\n');
         return RETURN_EMPTY;          //freee!!
     }
+    else if(ch[0] == 4) {
+        mx_printstr("\n");
+        switch_canon(savetty);
+        exit(0);
+        return LOOP_BREAK;
+    }
+    else if (ch[0] == 26) 
+        write(1, "\a", 1);
     else if(history_or_backsp(ch, cur, line, i))      //опрацьовуємо історію та бекспейс
         return LOOP_CONTINUE;
     else if(left_right_key(ch, line, i)) {
@@ -73,6 +81,13 @@ static int read_from_stdin(t_cmd_history **cur, char **line, int *i, bool *errow
     return LOOP_CONTINUE;
 }
 
+static void wait_next_input(char **line) {
+    free(*line);
+    *line = mx_strnew(BUFSIZE);
+    mx_memset(*line, '\0', BUFSIZE);
+    write(1, "u$h> ", 5);
+}
+
 char *noncanon_read_line(t_cmd_history **head) {
     struct termios savetty;             //змінні для зберігання управляючих струтктур
     struct termios tty;                 //
@@ -84,16 +99,25 @@ char *noncanon_read_line(t_cmd_history **head) {
 
     switch_noncanon(&savetty, &tty);
 
+    mx_memset(line, '\0', BUFSIZE);
+
     write(1, "u$h> ", 5);
     while(1) {
-        res = read_from_stdin(&cur, &line, &i, &errow_pressed);
+        res = read_from_stdin(&cur, &line, &i, &errow_pressed, &savetty);
         if(!cur)
             cur = *head;
-        if(res == LOOP_BREAK)
-            break;
+        if(res == LOOP_BREAK) {
+            if(line[0] == '\0') {
+                mx_printchar('\n');
+                wait_next_input(&line);
+                continue;
+            }
+            else
+                break;
+        }
         else if(res == RETURN_EMPTY) {
-            free(line);
-            mx_strnew(1);
+            wait_next_input(&line);
+            continue;
         }
         else if(res == LOOP_CONTINUE)
             continue;
