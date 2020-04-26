@@ -7,7 +7,7 @@ void mx_ush_loop(t_global *hd) {
     hd->last_exit_status = 0;
 
     while (status) {
-        hd->env = mx_env_copy();
+        // hd->env = mx_env_copy();
         mx_handler();
         hd->new = mx_ush_read_line(&hist);                     //зчитуємо строку
         root = hd->new;
@@ -19,7 +19,7 @@ void mx_ush_loop(t_global *hd) {
        // free(root->cmd);
        // free(root->av);
        delete_list(root);
-       mx_del_strarr(&hd->env);
+    //    mx_del_strarr(&hd->env);
     }
     delete_history(hist);
 }

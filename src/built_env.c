@@ -16,7 +16,7 @@ char **mx_env_copy(void) {
     while (environ[len])
         len++;
     if (environ[0]) {
-        env_copy = malloc((len + 1) * sizeof(char*));
+        env_copy = malloc((len + 100) * sizeof(char*));
         copy_environ(env_copy, environ);
     }
     return env_copy;
@@ -77,6 +77,7 @@ char **realloc_env(int new_size, char **env) {
 void mx_set_env_var(char *key, char *value, char ***env) {
 	int	pos = mx_find_env_var(key, *env);
 	char *tmp = mx_strjoin("=", value);
+
 	if (*(*env + pos)) {
 		free(*(*env + pos));
 		if (value)

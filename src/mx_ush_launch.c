@@ -26,7 +26,8 @@ static int print_exec_error(t_lst *new) {
 static int func_exec(t_global *hd, t_lst *head) {
     int status = 0;
     char **new_env;
-
+    hd->env = mx_env_copy();
+    
     if (mx_strcmp(head->cmd, "env") == 0) {
         new_env = mx_parse_env_args(&hd);       //функція повертає NULL якщо в env не передано ніяких команд
         if(new_env == NULL)                     //інакше - повертає масив змінних среди
@@ -34,6 +35,7 @@ static int func_exec(t_global *hd, t_lst *head) {
         else
             status = execve(head->cmd, head->av, new_env); //запускаємо env з заданим набором змінних
         mx_del_strarr(&new_env);
+        mx_del_strarr(&hd->env);
     }
     else {
         status = execvp(head->cmd, head->av); // МОЖЕТ ЛУЧШЕ execvp? при таком случае работает лс и тд юзаємо с новими аргументами середи

@@ -90,13 +90,15 @@ int	mx_cd(t_global *s, t_lst *h) {
         else
             printf("%s\n", d->oldpwd);
     }  
+    if (mx_strcmp(h->av[1], ".") == 0) {
+        free(d);
+        return 1;
+    }
     status = cd(h->av, d, flags, i);
     if (status == -1) {
         free(d);
         return -1;    
     }
-    mx_del_strarr(&s->env);
-    s->env = mx_env_copy();
     free(d);
     return status;
 }

@@ -4,7 +4,7 @@ int mx_exit(t_global *hd) {
     int flag = 0;
 
     if (!hd->new->av[1]) {
-        mx_del_strarr(&hd->env);
+        // mx_del_strarr(&hd->env);
         mx_del_strarr(&hd->new->av);
         mx_strdel(&hd->new->cmd);
         free(hd);
