@@ -1,11 +1,19 @@
 #include "ush.h"
 
+int get_line(char **line) {
+    int res = 0;
+
+    for(int i = 0; read(0, &(*line)[i], 1) > 0; i++)
+        res = 1;
+    return res;
+}
+
 int main() {
     t_global *head = malloc(sizeof(t_global *));
 
-    char *line;
+    char *line = mx_strnew(255);
     size_t buf = 0;
-    if(isatty(0) == 0 && getline(&line, &buf, stdin) > 0)
+    if(isatty(0) == 0 && get_line(&line) > 0)
         head->input = line;
     else
         head->input = NULL;
@@ -14,6 +22,6 @@ int main() {
     // head->vars = init_vars();                   //локальні змінні оболонки /// ЛИКУЕТ!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //add_var_to_env("SHLVL", "=2", head);
     mx_ush_loop(head);                          //основний цикл
-    delete_global(head);                        //НЕ ЧИСТИТЬСЯ, ТРЕБА ЦЮ ФУНКЦІЮ
+    //delete_global(head);                        //НЕ ЧИСТИТЬСЯ, ТРЕБА ЦЮ ФУНКЦІЮ
                                                 //ВИКЛИКАТИ ПЕРЕД EXIT
 }
