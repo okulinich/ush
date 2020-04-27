@@ -55,6 +55,13 @@ static int count_quotes(char *line, char *quote_type) {
     int doubl = mx_get_char_index(line, '\"');
     int third = mx_get_char_index(line, '`');
     
+    if(ordinar > 0 && line[ordinar - 1] == '\\')
+        ordinar = -1;
+    if(doubl > 0 && line[doubl - 1] == '\\')
+        doubl = -1;
+    if(third > 0 && line[third - 1] == '\\')
+        third = -1;
+
     *quote_type = 'q';
     if(ordinar >= 0 && doubl >= 0 && third >= 0)
         *quote_type = ordinar < doubl ? (ordinar < third ? '\'' : '`') : (doubl < third ? '\"' : '`');
