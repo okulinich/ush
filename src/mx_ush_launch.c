@@ -28,9 +28,13 @@ static int func_exec(t_global *hd, t_lst *head) {
     char **new_env;
 
     if (mx_strcmp(head->cmd, "env") == 0) {
+        hd->env = mx_env_copy();
+        add_var_to_env("SHLVL", "=2", hd);
         new_env = mx_parse_env_args(&hd);       //функція повертає NULL якщо в env не передано ніяких команд
-        if(new_env == NULL)                     //інакше - повертає масив змінних среди
+        mx_del_strarr(&hd->env);
+        if(new_env == NULL) {                    //інакше - повертає масив змінних среди
             return 1;
+        }
         else
             status = execve(head->cmd, head->av, new_env); //запускаємо env з заданим набором змінних
         mx_del_strarr(&new_env);
