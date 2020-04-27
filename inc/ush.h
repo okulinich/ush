@@ -135,23 +135,23 @@ int mx_echo(t_global *hd, t_lst *head);
 ////функція перевіряє чи менша строка входить в більшу (до знака = в більшій)
 bool find_var_in_str(char *big, char *little);
 //функція для експортування змінних в ENV
-int mx_export(t_global *hd, t_lst *head);
+int mx_export(t_lst *head);
 //вбудована функція cd
 int mx_cd(t_global *hd, t_lst *head);
 //функція приймає ім'я змінної і шукає її перше входження в nev(до =) і повертає індекс
-int search_for_var_in_env(t_global *hd, char *str);
+int search_for_var_in_env(char *str);
 //те саме що і верхня тілкьки з масивом vars
 int search_for_var_in_vars(t_global *hd, char *str);
 //видаляє змінні із env та var
-int mx_unset(t_global *hd, t_lst *head);
+int mx_unset(t_lst *head) ;
 //розділяє строку по лапках
 char **mx_split_by_quotes(char *line);
 //додає або замінює змінну в env масиві
 void add_var_to_env(char *name, char *value, t_global *hd);
 //built-in which command
-int mx_which(t_global *hd, t_lst *head);
+int mx_which(t_lst *head);
 //якщо знаходить змінну повертає *=value* інакше = 0
-char *ssearch_for_var_in_env(t_global *hd, char *str);
+char *ssearch_for_var_in_env(char *str);
 //ekranirovanie of space-symbols
 void catch_escape_seq(char *str); 
 //
@@ -168,6 +168,8 @@ void fill_cmd_list(char **global, t_lst **head);
 t_lst *create_node(char *str);
 //
 char get_escape(char c);
+//
+void add_str_to_env(char *str);
 
 
 // ailchuk

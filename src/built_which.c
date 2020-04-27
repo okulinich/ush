@@ -62,8 +62,8 @@ static char *check_dir(DIR *search_dir, char **res, char **token_and_bin, bool s
 	return NULL;
 }
 
-static char *get_path_to_binary(t_global *hd, char *bin_name, bool search_all_bins) {
-	char *path_var = mx_strdup(&(ssearch_for_var_in_env(hd, "PATH"))[1]);
+static char *get_path_to_binary(char *bin_name, bool search_all_bins) {
+	char *path_var = mx_strdup(&(ssearch_for_var_in_env("PATH"))[1]);
 	char *token = strtok(path_var, ":");
 	char *res = NULL;
 	char *tmp[2];
@@ -88,7 +88,7 @@ static char *get_path_to_binary(t_global *hd, char *bin_name, bool search_all_bi
 	return res;
 }
 
-int mx_which(t_global *hd, t_lst *head) {
+int mx_which(t_lst *head) {
 	bool no_output = false;
 	bool search_all_bins = false;
 	int start_index = 0;
@@ -99,7 +99,7 @@ int mx_which(t_global *hd, t_lst *head) {
 		return 1;
 	start_index = parse_flags(&no_output, &search_all_bins, head);
 	for(i = start_index; head->av[i]; i++) {
-		res = get_path_to_binary(hd, head->av[i], search_all_bins);
+		res = get_path_to_binary(head->av[i], search_all_bins);
 		if(no_output == false && res != NULL) {
 			mx_printstr(res);
 			mx_printstr("\n");

@@ -10,13 +10,13 @@ int mx_find_builtin(t_global *hd, t_lst *head) {
     else if(mx_strcmp(head->cmd, "echo") == 0)
         return mx_echo(hd, head);
     else if(mx_strcmp(head->cmd, "export") == 0)
-        return mx_export(hd, head);
+        return mx_export(head);
     else if(mx_strcmp(head->cmd, "cd") == 0)
         return mx_cd(hd, head);
     else if(mx_strcmp(head->cmd, "unset") == 0)
-        return mx_unset(hd, head);
+        return mx_unset(head);
     else if(mx_strcmp(head->cmd, "which") == 0)
-        return mx_which(hd, head);
+        return mx_which(head);
     // else if(mx_strcmp(head->cmd, "fg") == 0)
         // return mx_fg(hd, head);
     return 0;

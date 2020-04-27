@@ -1,9 +1,11 @@
 #include "ush.h"
 
-static char *search_for_var(t_global *hd, char *str) {
-    for(int i = 0; hd->env[i]; i++) {
-        if(find_var_in_str(hd->env[i], &str[1])) {
-            return &hd->env[i][mx_strlen(str)];
+static char *search_for_var(char *str) {
+    extern char **environ;
+
+    for(int i = 0; environ[i]; i++) {
+        if(find_var_in_str(environ[i], &str[1])) {
+            return mx_strdup(&environ[i][mx_strlen(str)]);
         }
     }
     return NULL;
@@ -135,9 +137,10 @@ int mx_echo(t_global *hd, t_lst *head) {
                 mx_printint(hd->last_exit_status);
             }
             else if(head->av[i][0] == '$') {
-                str = search_for_var(hd, head->av[i]);
+                str = search_for_var(head->av[i]);
                 if(str != NULL) {
                     mx_printstr(str);
+                    free(str);
                 }
             }
             else {
