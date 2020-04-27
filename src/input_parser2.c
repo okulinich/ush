@@ -45,11 +45,10 @@ t_lst *mx_ush_read_line(t_cmd_history **hist) {
         free(av);
     }
     else if(av) {
-        if(av[0][0] != 'e' && av[0][1] != 'e' && av[0][2] != 'c' && av[0][3] != 'h')
-            for(int i = 0; av[i] != NULL; i++)
-                catch_escape_seq(av[i]); 
         global = (char **)malloc(sizeof(char *) * BUFSIZE);
         for(i = 0; av[i] != NULL; i++) {
+            if(i == 0 || strstr(av[i - 1], "echo") != NULL)
+                catch_escape_seq(av[i]);
             if(av[i][0] == '\'' || av[i][0] == '\"')        //токен в лапках розглядаємо як суцільний аргумент
                 global[gl_i++] = mx_strndup(&av[i][1], strlen(av[i]) - 2);
             else if(av[i][0] == '`')

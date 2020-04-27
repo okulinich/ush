@@ -166,6 +166,9 @@ void split_by_delimiter(char ***av);
 void fill_cmd_list(char **global, t_lst **head);
 //
 t_lst *create_node(char *str);
+//
+char get_escape(char c);
+
 
 // ailchuk
 int mx_exit(t_global *hd);
