@@ -48,6 +48,23 @@ char *get_cmd_output(char *cmd, t_global *hd) {
     root = head;
 
     while(head) {
+        if(mx_strcmp(head->cmd, "echo") == 0) {
+            int indx = check_cmd_args_for_commands(head);
+            if(indx > 0) {
+                str = get_cmd_output(head->av[indx], hd);
+                delete_list(root);
+                return str;
+            }
+            if(head->av[1]) {
+                delete_list(root);
+                return mx_strdup(head->av[1]);
+            }
+            else {
+                delete_list(root);
+                return mx_strnew(1);
+            }
+        }
+
         pipe(spwn.fds);
         posix_spawn_file_actions_init(&spwn.actions);
         posix_spawn_file_actions_adddup2(&spwn.actions, spwn.fds[1], 1);

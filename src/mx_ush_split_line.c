@@ -78,7 +78,7 @@ static int count_quotes(char *line, char *quote_type) {
     else {
         ordinar = 0;
         for(int i = 0; i < mx_strlen(line); i++)
-            if(line[i] == *quote_type)
+            if(line[i] == *quote_type && (i == 0 || line[i - 1] != '\\'))
                 ordinar++;
         if(ordinar % 2 != 0)
             return -1;
