@@ -1,18 +1,13 @@
 #include "ush.h"
 
-// static char *search_for_var(t_global *hd, char *str) {
-//     for(int i = 0; hd->env[i]; i++) {
-//         if(find_var_in_str(hd->env[i], &str[1])) {
-//             return &hd->env[i][mx_strlen(str)];
-//         }
-//     }
-//     for(int i = 0; hd->vars[i]; i++) {
-//         if(find_var_in_str(hd->vars[i], &str[1])) {
-//             return &hd->vars[i][mx_strlen(str)];
-//         }
-//     }
-//     return NULL;
-// }
+static char *search_for_var(t_global *hd, char *str) {
+    for(int i = 0; hd->env[i]; i++) {
+        if(find_var_in_str(hd->env[i], &str[1])) {
+            return &hd->env[i][mx_strlen(str)];
+        }
+    }
+    return NULL;
+}
 
 // \' одинарная кавычка
 // \" двойная кавычка
@@ -140,7 +135,7 @@ int mx_echo(t_global *hd, t_lst *head) {
                 mx_printint(hd->last_exit_status);
             }
             else if(head->av[i][0] == '$') {
-                str = ssearch_for_var_in_env(hd, head->av[i]);
+                str = search_for_var(hd, head->av[i]);
                 if(str != NULL) {
                     mx_printstr(str);
                 }
