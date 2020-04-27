@@ -19,6 +19,8 @@ int mx_unset(t_global *hd, t_lst *head) {
             unsetenv(var_name);
             free(var_name);
         }
+        else
+            return -1;
 //meybe we will add variables, so let this code below be
 /*        index = search_for_var_in_vars(hd, var_name);
         if(index != -1) {

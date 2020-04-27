@@ -21,9 +21,8 @@ static t_lst *parse_cmd_to_list(char *cmd) {
     return head;
 }
 
-static void get_command_output(t_spawn_args *spwn, t_global *hd, char **input) {
-    char str[256];
-    char *temp;
+static char *get_command_output(t_spawn_args *spwn, t_global *hd) {
+    char *str = mx_strnew(255);
 
 
     if(spwn->status != -1)
@@ -35,14 +34,7 @@ static void get_command_output(t_spawn_args *spwn, t_global *hd, char **input) {
         ;
     str[mx_strlen(str) - 1] = '\0';
     close(spwn->fds[0]);
-    if(*input != NULL) {
-        temp = mx_strdup(*input);
-        free(*input);
-        *input = mx_strjoin(temp, str);
-        free(temp);
-    }
-    else
-        *input = mx_strdup(str);
+    return str;
 }
 
 char *get_cmd_output(char *cmd, t_global *hd) {
@@ -62,7 +54,7 @@ char *get_cmd_output(char *cmd, t_global *hd) {
         
         if(spwn.status == 0) {
             spwn.status = waitpid(spwn.child, &spwn.status, 0);
-            get_command_output(&spwn, hd, &str);
+            str = get_command_output(&spwn, hd);
         }
         else
             printf("Posix spawn error: %s", strerror(spwn.status));

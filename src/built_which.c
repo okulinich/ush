@@ -104,9 +104,16 @@ int mx_which(t_global *hd, t_lst *head) {
 			mx_printstr(res);
 			mx_printstr("\n");
 		}
+		else if(no_output && res != NULL) {
+			//hd->last_exit_status = 0;
+			free(res);
+			return 1;
+		}
+		else if(no_output && res == NULL) {
+			return -1;
+		}
 		if(res)
 			free(res);
-		//else ??? where to return 0 or 1 if -s flag specfied???
 	}
 	return 1;
 }

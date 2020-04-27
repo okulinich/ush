@@ -1,19 +1,19 @@
 #include "ush.h"
 
-//якщо знаходить змінну повертає *=value* інакше = 0
-static char *search_for_var(t_global *hd, char *str) {
-    for(int i = 0; hd->vars[i]; i++) {
-        if(find_var_in_str(hd->vars[i], str)) {
-            return &hd->vars[i][mx_strlen(str)];
-        }
-    }
-    for(int i = 0; hd->env[i]; i++) {
-        if(find_var_in_str(hd->env[i], str)) {
-            return &hd->env[i][mx_strlen(str)];
-        }
-    }
-    return NULL;
-}
+// //якщо знаходить змінну повертає *=value* інакше = 0
+// static char *search_for_var(t_global *hd, char *str) {
+//     for(int i = 0; hd->vars[i]; i++) {
+//         if(find_var_in_str(hd->vars[i], str)) {
+//             return &hd->vars[i][mx_strlen(str)];
+//         }
+//     }
+//     for(int i = 0; hd->env[i]; i++) {
+//         if(find_var_in_str(hd->env[i], str)) {
+//             return &hd->env[i][mx_strlen(str)];
+//         }
+//     }
+//     return NULL;
+// }
 
 //якщо знаходить змінну повертає *=value* інакше = 0
 char *ssearch_for_var_in_env(t_global *hd, char *str) {
@@ -78,12 +78,12 @@ int mx_export(t_global *hd, t_lst *head) {
         if(!head->av[i])
             return 1;
         else if(mx_get_char_index(head->av[i], '=') < 0) {  //якщо в строці немає =
-            new_var = search_for_var(hd, head->av[i]);
+            new_var = ssearch_for_var_in_env(hd, head->av[i]);
             if(new_var) {                           //якщо змінну знайдено в масиві env або в масиві змінних->
                 add_var_to_env(head->av[i], new_var, hd);   //експортуємо її в нове значення в env
             }
             else
-                return 1;
+                return -1;
         }
         else {                                              //якщо = є
             add_str_to_env(hd, head, i);
