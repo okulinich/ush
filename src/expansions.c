@@ -22,7 +22,7 @@ static t_lst *parse_cmd_to_list(char *cmd) {
 }
 
 static char *get_command_output(t_spawn_args *spwn, t_global *hd) {
-    char *str = mx_strnew(255);
+    char *str = mx_strnew(1024);
 
 
     if(spwn->status != -1)
@@ -42,7 +42,8 @@ char *get_cmd_output(char *cmd, t_global *hd) {
     char *str = NULL;
     t_lst *head = NULL;
     t_lst *root = NULL;
-    
+    char *tmp = NULL;
+
     head = parse_cmd_to_list(cmd);
     root = head;
 
@@ -54,10 +55,21 @@ char *get_cmd_output(char *cmd, t_global *hd) {
         
         if(spwn.status == 0) {
             spwn.status = waitpid(spwn.child, &spwn.status, 0);
-            str = get_command_output(&spwn, hd);
+            tmp = get_command_output(&spwn, hd);
+            if(str == NULL) {
+                str = mx_strdup(tmp);
+                free(tmp);
+            }
+            else {
+                char *buf = mx_strjoin(str, tmp);
+                free(tmp);
+                free(str);
+                str = buf;
+            }
         }
         else
             printf("Posix spawn error: %s", strerror(spwn.status));
+        posix_spawn_file_actions_destroy(&spwn.actions);
         head = head->next;
     }
 
@@ -86,6 +98,8 @@ t_lst *parse_string(char *str) {
         for(i = 0; av[i] != NULL; i++) {
             if(av[i][0] == '\'' || av[i][0] == '\"')        //токен в лапках розглядаємо як суцільний аргумент
                 global[gl_i++] = mx_strndup(&av[i][1], strlen(av[i]) - 2);
+            else if(av[i][0] == '`')
+                global[gl_i++] = mx_strdup(av[i]);
             else {
                 temp = mx_ush_split_line(av[i], NULL);      //токен не в лапках ділимо на підстроки
                 split_by_delimiter(&temp);
@@ -98,9 +112,9 @@ t_lst *parse_string(char *str) {
         mx_del_strarr(&global);
     }
     else {
-        //catch_escape_seq(line); //function that takes string and catches (ekrans) escape sequances
+        catch_escape_seq(line); //function that takes string and catches (ekrans) escape sequances
         av = mx_ush_split_line(line, NULL);      /* розділяємо строку на токени  */
-        //split_by_delimiter(&av);                /* по крапці з комою */
+        split_by_delimiter(&av);                /* по крапці з комою */
         i = 0;
         fill_cmd_list(av, &head);
     }

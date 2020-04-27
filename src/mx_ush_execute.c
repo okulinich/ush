@@ -40,7 +40,7 @@ int mx_ush_execute(t_global *hd, t_lst *head) {
     int ret = -2;
 
     //works in general, but makes one root leak, can`t find it 
-    //execute_av_in_qoutes(hd, head);
+    execute_av_in_qoutes(hd, head);
     if (head->cmd == NULL)
         return 1;
     ret = mx_find_builtin(hd, head); // 0 launch - 1 builtin
