@@ -28,7 +28,7 @@ void fill_cmd_list(char **global, t_lst **head) {
 // - у випадку якщо лапки не закриті - видаємо помилку
 // - токени які не були заключені в лапки - ділимо по спейс-симловах
 // - а потім ділимо по крапці з комою
-t_lst *mx_ush_read_line(t_cmd_history **hist) {
+t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd) {
     char *line = NULL;
     char **av = NULL;
     char **global;
@@ -37,7 +37,10 @@ t_lst *mx_ush_read_line(t_cmd_history **hist) {
     t_lst *head = NULL;
     int i = 0;
 
-    line = noncanon_read_line(hist);
+    if(hd->input != NULL)
+        line = mx_strdup(hd->input);
+    else
+        line = noncanon_read_line(hist);
 
     av = mx_split_by_quotes(line);              //розбиваємо стркоу по лапках
     if(av && mx_strcmp(av[0], "ERROR") == 0) {  //якщо лапки не закриті - видаємо помилку

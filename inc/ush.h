@@ -70,6 +70,7 @@ typedef struct s_global {
     t_lst *new;
     char **env;
     char **vars;
+    char *input;
     int last_exit_status;
 }   t_global;
 
@@ -86,7 +87,7 @@ void mx_ush_loop(t_global *hd);
 int mx_ush_execute(t_global *hd, t_lst *head);
 int mx_ush_launch(t_global *hd, t_lst *head);
 char **mx_ush_split_line(char *line, char *delim);
-t_lst *mx_ush_read_line(t_cmd_history **hist);
+t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd);
 
 //зчитування, парсинг строки, формування списку команд для виконання
 t_lst *lsh_read_line(t_cmd_history **hist);

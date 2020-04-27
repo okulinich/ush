@@ -8,14 +8,19 @@ void mx_ush_loop(t_global *hd) {
 
     while (status) {
         mx_handler();
-        hd->new = mx_ush_read_line(&hist);                     //зчитуємо строку
+        hd->new = mx_ush_read_line(&hist, hd);                     //зчитуємо строку
         root = hd->new;
         for ( ; hd->new; hd->new = hd->new->next) {
             status = mx_ush_execute(hd, hd->new);                 //виконуємо команди
         }
+        delete_list(root);
+        if(hd->input != NULL) {
+            //free(hd->input);
+            break;
+        }
         // system("leaks -q ush");
         // // exit(1);
-        delete_list(root);
     }
-    delete_history(hist);
+    if(hd->input == NULL)
+        delete_history(hist);
 }
