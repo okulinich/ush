@@ -139,8 +139,6 @@ int mx_echo(t_global *hd, t_lst *head) {
                 if(str != NULL) {
                     mx_printstr(str);
                 }
-                else
-                    mx_printstr(head->av[i]);
             }
             else {
                 escape_off == true ? mx_printstr(head->av[i]) : print_with_escape(head->av[i]);
