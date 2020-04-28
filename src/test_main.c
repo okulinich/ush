@@ -12,10 +12,15 @@ int get_line(char **line) {
 int main() {
     t_global *head = malloc(sizeof(t_global *));
 
-    char *line = mx_strnew(1024);
+    char *line;// = mx_strnew(1024);
     size_t buf = 0;
     char *input = NULL;
-    if(isatty(0) == 0 && getline(&line, &buf, stdin) > 0) {
+    if(isatty(0) == 0) {
+        mx_printstr("not chr device\n");
+        if(getline(&line, &buf, stdin) < 0) {
+            mx_printstr("no input str\n");
+            exit(1);
+        }
         input = mx_strnew(1024);
         mx_strcpy(input, line);
     }
