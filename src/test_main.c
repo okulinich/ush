@@ -1,14 +1,5 @@
 #include "ush.h"
 
-int get_line(char **line) {
-    int res = 0;
-
-    for(int i = 0; i < 255; i++)
-        if(read(0, &(*line)[i], 1) > 0 && i == 0)
-            res = 1;
-    return res;
-}
-
 int main() {
     t_global *head = malloc(sizeof(t_global *));
 

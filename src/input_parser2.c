@@ -80,7 +80,7 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
         fill_cmd_list(av, &head);
     }
 
-    //free(line);
+    free(line);
     if(mx_strcmp(av[0], "ERROR") != 0)
         mx_del_strarr(&av);
     return head;

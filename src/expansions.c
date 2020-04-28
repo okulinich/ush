@@ -43,6 +43,7 @@ char *get_cmd_output(char *cmd, t_global *hd) {
     t_lst *head = NULL;
     t_lst *root = NULL;
     char *tmp = NULL;
+    extern char **environ;
 
     head = parse_cmd_to_list(cmd);
     root = head;
@@ -56,8 +57,10 @@ char *get_cmd_output(char *cmd, t_global *hd) {
                 return str;
             }
             if(head->av[1]) {
+                str = mx_strnew(strlen(head->av[1]));
+                mx_strcpy(str, head->av[1]);
                 delete_list(root);
-                return mx_strdup(head->av[1]);
+                return str;
             }
             else {
                 delete_list(root);
@@ -68,7 +71,7 @@ char *get_cmd_output(char *cmd, t_global *hd) {
         pipe(spwn.fds);
         posix_spawn_file_actions_init(&spwn.actions);
         posix_spawn_file_actions_adddup2(&spwn.actions, spwn.fds[1], 1);
-        spwn.status = posix_spawnp(&spwn.child, head->cmd, &spwn.actions, NULL, head->av, hd->env);
+        spwn.status = posix_spawnp(&spwn.child, head->cmd, &spwn.actions, NULL, head->av, environ);
         
         if(spwn.status == 0) {
             spwn.status = waitpid(spwn.child, &spwn.status, 0);
@@ -84,8 +87,10 @@ char *get_cmd_output(char *cmd, t_global *hd) {
                 str = buf;
             }
         }
-        else
-            printf("Posix spawn error: %s", strerror(spwn.status));
+        else {
+            mx_printstr("Posix spawn error: "); 
+            mx_printstr(strerror(spwn.status));
+        }
         posix_spawn_file_actions_destroy(&spwn.actions);
         head = head->next;
     }
