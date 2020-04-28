@@ -28,7 +28,7 @@ void fill_cmd_list(char **global, t_lst **head) {
 // - у випадку якщо лапки не закриті - видаємо помилку
 // - токени які не були заключені в лапки - ділимо по спейс-симловах
 // - а потім ділимо по крапці з комою
-t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd) {
+t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
     char *line = NULL;
     char **av = NULL;
     char **global;
@@ -37,10 +37,15 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd) {
     t_lst *head = NULL;
     int i = 0;
 
-    if(hd->input != NULL)
-        line = mx_strdup(hd->input);
-    else
+    if(mx_strcmp("suka", input) != 0) {
+        line = mx_strnew(1024);
+        strcpy(line, input);
+        //printf("from input parser: %s\nwritten = %s\n", input, line);
+    }
+    else {
+        //printf("from read_line = %s\n", input);
         line = noncanon_read_line(hist);
+    }
 
     av = mx_split_by_quotes(line);              //розбиваємо стркоу по лапках
     if(av && mx_strcmp(av[0], "ERROR") == 0) {  //якщо лапки не закриті - видаємо помилку
@@ -75,7 +80,7 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd) {
         fill_cmd_list(av, &head);
     }
 
-    free(line);
+    //free(line);
     if(mx_strcmp(av[0], "ERROR") != 0)
         mx_del_strarr(&av);
     return head;
