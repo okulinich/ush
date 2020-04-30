@@ -117,7 +117,7 @@ bool left_right_key(char ch[4], char **line, int *i);
 bool arrow_pressed(char *str, int a, int b, int c);
 //заповнює строку '\0'
 void mx_line_alloc(char *line);
-//
+//prints environ array
 void mx_print_env(char **env);
 //
 char **mx_parse_env_args(t_global **hd);
@@ -155,22 +155,26 @@ int mx_which(t_lst *head);
 char *ssearch_for_var_in_env(char *str);
 //ekranirovanie of space-symbols
 void catch_escape_seq(char *str); 
-//
+//checks array of args for `cmd`
 int check_cmd_args_for_commands(t_lst *cur);
-//
+//return a string that contains output from `cmd`
 char *get_cmd_output(char *cmd, t_global *hd);
-//
+//special parser for command substitution `cmd`
 t_lst *parse_string(char *line);
-//
+//splits each string by the delimiter
 void split_by_delimiter(char ***av);
-//
+//fills the list with values (commands and arguments)
 void fill_cmd_list(char **global, t_lst **head);
-//
+//creates an item of the list
 t_lst *create_node(char *str);
-//
+//returns char c + '\'
 char get_escape(char c);
-//
+//adds new var and it's value to environ array
 void add_str_to_env(char *str);
+//checks the str for variables and replaces vars with their values
+bool get_var_from_str(char **str);
+//returns the value of variable from environ array
+char *search_for_var(char *str);
 
 
 // ailchuk

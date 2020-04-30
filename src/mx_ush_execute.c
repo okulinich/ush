@@ -33,14 +33,33 @@ static void execute_av_in_qoutes(t_global *hd, t_lst *head) {
         head->av[indx] = str;
     }
 }
+
+static void cmd_sub_tilda(t_lst *head) {
+    char *user_name = search_for_var("USER");
+    char *tilda_value = mx_strjoin("/Users/", user_name);
+    char *temp = NULL;
+
+    for(int i = 1; head->av[i] != NULL; i++) {
+        while(mx_get_char_index(head->av[i], '~') >= 0) {
+            temp = mx_replace_substr(head->av[i], "~", tilda_value);
+            free(head->av[i]);
+            head->av[i] = mx_strnew(mx_strlen(temp));
+            mx_strcpy(head->av[i], temp);
+            free(temp);
+        }
+    }
+
+    free(user_name);
+    free(tilda_value);
+}
 //тут перевірка аргументів на наявність  `cmd` і запуск відповідної ф-кції
 //результат віконання цієї ф-кції = строка з виводом запущеної команди
 //ця строка записується в якості аргумента поміщеного в ``
 int mx_ush_execute(t_global *hd, t_lst *head) {
     int ret = -2;
 
-    //works in general, but makes one root leak, can`t find it 
-    execute_av_in_qoutes(hd, head);
+    execute_av_in_qoutes(hd, head); //getting output from command placed in `` (cmd subtitution)
+    cmd_sub_tilda(head); //replacing ~ with Users/USER
     if (head->cmd == NULL)
         return 1;
     ret = mx_find_builtin(hd, head); // 0 launch - 1 builtin

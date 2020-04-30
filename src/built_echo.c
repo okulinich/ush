@@ -1,11 +1,11 @@
 #include "ush.h"
 
-static char *search_for_var(char *str) {
+char *search_for_var(char *str) {
     extern char **environ;
 
     for(int i = 0; environ[i]; i++) {
-        if(find_var_in_str(environ[i], &str[1])) {
-            return mx_strdup(&environ[i][mx_strlen(str)]);
+        if(find_var_in_str(environ[i], str)) {
+            return mx_strdup(&environ[i][mx_strlen(str) + 1]);
         }
     }
     return NULL;
@@ -136,16 +136,12 @@ int mx_echo(t_global *hd, t_lst *head) {
             if(mx_strcmp(head->av[i], "$?") == 0) {
                 mx_printint(hd->last_exit_status);
             }
-            else if(head->av[i][0] == '$') {
-                str = search_for_var(head->av[i]);
-                if(str != NULL) {
-                    mx_printstr(str);
-                    free(str);
-                }
+            else if(get_var_from_str(&head->av[i])) {
+                while(get_var_from_str(&head->av[i]))
+                    ;
             }
-            else {
+            if(mx_strcmp(head->av[i], "$?") != 0)
                 escape_off == true ? mx_printstr(head->av[i]) : print_with_escape(head->av[i]);
-            }
             if(head->av[i + 1])
                 mx_printstr(" ");
         }
@@ -154,4 +150,91 @@ int mx_echo(t_global *hd, t_lst *head) {
         }
     }
     return 1;
+}
+
+char *get_variable_value(int pos, char *str) {
+    int j = 0;
+    bool ph_closed = false;
+    char variable_name[256];
+    char *variable_value = NULL;
+
+    if(str[pos + 1] != '{') {
+        while(isalpha(str[++pos])) {
+            variable_name[j++] = str[pos];
+        }
+        ph_closed = true;
+    }
+    else {
+        pos += 2;
+        while(str[pos] != '}' && pos < mx_strlen(str))
+            variable_name[j++] = str[pos++];
+        if(pos < mx_strlen(str) && str[pos] == '}')
+            ph_closed = true;
+    }
+
+    variable_name[j] = '\0';
+
+    if(ph_closed)
+        variable_value = search_for_var(variable_name);
+    else
+        variable_value = mx_strdup("Error: odd number of parenthesis\n");
+    return variable_value;
+}
+
+void replace_var_with_value(char **str, char *var_value, int i) {
+    char *new_str = NULL;
+    int g = 0;
+    int k = i;
+
+    if(var_value)
+        new_str = mx_strnew(mx_strlen(*str) + mx_strlen(var_value));
+    else
+        new_str = mx_strnew(mx_strlen(*str));
+
+    for(int j = 0; j < i; j++)
+        new_str[g++] = (*str)[j];
+    if(var_value) {
+        for(int j = 0; j < mx_strlen(var_value); j++)
+            new_str[g++] = var_value[j];
+        free(var_value);
+    }
+    if((*str)[k + 1] != '{') 
+        while(isalpha((*str)[++k]))
+            ;
+    else {
+        while((*str)[k++] != '}')
+            ;
+    }
+    while(k < mx_strlen(*str))
+        new_str[g++] = (*str)[k++];
+    
+    free(*str);
+    *str = new_str;
+}
+
+
+bool get_var_from_str(char **str) {
+    bool var_found = false;
+    int i;
+    char *var_value;
+
+    if(*str != NULL && mx_strlen(*str) > 1) {
+        for(i = 0; i < mx_strlen(*str); i++)
+            if((*str)[i] == '$' && i + 1 < mx_strlen(*str) 
+                && (isalpha((*str)[i + 1]) || (*str)[i + 1] == '{')) {
+                var_found = true;
+                break;
+            }
+    }
+    if(var_found) {
+        var_value = get_variable_value(i, *str);
+        if(var_value && var_value[0] == 'E' && var_value[1] == 'r' && var_value[2] == 'r') {
+            free(*str);
+            *str = var_value;
+        }
+        else {
+            replace_var_with_value(str, var_value, i);
+        }
+    }
+    return var_found;
 }
