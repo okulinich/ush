@@ -4,7 +4,7 @@ void split_by_delimiter(char ***av);
 
 void fill_cmd_list(char **global, t_lst **head) {
     bool semicolon = true;
-    t_lst *tmp = NULL;
+    t_lst *tmp = 0;
 
     for(int j = 0; global[j]; j++) {
         if(mx_strcmp(global[j], ";") == 0) {     
@@ -48,7 +48,7 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
     }
 
     av = mx_split_by_quotes(line);              //розбиваємо стркоу по лапках
-    if(av && mx_strcmp(av[0], "ERROR") == 0) {  //якщо лапки не закриті - видаємо помилку
+    if(av && av[0] == 0) {  //якщо лапки не закриті - видаємо помилку
         mx_printerr("ush: ERROR: Odd number of quotes.\n");
         free(av);
     }
@@ -81,7 +81,8 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
     }
 
     free(line);
-    if(mx_strcmp(av[0], "ERROR") != 0)
+    // if(mx_strcmp(av[0], "ERROR") != 0)
+    if(av[0] != 0)
         mx_del_strarr(&av);
     return head;
 }

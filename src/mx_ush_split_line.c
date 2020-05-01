@@ -20,7 +20,7 @@ void catch_escape_seq(char *str) {
 char **mx_ush_split_line(char *line, char *delim) {
     int buf_size = BUFSIZE;
     int pos = 0;
-    char **tokens = (char **)malloc(buf_size * sizeof(char *));       //масив слів із строки
+    char **tokens = (char **)malloc(100* sizeof(char *));       //масив слів із строки
     char *token;
     int j = 0;
 
@@ -29,7 +29,8 @@ char **mx_ush_split_line(char *line, char *delim) {
             line[i + 1] = '_';
     token = strtok(line, delim == NULL ? DELIMITERS : delim);
     while(token) {
-        tokens[pos] = mx_strdup(token);                                  //записуємо кожне слово в масив
+        // tokens[pos] = mx_strdup(token);                                  //записуємо кожне слово в масив
+        tokens[pos] = token;                                  //записуємо кожне слово в масив
         for(int i = 0; i < mx_strlen(token); i++)
             if (token[i] == '\\' && i + 1 < mx_strlen(token) && token[i + 1] == '_') {
                 tokens[pos][j++] = ' ';
@@ -100,7 +101,7 @@ char **mx_split_by_quotes(char *line) {
         return NULL;
     }
     else if(num_of_quotes == -1) {
-        tokens[0] = "ERROR";
+        tokens[0] = 0;
         return tokens;
     }
     else {

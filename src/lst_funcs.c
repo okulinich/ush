@@ -1,7 +1,8 @@
 #include "ush.h"
 
 t_lst *create_node(char *str) {
-    t_lst *node = (t_lst *)malloc(sizeof(t_lst));
+    t_lst *node = (t_lst *)malloc(sizeof(t_lst) * 1);
+
     node->cmd = strdup(str);
     node->av = (char **)malloc(sizeof(char *) * 2);
     node->av[0] = strdup(str);
@@ -14,7 +15,8 @@ void delete_list(t_lst *head) {
     t_lst *temp = head;
 
     while (head) {
-        free(head->cmd);
+        // if (head->cmd != NULL)
+            free(head->cmd);
         mx_del_strarr(&head->av);
         temp = head;
         head = head->next;
@@ -37,6 +39,7 @@ t_lst *push_back(t_lst **head, char *command) {
     t_lst *root = *head;
 
     if(!head || !(*head)) {
+        mx_printstr(command);
         *head = create_node(command);
         return *head;
     }
