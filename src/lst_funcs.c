@@ -1,8 +1,7 @@
 #include "ush.h"
 
 t_lst *create_node(char *str) {
-    t_lst *node = (t_lst *)malloc(sizeof(t_lst) * 1);
-
+    t_lst *node = (t_lst *)malloc(sizeof(t_lst));
     node->cmd = strdup(str);
     node->av = (char **)malloc(sizeof(char *) * 2);
     node->av[0] = strdup(str);
@@ -15,8 +14,7 @@ void delete_list(t_lst *head) {
     t_lst *temp = head;
 
     while (head) {
-        // if (head->cmd != NULL)
-            free(head->cmd);
+        free(head->cmd);
         mx_del_strarr(&head->av);
         temp = head;
         head = head->next;
@@ -35,22 +33,39 @@ void delete_history(t_cmd_history *head) {
     }
 }
 
-t_lst *push_back(t_lst **head, char *command) {
-    t_lst *root = *head;
+// t_lst *push_back(t_lst **head, char *command) {
+void push_back(t_lst **head, char *command) {
+//     t_lst *root = *head;
 
-    if(!head || !(*head)) {
-        mx_printstr(command);
-        *head = create_node(command);
-        return *head;
+//     if(!head || !(*head)) {
+//         *head = create_node(command);
+//         return *head;
+//     }
+//     else {
+//         while(root->next) {
+//             root = root->next;
+//         }
+//         root->next = create_node(command);
+//         return root->next;
+//     }
+// }
+// void mx_push_back(t_list **list, void *data) {
+    t_lst *node;
+    t_lst *temp;
+
+    if (!head)
+        return;
+    node = create_node(command);
+    temp = *head;
+    if (!*head) {
+        *head = node;
+        return;
     }
-    else {
-        while(root->next) {
-            root = root->next;
-        }
-        root->next = create_node(command);
-        return root->next;
-    }
+    while (temp->next)
+        temp = temp->next;
+    temp->next = node;
 }
+
 
 void add_new_arg(t_lst *tmp, char *arg) {
     int i = 0;

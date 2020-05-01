@@ -98,7 +98,8 @@ bool mx_is_command(char *str);
 //функція що ділить строку на токени
 char **ush_split_line(char *line);
 //додавання елемента в кінець списку команд
-t_lst *push_back(t_lst **head, char *command);
+// t_lst *push_back(t_lst **head, char *command);
+void push_back(t_lst **head, char *command);
 //додавання елемента в історію
 void push_front_history(t_cmd_history **head, char *line);
 //повертає масив команд підтримуваних інтерпретатором (для розпізнавання команд в строці)

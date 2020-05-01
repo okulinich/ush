@@ -4,7 +4,7 @@ void split_by_delimiter(char ***av);
 
 void fill_cmd_list(char **global, t_lst **head) {
     bool semicolon = true;
-    t_lst *tmp = 0;
+    // t_lst *tmp = *head;
 
     for(int j = 0; global[j]; j++) {
         if(mx_strcmp(global[j], ";") == 0) {     
@@ -15,11 +15,13 @@ void fill_cmd_list(char **global, t_lst **head) {
             continue;
         else {
             if(semicolon) {
-                tmp = push_back(head, global[j]);
+                // tmp = push_back(head, global[j]);
+                push_back(head, global[j]);
                 semicolon = false;
             }
             else
-                add_new_arg(tmp, global[j]);
+                add_new_arg((*head), global[j]);
+                // add_new_arg(tmp, global[j]);
         }
     }
 }
@@ -43,12 +45,12 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
         //printf("from input parser: %s\nwritten = %s\n", input, line);
     }
     else {
-        //printf("from read_line = %s\n", input);
+        // printf("from read_line = %s\n", input);
         line = noncanon_read_line(hist);
     }
 
     av = mx_split_by_quotes(line);              //розбиваємо стркоу по лапках
-    if(av && av[0] == 0) {  //якщо лапки не закриті - видаємо помилку
+    if(av && mx_strcmp(av[0], "ERROR") == 0) {  //якщо лапки не закриті - видаємо помилку
         mx_printerr("ush: ERROR: Odd number of quotes.\n");
         free(av);
     }
@@ -74,6 +76,8 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
     }
     else {
         catch_escape_seq(line); //function that takes string and catches (ekrans) escape sequances
+        if (av)
+            mx_del_strarr(&av);
         av = mx_ush_split_line(line, NULL);      /* розділяємо строку на токени  */
         split_by_delimiter(&av);                /* по крапці з комою */
         i = 0;
@@ -81,9 +85,10 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
     }
 
     free(line);
-    // if(mx_strcmp(av[0], "ERROR") != 0)
-    if(av[0] != 0)
+    // if(av[0] != NULL && mx_strcmp(av[0], "ERROR") != 0) {
         mx_del_strarr(&av);
+        // mx_printstr("HUHUY");
+    // }
     return head;
 }
 

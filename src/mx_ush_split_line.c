@@ -20,7 +20,7 @@ void catch_escape_seq(char *str) {
 char **mx_ush_split_line(char *line, char *delim) {
     int buf_size = BUFSIZE;
     int pos = 0;
-    char **tokens = (char **)malloc(100* sizeof(char *));       //масив слів із строки
+    char **tokens = (char **)malloc(buf_size * sizeof(char *));       //масив слів із строки
     char *token;
     int j = 0;
 
@@ -101,7 +101,7 @@ char **mx_split_by_quotes(char *line) {
         return NULL;
     }
     else if(num_of_quotes == -1) {
-        tokens[0] = 0;
+        tokens[0] = "ERROR";
         return tokens;
     }
     else {
