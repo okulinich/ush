@@ -33,23 +33,23 @@ void delete_history(t_cmd_history *head) {
     }
 }
 
-// t_lst *push_back(t_lst **head, char *command) {
-void push_back(t_lst **head, char *command) {
-//     t_lst *root = *head;
+t_lst *push_back(t_lst **head, char *command) {
+    t_lst *root = *head;
 
-//     if(!head || !(*head)) {
-//         *head = create_node(command);
-//         return *head;
-//     }
-//     else {
-//         while(root->next) {
-//             root = root->next;
-//         }
-//         root->next = create_node(command);
-//         return root->next;
-//     }
-// }
-// void mx_push_back(t_list **list, void *data) {
+    if(!head || !(*head)) {
+        *head = create_node(command);
+        return *head;
+    }
+    else {
+        while(root->next) {
+            root = root->next;
+        }
+        root->next = create_node(command);
+        return root->next;
+    }
+}
+/*
+void mx_push_back(t_list **list, void *data) {
     t_lst *node;
     t_lst *temp;
 
@@ -64,7 +64,7 @@ void push_back(t_lst **head, char *command) {
     while (temp->next)
         temp = temp->next;
     temp->next = node;
-}
+}*/
 
 
 void add_new_arg(t_lst *tmp, char *arg) {

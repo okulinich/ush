@@ -4,7 +4,7 @@ void split_by_delimiter(char ***av);
 
 void fill_cmd_list(char **global, t_lst **head) {
     bool semicolon = true;
-    // t_lst *tmp = *head;
+    t_lst *tmp = *head;
 
     for(int j = 0; global[j]; j++) {
         if(mx_strcmp(global[j], ";") == 0) {     
@@ -15,13 +15,11 @@ void fill_cmd_list(char **global, t_lst **head) {
             continue;
         else {
             if(semicolon) {
-                // tmp = push_back(head, global[j]);
-                push_back(head, global[j]);
+                tmp = push_back(head, global[j]);
                 semicolon = false;
             }
             else
-                add_new_arg((*head), global[j]);
-                // add_new_arg(tmp, global[j]);
+                add_new_arg(tmp, global[j]);
         }
     }
 }
@@ -176,7 +174,8 @@ void mx_replace_arg_with_arr(char ***av, int indx, char **str_arr) {
             new_av[str_arr_size + indx + i] = mx_strdup(least[i]);
         }
     new_av[str_arr_size + least_size + indx] = NULL;
-    mx_del_strarr(av);
+    //mx_del_strarr(av);
+    free(*av);
     if(least_size > 0)
         mx_del_strarr(&least);
     *av = new_av;

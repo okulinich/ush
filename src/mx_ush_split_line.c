@@ -29,7 +29,7 @@ char **mx_ush_split_line(char *line, char *delim) {
             line[i + 1] = '_';
     token = strtok(line, delim == NULL ? DELIMITERS : delim);
     while(token) {
-        // tokens[pos] = mx_strdup(token);                                  //записуємо кожне слово в масив
+        //tokens[pos] = mx_strdup(token);                                  //записуємо кожне слово в масив
         tokens[pos] = token;                                  //записуємо кожне слово в масив
         for(int i = 0; i < mx_strlen(token); i++)
             if (token[i] == '\\' && i + 1 < mx_strlen(token) && token[i + 1] == '_') {

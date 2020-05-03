@@ -10,7 +10,15 @@ int mx_unset(t_lst *head)  {
         index = search_for_var_in_env(var_name);
         if(index != -1) {
             res = unsetenv(var_name);
+            if(res == 0) {
+                res = 1;
+            }
+            else {
+                res = -1;
+            }
         }
+        else
+            res = -1;
     }
     return res;
 }
