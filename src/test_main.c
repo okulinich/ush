@@ -1,7 +1,7 @@
 #include "ush.h"
 
 int main() {
-    t_global *head = malloc(sizeof(t_global *));
+    t_global *head = malloc(sizeof(t_global));
 
     char *line;// = mx_strnew(1024);
     size_t buf = 0;
