@@ -60,7 +60,7 @@ int mx_cd_l(char *path, char flags, t_dirs *d) {
         if ((flags & 1) == 0)
         fprintf(stderr, "cd: %s: %s\n", strerror(errno), new_pwd);
         free(new_pwd);
-        return 1;
+        return -1;
     }
     d->pwd = new_pwd;
     setenv("PWD", d->pwd, 1);

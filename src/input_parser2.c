@@ -81,12 +81,9 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
         i = 0;
         fill_cmd_list(av, &head);
     }
-
     free(line);
-    // if(av[0] != NULL && mx_strcmp(av[0], "ERROR") != 0) {
+    if(av[0] != NULL && mx_strcmp(av[0], "ERROR") != 0)
         mx_del_strarr(&av);
-        // mx_printstr("HUHUY");
-    // }
     return head;
 }
 

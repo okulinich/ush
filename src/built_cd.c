@@ -1,31 +1,22 @@
 #include "ush.h"
 
-/* 
-* -1 - not flagline
-*/
 static int get_flags_from_line(char *str) {
     int i = 0;
     int flags = 0;
 
     if (str[i + 1] == '\0') 
-        return 4; // - flag
+        return 4;
     while(str[++i]) {
         if (str[i] == 's') 
             flags |= 1;
         else if (str[i] == 'P') 
             flags |= 2;
-        else {
+        else
             return -1;
-        }
     }
     return flags;
 }
 
-/* 
-* 1-st bit -> -s
-* 2-nd bit -> -P
-* 3-rd bit -> -
-*/
 static int get_flags(char **argv, int *i) {
     int flags = 0;
 
@@ -49,6 +40,8 @@ static int cd(char **argv, t_dirs *d, int flags, int i) {
     char *path = NULL;
     int status = 0;
 
+    if (argv[i] && mx_strcmp(argv[i], ".") == 0)
+        return 0;
     if (flags & 4)
         path = strdup(d->oldpwd); 
     else
@@ -58,10 +51,7 @@ static int cd(char **argv, t_dirs *d, int flags, int i) {
         mx_strdel(&path);
         return -1;
     }
-    if (flags & 2)
-        status = mx_cd_p(path, flags, d);
-    else
-        status = mx_cd_l(path, flags, d);
+    status = (flags & 2 ? mx_cd_p(path, flags, d) : mx_cd_l(path, flags, d));
     mx_strdel(&path);
     return status;
 }
@@ -90,13 +80,10 @@ int	mx_cd(t_global *s, t_lst *h) {
         else
             printf("%s\n", d->oldpwd);
     }  
-    status = cd(h->av, d, flags, i);
-    if (status == -1) {
+    if ((status = cd(h->av, d, flags, i)) == -1) {
         free(d);
         return -1;    
     }
-    //mx_del_strarr(&s->env);
-    //s->env = mx_env_copy();
     free(d);
     return status;
 }
