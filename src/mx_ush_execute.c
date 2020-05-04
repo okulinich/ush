@@ -7,6 +7,10 @@ int find_add(t_global *hd, t_lst *head) {
         return mx_call_true(hd);
     else if (mx_strcmp(head->cmd, "false") == 0)
         return mx_call_false(hd);
+    else if (mx_strcmp(head->cmd, "set") == 0)
+        return mx_set(head);
+    else if (mx_strcmp(head->cmd, "bye") == 0)
+        return mx_bye(hd, head);
     return 0;
 }
 
@@ -14,7 +18,7 @@ int mx_find_builtin(t_global *hd, t_lst *head) {
     if (mx_strcmp(head->cmd, "pwd") == 0)
         return mx_builtin_pwd(head); // ret 1
     else if (mx_strcmp(head->cmd, "exit") == 0)
-        return mx_exit(hd); // ret 1
+        return mx_exit(hd, head); // ret 1
     else if (mx_strcmp(head->cmd, "env") == 0)
         return mx_ush_launch(hd, head); // ret 1
     else if(mx_strcmp(head->cmd, "echo") == 0)

@@ -179,7 +179,7 @@ char *search_for_var(char *str);
 
 
 // ailchuk
-int mx_exit(t_global *hd);
+int mx_exit(t_global *hd, t_lst *l);
 int mx_builtin_pwd(t_lst *head);
 char **mx_env_copy(void); // копирует все из env
 char *mx_get_env_var(char **env, char *var);   // возвращает ключ переменной который ты ищешь в массиве ЕНВ
@@ -190,8 +190,10 @@ char *mx_add_one_slash(char *path, char *new_part);
 char *mx_del_last_slash(char *path);
 
 void mx_handler(); // signals
-int mx_help_command(t_global *g, t_lst *l);
-int mx_call_true(t_global *h);
-int mx_call_false(t_global *h);
+int mx_help_command(t_global *g, t_lst *l); // built 
+int mx_call_true(t_global *h); // b
+int mx_call_false(t_global *h); // b 
+int mx_set(t_lst *s); // b 
+int mx_bye(t_global *g, t_lst *h); // b 
 
 #endif

@@ -1,6 +1,6 @@
 #include "ush.h"
 
-int mx_exit(t_global *hd) {
+int mx_exit(t_global *hd, t_lst *l) {
     int flag = 0;
 
     if (!hd->new->av[1]) {
@@ -12,19 +12,17 @@ int mx_exit(t_global *hd) {
         exit(0);
         return 1;
     }
-    for (unsigned int i = 0; i < strlen(hd->new->av[1]); i++)
-        if (!isnumber(hd->new->av[1][i])) {
+    for (unsigned int i = 0; i < strlen(l->av[1]); i++)
+        if (!isnumber(l->av[1][i])) {
             fprintf(stderr, "%s\nush: %s: %s: numeric argument required\n",
-                    hd->new->av[0], hd->new->av[0], hd->new->av[1]);
+                    l->av[0], l->av[0], l->av[1]);
             exit(255);
             return 1;
         }
-    if (mx_arr_size(hd->new->av) > 2) {
-        fprintf(stderr, "%s\nush: %s: too many arguments\n",
-                hd->new->av[0], hd->new->av[0]); //  не делать exit
+    if (mx_arr_size(l->av) > 2) { // ne delat exit
+        fprintf(stderr,"%s\nush: %s: too many arguments\n", l->av[0], l->av[0]);
         flag = 1;
     }
-    //system("leaks -q ush");
     if (!flag) {
         free(hd);
         system("leaks -q ush");
@@ -32,8 +30,3 @@ int mx_exit(t_global *hd) {
     }
     return 1;
 }
-
-// доделать ексит!
-// если число 256 то выход == 1 если 255 == 0 267 == 2 и тд
-// выходит не больше лонг лонг инта заходит туда
-// сделать так что бы оно обрабатывао это
