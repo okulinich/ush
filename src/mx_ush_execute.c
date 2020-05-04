@@ -1,5 +1,15 @@
 #include "ush.h"
 
+int find_add(t_global *hd, t_lst *head) {
+    if (mx_strcmp(head->cmd, "help") == 0)
+        return mx_help_command(hd, head);
+    else if (mx_strcmp(head->cmd, "true") == 0)
+        return mx_call_true(hd);
+    else if (mx_strcmp(head->cmd, "false") == 0)
+        return mx_call_false(hd);
+    return 0;
+}
+
 int mx_find_builtin(t_global *hd, t_lst *head) {
     if (mx_strcmp(head->cmd, "pwd") == 0)
         return mx_builtin_pwd(head); // ret 1
@@ -19,7 +29,7 @@ int mx_find_builtin(t_global *hd, t_lst *head) {
         return mx_which(head);
     // else if(mx_strcmp(head->cmd, "fg") == 0)
         // return mx_fg(hd, head);
-    return 0;
+    return find_add(hd, head);
 }
 
 static void execute_av_in_qoutes(t_global *hd, t_lst *head) {
@@ -58,10 +68,10 @@ static void cmd_sub_tilda(t_lst *head) {
 int mx_ush_execute(t_global *hd, t_lst *head) {
     int ret = -2;
 
-    execute_av_in_qoutes(hd, head); //getting output from command placed in `` (cmd subtitution)
-    cmd_sub_tilda(head); //replacing ~ with Users/USER
     if (head->cmd == NULL)
         return 1;
+    execute_av_in_qoutes(hd, head); //getting output from command placed in `` (cmd subtitution)
+    cmd_sub_tilda(head); //replacing ~ with Users/USER
     ret = mx_find_builtin(hd, head); // 0 launch - 1 builtin
     if (ret < 0) { // -1 error 
         hd->last_exit_status = 1;

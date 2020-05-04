@@ -190,5 +190,8 @@ char *mx_add_one_slash(char *path, char *new_part);
 char *mx_del_last_slash(char *path);
 
 void mx_handler(); // signals
+int mx_help_command(t_global *g, t_lst *l);
+int mx_call_true(t_global *h);
+int mx_call_false(t_global *h);
 
 #endif
