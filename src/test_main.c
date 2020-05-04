@@ -17,7 +17,7 @@ int main() {
     }
     else {
         input = mx_strnew(1024);
-        mx_strcpy(input, "suka");
+        mx_strcpy(input, "emptbuff");
     }
 
     //head->env = mx_env_copy();                  //системні змінні оболонки

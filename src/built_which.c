@@ -63,7 +63,7 @@ static char *check_dir(DIR *search_dir, char **res, char **token_and_bin, bool s
 }
 
 static char *get_path_to_binary(char *bin_name, bool search_all_bins) {
-	char *path_var = mx_strdup(&(ssearch_for_var_in_env("PATH"))[1]);
+	char *path_var = strdup(&(ssearch_for_var_in_env("PATH"))[1]);
 	char *token = strtok(path_var, ":");
 	char *res = NULL;
 	char *tmp[2];

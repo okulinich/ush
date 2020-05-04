@@ -21,7 +21,7 @@ char *ssearch_for_var_in_env(char *str) {
 
     for(int i = 0; environ[i]; i++) {
         if(find_var_in_str(environ[i], str)) {
-            return mx_strdup(&environ[i][mx_strlen(str)]);
+            return strdup(&environ[i][mx_strlen(str)]);
         }
     }
     return NULL;
@@ -38,17 +38,17 @@ char *ssearch_for_var_in_env(char *str) {
 //         //mx_printstr("replace var\n");
 //         // for(i = 0; strstr(hd->env[i], name_for_search) == NULL; i++) ;
 //         // free(hd->env[i]);
-//         // hd->env[i] = mx_strdup(new_var);
+//         // hd->env[i] = strdup(new_var);
 //         setenv(name, value, 1);
 //     }
 //     else {
 //         //mx_printstr("add new var\n");
 //         // for(i = 0; strstr(hd->env[i], "_=") == NULL; i++) ;
 //         // hd->env = realloc(hd->env, (i + 3) * sizeof(char *));
-//         // hd->env[i + 1] = mx_strdup(hd->env[i]);
+//         // hd->env[i + 1] = strdup(hd->env[i]);
 //         // hd->env[i + 2] = NULL;
 //         // free(hd->env[i]);
-//         // hd->env[i] = mx_strdup(new_var);
+//         // hd->env[i] = strdup(new_var);
 //         setenv(name, value, 1);
 //     }
 //     if(temp)
@@ -59,7 +59,7 @@ char *ssearch_for_var_in_env(char *str) {
 
 void add_str_to_env(char *str) {
     char *var_name = mx_strndup(str, mx_get_char_index(str, '='));
-    char *value = mx_strdup(&str[mx_get_char_index(str, '=') + 1]);
+    char *value = strdup(&str[mx_get_char_index(str, '=') + 1]);
 
     setenv(var_name, value, 1);
 

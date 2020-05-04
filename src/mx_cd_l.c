@@ -12,7 +12,7 @@ static int get_slash(char *path) {
 
 static char *get_new_pwd(char *path, t_dirs *d) {
     char **tokens = mx_strsplit(path, '/');
-    char *tmp_pwd = path[0] == '/' ? mx_strdup("/") : mx_strdup(d->pwd);
+    char *tmp_pwd = path[0] == '/' ? strdup("/") : strdup(d->pwd);
     char *res = 0;
 
     for (int i = 0; tokens[i]; i++)

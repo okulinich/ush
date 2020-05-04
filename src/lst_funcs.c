@@ -2,6 +2,10 @@
 
 t_lst *create_node(char *str) {
     t_lst *node = (t_lst *)malloc(sizeof(t_lst));
+    if(node == NULL) {
+        mx_printstr("malloc error in create_node\n");
+        exit(1);
+    }
     node->cmd = strdup(str);
     node->av = (char **)malloc(sizeof(char *) * 2);
     node->av[0] = strdup(str);
@@ -84,7 +88,7 @@ void add_new_arg(t_lst *tmp, char *arg) {
 void push_front_history(t_cmd_history **head, char *line) {
     t_cmd_history *new_item = (t_cmd_history *)malloc(sizeof (t_cmd_history));
 
-    new_item->user_input = mx_strdup(line);
+    new_item->user_input = strdup(line);
     new_item->next = *head;
     new_item->prev = NULL;
     if(*head)
@@ -136,19 +140,19 @@ void add_local_var(t_global **hd, char *str) {
     i = search_for_var_in_vars(*hd, var_name);
     if(i != -1) {        //якщо змінну знайдено - заміняємо
         free((*hd)->vars[i]);
-        (*hd)->vars[i] = mx_strdup(str);
+        (*hd)->vars[i] = strdup(str);
     }
     i = search_for_var_in_env(var_name);
     if(i != -1) {
         free((*hd)->env[i]);
-        (*hd)->env[i] = mx_strdup(str);
+        (*hd)->env[i] = strdup(str);
     }
     else {
         i = 0;
         while((*hd)->vars[i])
             i++;
         (*hd)->vars = realloc((*hd)->vars, (i + 2) * sizeof(char *));
-        (*hd)->vars[i] = mx_strdup(str);
+        (*hd)->vars[i] = strdup(str);
         (*hd)->vars[i + 1] = NULL;
     }
     free(var_name);

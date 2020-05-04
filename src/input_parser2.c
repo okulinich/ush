@@ -37,7 +37,7 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
     t_lst *head = NULL;
     int i = 0;
 
-    if(mx_strcmp("suka", input) != 0) {
+    if(mx_strcmp("emptbuff", input) != 0) {
         line = mx_strnew(1024);
         strcpy(line, input);
         //printf("from input parser: %s\nwritten = %s\n", input, line);
@@ -60,12 +60,12 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
             if(av[i][0] == '\'' || av[i][0] == '\"')        //токен в лапках розглядаємо як суцільний аргумент
                 global[gl_i++] = mx_strndup(&av[i][1], strlen(av[i]) - 2);
             else if(av[i][0] == '`')
-                global[gl_i++] = mx_strdup(av[i]);
+                global[gl_i++] = strdup(av[i]);
             else {
                 temp = mx_ush_split_line(av[i], NULL);      //токен не в лапках ділимо на підстроки
                 split_by_delimiter(&temp);
                 for(int j = 0; temp[j] != NULL; j++)
-                    global[gl_i++] = mx_strdup(temp[j]);
+                    global[gl_i++] = strdup(temp[j]);
                 mx_del_strarr(&temp);
             }
         }
@@ -83,10 +83,10 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
     }
 
     free(line);
-    // if(av[0] != NULL && mx_strcmp(av[0], "ERROR") != 0) {
+    if(av && av[0] != NULL && mx_strcmp(av[0], "ERROR") != 0) {
         mx_del_strarr(&av);
         // mx_printstr("HUHUY");
-    // }
+    }
     return head;
 }
 
@@ -121,16 +121,16 @@ static char **split_to_substr(int *num_of_substr, char c, char *str) {
             str_arr[substr] = bad_strdup(str, i);
             if(mx_strlen(str_arr[substr]) == 0) {
                 free(str_arr[substr]);
-                str_arr[substr] = mx_strdup(";");
+                str_arr[substr] = strdup(";");
                 substr++;
             }
             else {
                 substr++;
-                str_arr[substr] = mx_strdup(";");
+                str_arr[substr] = strdup(";");
                 substr++;
             }
             if(mx_get_char_index(&str[i + 1], ';') < 0) {
-                str_arr[substr] = mx_strdup(&str[i + 1]);
+                str_arr[substr] = strdup(&str[i + 1]);
                 substr++;
                 break;
             }
@@ -157,7 +157,7 @@ void mx_replace_arg_with_arr(char ***av, int indx, char **str_arr) {
     if(least_size > 0) {
         least = (char **)malloc(sizeof(char *) * least_size + 1);
         for(int i = 0; i < least_size; i++)
-            least[i] = mx_strdup((*av)[indx + 1 + i]);
+            least[i] = strdup((*av)[indx + 1 + i]);
         least[least_size] = NULL;
     }
     else
@@ -166,12 +166,12 @@ void mx_replace_arg_with_arr(char ***av, int indx, char **str_arr) {
     new_av = (char **)malloc(sizeof(char *) * (str_arr_size + least_size + indx + 1));
     
     for(int i = 0; i < indx; i++)
-        new_av[i] = mx_strdup((*av)[i]);
+        new_av[i] = strdup((*av)[i]);
     for(int i = 0; i < str_arr_size; i++)
-        new_av[indx + i] = mx_strdup(str_arr[i]);
+        new_av[indx + i] = strdup(str_arr[i]);
     if(least_size > 0)
         for(int i = 0; i < least_size; i++) {
-            new_av[str_arr_size + indx + i] = mx_strdup(least[i]);
+            new_av[str_arr_size + indx + i] = strdup(least[i]);
         }
     new_av[str_arr_size + least_size + indx] = NULL;
     //mx_del_strarr(av);
@@ -252,7 +252,7 @@ char **fill_new_env(t_global **hd, int *i) {
         while(new_env[j] != NULL)
             j++;
         new_env = realloc(new_env, (sizeof(char *)) * (j + 2));
-        new_env[j] = mx_strdup((*hd)->new->av[*i]);
+        new_env[j] = strdup((*hd)->new->av[*i]);
         new_env[j + 1] = NULL;
     }
     return new_env;
@@ -265,11 +265,11 @@ void reparse_input_for_env(t_global **hd, int i, char *folder_to_search) {
     int j = 0;
     char *temp = NULL;
 
-    filename = mx_strdup((*hd)->new->av[i]);
+    filename = strdup((*hd)->new->av[i]);
     buf = (char **)malloc(sizeof(char *) * BUFSIZE);
     buf[0] = NULL;
     while((*hd)->new->av[++i])
-        buf[j++] = mx_strdup((*hd)->new->av[i]);                //зберігаємо флаги якщо вони є
+        buf[j++] = strdup((*hd)->new->av[i]);                //зберігаємо флаги якщо вони є
     if((*hd)->new->cmd) {
         mx_del_strarr(&(*hd)->new->av);
         free((*hd)->new->cmd);
@@ -290,9 +290,9 @@ void reparse_input_for_env(t_global **hd, int i, char *folder_to_search) {
         }
     }
     else
-        (*hd)->new->cmd = mx_strdup(filename);
+        (*hd)->new->cmd = strdup(filename);
     (*hd)->new->av = (char **)malloc(sizeof(char *) * 2);   //формуємо масив аргументів
-    (*hd)->new->av[0] = mx_strdup(filename);
+    (*hd)->new->av[0] = strdup(filename);
     (*hd)->new->av[1] = NULL;
 
     for(j = 0; buf[j]; j++)
@@ -330,7 +330,7 @@ char **ignore_variables(t_global **hd) {
     new_env = (char **)malloc(sizeof(char *) * size + 1);
     for(int i = 0; i < size; i++) {
         if(!find_var_in_str((*hd)->env[i], (*hd)->new->av[2]))
-            new_env[j++] = mx_strdup((*hd)->env[i]);
+            new_env[j++] = strdup((*hd)->env[i]);
     }
     new_env[j] = NULL;
     return new_env;
@@ -351,7 +351,7 @@ char **i_flag_env(t_global **hd) {
             if((*hd)->new->av[3]) {
                 if(!(*hd)->new->av[4])    //якщо після -Р тільки один аргумент то виходимо
                     return NULL;            //just skiip and exit!!
-                folder_to_search = mx_strdup((*hd)->new->av[3]);
+                folder_to_search = strdup((*hd)->new->av[3]);
                 i = 4;
             }
             else {
@@ -407,7 +407,7 @@ char **p_flag_env(t_global **hd) {
         }
         else {
             new_env = mx_env_copy();
-            folder_to_search = mx_strdup((*hd)->new->av[2]);
+            folder_to_search = strdup((*hd)->new->av[2]);
             reparse_input_for_env(hd, 3, folder_to_search);
             return new_env;
         }

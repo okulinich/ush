@@ -6,7 +6,7 @@ void catch_escape_seq(char *str) {
 
     for(int i = 0; i < mx_strlen(str); i++) {
         if(str[i] == '\\' && i + 1 < mx_strlen(str) && str[i + 1] != ' ') {
-            temp = mx_strdup(str);
+            temp = strdup(str);
             j = 0;
             for(int g = 0; g < mx_strlen(temp); g++)
                 if(g != i)
@@ -29,7 +29,7 @@ char **mx_ush_split_line(char *line, char *delim) {
             line[i + 1] = '_';
     token = strtok(line, delim == NULL ? DELIMITERS : delim);
     while(token) {
-        //tokens[pos] = mx_strdup(token);                                  //записуємо кожне слово в масив
+        //tokens[pos] = strdup(token);                                  //записуємо кожне слово в масив
         tokens[pos] = token;                                  //записуємо кожне слово в масив
         for(int i = 0; i < mx_strlen(token); i++)
             if (token[i] == '\\' && i + 1 < mx_strlen(token) && token[i + 1] == '_') {
@@ -126,7 +126,7 @@ char **mx_split_by_quotes(char *line) {
                 num_of_quotes = 0;
         }
         if(pos + 1 < mx_strlen(line))
-            tokens[i] = mx_strdup(&line[pos + 1]);
+            tokens[i] = strdup(&line[pos + 1]);
         return tokens;
     }
 }

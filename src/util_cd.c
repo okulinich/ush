@@ -20,7 +20,7 @@ char *mx_del_last_slash(char *path) {
         path[i] = 0;
     if ((path[i] == '/') && (i != 0))
         path[i] = 0;
-    new_path = mx_strdup(path);
+    new_path = strdup(path);
     free(path);
     return new_path;
 }

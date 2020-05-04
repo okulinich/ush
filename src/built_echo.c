@@ -5,7 +5,7 @@ char *search_for_var(char *str) {
 
     for(int i = 0; environ[i]; i++) {
         if(find_var_in_str(environ[i], str)) {
-            return mx_strdup(&environ[i][mx_strlen(str) + 1]);
+            return strdup(&environ[i][mx_strlen(str) + 1]);
         }
     }
     return NULL;
@@ -177,7 +177,7 @@ char *get_variable_value(int pos, char *str) {
     if(ph_closed)
         variable_value = search_for_var(variable_name);
     else
-        variable_value = mx_strdup("Error: odd number of parenthesis\n");
+        variable_value = strdup("Error: odd number of parenthesis\n");
     return variable_value;
 }
 

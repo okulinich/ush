@@ -13,7 +13,7 @@ int check_cmd_args_for_commands(t_lst *cur) {
     //виконатись сформувавши одну строку
 static t_lst *parse_cmd_to_list(char *cmd) {
     t_lst *head = NULL;
-    char *str = mx_strdup(&cmd[1]);
+    char *str = strdup(&cmd[1]);
 
     str[mx_strlen(str) - 1] = '\0';
     head = parse_string(str);
@@ -77,7 +77,7 @@ char *get_cmd_output(char *cmd, t_global *hd) {
             spwn.status = waitpid(spwn.child, &spwn.status, 0);
             tmp = get_command_output(&spwn, hd);
             if(str == NULL) {
-                str = mx_strdup(tmp);
+                str = strdup(tmp);
                 free(tmp);
             }
             else {
@@ -100,7 +100,7 @@ char *get_cmd_output(char *cmd, t_global *hd) {
 }
 
 t_lst *parse_string(char *str) {
-    char *line = mx_strdup(str);
+    char *line = strdup(str);
     char **av = NULL;
     char **global;
     int gl_i = 0;
@@ -121,12 +121,12 @@ t_lst *parse_string(char *str) {
             if(av[i][0] == '\'' || av[i][0] == '\"')        //токен в лапках розглядаємо як суцільний аргумент
                 global[gl_i++] = mx_strndup(&av[i][1], strlen(av[i]) - 2);
             else if(av[i][0] == '`')
-                global[gl_i++] = mx_strdup(av[i]);
+                global[gl_i++] = strdup(av[i]);
             else {
                 temp = mx_ush_split_line(av[i], NULL);      //токен не в лапках ділимо на підстроки
                 split_by_delimiter(&temp);
                 for(int j = 0; temp[j] != NULL; j++)
-                    global[gl_i++] = mx_strdup(temp[j]);
+                    global[gl_i++] = strdup(temp[j]);
                 mx_del_strarr(&temp);
             }
         }
