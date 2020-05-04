@@ -11,6 +11,8 @@ int find_add(t_global *hd, t_lst *head) {
         return mx_set(head);
     else if (mx_strcmp(head->cmd, "bye") == 0)
         return mx_bye(hd, head);
+    // else if (mx_strcmp(head->cmd, "return") == 0)
+        // return mx_return(hd, head);
     return 0;
 }
 

@@ -195,5 +195,6 @@ int mx_call_true(t_global *h); // b
 int mx_call_false(t_global *h); // b 
 int mx_set(t_lst *s); // b 
 int mx_bye(t_global *g, t_lst *h); // b 
+int mx_return(t_global *g, t_lst *l); // b
 
 #endif
