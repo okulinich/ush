@@ -89,53 +89,11 @@ static void wait_next_input(char **line) {
 }
 
 char *noncanon_read_line(t_cmd_history **head) {
-    // struct termios savetty;             //змінні для зберігання управляючих струтктур
-    // struct termios tty;                 //
     char *line = mx_strnew(BUFSIZE);
-    char temp = 'a';
-    int i = 0;
-    //bool errow_pressed = false;         //для реалізації клавіш вліво-вправо
-    //char ch[4] = {'\0', '\0', '\0', '\0'};             //буфер для посимвольного зчитування
 
     write(1, "u$h> ", 5);
-    while(temp != '\n') {
-        read(0, &temp, 1);
-        if(temp != '\n') {
-            line[i++] = temp;
-        }
-    }
+    fgets(line, BUFSIZE, stdin);
 
-    //switch_noncanon(&savetty, &tty);
-
-    //mx_memset(line, '\0', BUFSIZE);
-
-    // write(1, "u$h> ", 5);
-    // while(1) {
-    //     res = read_from_stdin(&cur, &line, &i, &errow_pressed, &savetty);
-    //     if(!cur)
-    //         cur = *head;
-    //     if(res == LOOP_BREAK) {
-    //         if(line[0] == '\0') {
-    //             mx_printchar('\n');
-    //             wait_next_input(&line);
-    //             continue;
-    //         }
-    //         else
-    //             break;
-    //     }
-    //     else if(res == RETURN_EMPTY) {
-    //         wait_next_input(&line);
-    //         continue;
-    //     }
-    //     else if(res == LOOP_CONTINUE)
-    //         continue;
-    // }
-
-    // if(strlen(line) >= 1)                           //добавляємо запис в історію
-    //     push_front_history(head, line);             //якщо це не пуста строка
-    
-    //switch_canon(&savetty);
-    //mx_printchar('\n');
     return line;
 }
 
