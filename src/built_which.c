@@ -37,6 +37,7 @@ static void rewrite_res(char **res, char *token, char *bin_name) {
 	free(tmp);
 	tmp = *res;
 	*res = mx_strjoin(tmp, bin_name);
+	free(tmp);
 }
 
 static char *check_dir(DIR *search_dir, char **res, char **token_and_bin, bool search_all_bins) {
@@ -63,12 +64,14 @@ static char *check_dir(DIR *search_dir, char **res, char **token_and_bin, bool s
 }
 
 static char *get_path_to_binary(char *bin_name, bool search_all_bins) {
-	char *path_var = mx_strdup(&(ssearch_for_var_in_env("PATH"))[1]);
+	char *temp_str = ssearch_for_var_in_env("PATH");
+	char *path_var = mx_strdup(&(temp_str)[1]);
 	char *token = strtok(path_var, ":");
 	char *res = NULL;
 	char *tmp[2];
 	DIR *search_dir;
 
+	free(temp_str);
 	while(token) {
 		search_dir = opendir(token);
 		if(search_dir == NULL) {
@@ -100,6 +103,10 @@ int mx_which(t_lst *head) {
 	start_index = parse_flags(&no_output, &search_all_bins, head);
 	for(i = start_index; head->av[i]; i++) {
 		res = get_path_to_binary(head->av[i], search_all_bins);
+		if(check_if_cmd_is_builtin(head->av[i])) {
+			mx_printstr(head->av[i]);
+			mx_printstr(": shell built-in command\n");
+		}
 		if(no_output == false && res != NULL) {
 			mx_printstr(res);
 			mx_printstr("\n");
@@ -116,4 +123,32 @@ int mx_which(t_lst *head) {
 			free(res);
 	}
 	return 1;
+}
+
+bool check_if_cmd_is_builtin(char *cmd) {
+	if(mx_strcmp(cmd, "echo") == 0)
+		return true;
+	if(mx_strcmp(cmd, "env") == 0)
+		return true;
+	if(mx_strcmp(cmd, "cd") == 0)
+		return true;
+	if(mx_strcmp(cmd, "exit") == 0)
+		return true;
+	if(mx_strcmp(cmd, "export") == 0)
+		return true;
+	if(mx_strcmp(cmd, "unset") == 0)
+		return true;
+	if(mx_strcmp(cmd, "which") == 0)
+		return true;
+	if(mx_strcmp(cmd, "help") == 0)
+		return true;
+	if(mx_strcmp(cmd, "true") == 0)
+		return true;
+	if(mx_strcmp(cmd, "false") == 0)
+		return true;
+	if(mx_strcmp(cmd, "set") == 0)
+		return true;
+	if(mx_strcmp(cmd, "bye") == 0)
+		return true;
+	return false;
 }
