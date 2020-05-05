@@ -59,7 +59,7 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
     else if(av) {
         global = (char **)malloc(sizeof(char *) * BUFSIZE);
         for(i = 0; av[i] != NULL; i++) {
-            if(i == 0 || strstr(av[i - 1], "echo") != NULL)
+            if(i == 0 || strstr(av[i - 1], "echo") == NULL)
                 catch_escape_seq(av[i]);
             if(av[i][0] == '\'' || av[i][0] == '\"')        //токен в лапках розглядаємо як суцільний аргумент
                 global[gl_i++] = mx_strndup(&av[i][1], strlen(av[i]) - 2);

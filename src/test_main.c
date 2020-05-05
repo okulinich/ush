@@ -24,6 +24,7 @@ int main() {
     //head->last_exit_status = 0;
     // head->vars = init_vars();                   //локальні змінні оболонки /// ЛИКУЕТ!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //add_var_to_env("SHLVL", "=2", head);
+    setenv("SHLVL", "2", 1);
     mx_ush_loop(head, input);                          //основний цикл
     //delete_global(head);                        //НЕ ЧИСТИТЬСЯ, ТРЕБА ЦЮ ФУНКЦІЮ
                                                 //ВИКЛИКАТИ ПЕРЕД EXIT
