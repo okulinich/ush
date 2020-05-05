@@ -280,7 +280,7 @@ void reparse_input_for_env(t_global **hd, int i, char *folder_to_search) {
     }
     if(filename[0] != '/') {
         if(folder_to_search == NULL) {                              //якщо флаг -Р не введено тоді бінарник шукаємо в /bin
-            if(mx_strcmp(filename, "emacs") == 0 || mx_strcmp(filename, "vim") == 0)
+            if(mx_strcmp(filename, "emacs") == 0 || mx_strcmp(filename, "vim") == 0 || check_if_cmd_is_builtin(filename))
                 (*hd)->new->cmd = mx_strjoin("/usr/bin/", filename);        //записуємо шляха до бінарника
             else
                 (*hd)->new->cmd = mx_strjoin("/bin/", filename);        //записуємо шляха до бінарника

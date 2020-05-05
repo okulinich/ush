@@ -1,8 +1,11 @@
 #include "ush.h"
 
 int check_cmd_args_for_commands(t_lst *cur) {
-	for(int i = 0; cur->av[i] != NULL; i++) {
-		if(mx_get_char_index(cur->av[i], '`') != -1)
+	int indx = -1;
+
+    for(int i = 0; cur->av[i] != NULL; i++) {
+        indx = mx_get_char_index(cur->av[i], '`');
+		if(indx != -1 && mx_get_char_index(&cur->av[i][indx + 1], '`') != -1)
 			return i;
 	}
 	return 0;
