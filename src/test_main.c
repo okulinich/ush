@@ -2,10 +2,11 @@
 
 int main() {
     t_global *head = malloc(sizeof(t_global));
-
     char *line;// = mx_strnew(1024);
     size_t buf = 0;
     char *input = NULL;
+    
+    mx_nosig();    
     if(isatty(0) == 0) {
         //mx_printstr("not chr device\n");
         if(getline(&line, &buf, stdin) < 0) {

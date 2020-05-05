@@ -196,6 +196,7 @@ int mx_cd_l(char *path, char flags, t_dirs *d);
 char *mx_add_one_slash(char *path, char *new_part);
 char *mx_del_last_slash(char *path);
 
+void mx_nosig(void);
 void mx_handler(); // signals
 int mx_help_command(t_global *g, t_lst *l); // built 
 int mx_call_true(t_global *h); // b

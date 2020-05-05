@@ -7,9 +7,9 @@ void mx_ush_loop(t_global *hd, char *input) {
     hd->last_exit_status = 0;
 
     while (status) {
-        mx_handler();
         hd->new = mx_ush_read_line(&hist, hd, input);                     //зчитуємо строку
         root = hd->new;
+        signal(SIGINT, mx_handler);
         for ( ; hd->new; hd->new = hd->new->next) {
             if (mx_strcmp(hd->new->cmd, "exit") == 0)
                 free(input);
