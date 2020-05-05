@@ -182,6 +182,8 @@ void mx_repl_quotes_with_cmd(char **cmd, t_global *hd);
 bool mx_replace_pharent_with_quotes(char *line);
 //
 bool check_if_cmd_is_builtin(char *cmd);
+//
+bool mx_string_has_chars(char *str);
 
 // ailchuk
 int mx_exit(t_global *hd, t_lst *l);

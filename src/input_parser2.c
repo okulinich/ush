@@ -45,6 +45,10 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
     else {
         // printf("from read_line = %s\n", input);
         line = noncanon_read_line(hist);
+        while(!mx_string_has_chars(line)) {
+            free(line);
+            line = noncanon_read_line(hist);
+        }
     }
 
     if(!mx_replace_pharent_with_quotes(line)) {
@@ -101,6 +105,14 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
 
 //має вийти наступна конструкція: {ls} {-a} {-l} {src} {;} {cd} {inc} {;} {pwd}
 
+bool mx_string_has_chars(char *str) {
+    bool res = false;
+
+    for(int i = 0; i < mx_strlen(str); i++)
+        if(!isspace(str[i]))
+            res = true;
+    return res;
+}
 
 char *bad_strdup(char *str, int i) {
     int j = 0;
