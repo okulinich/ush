@@ -31,7 +31,7 @@ static int func_exec(t_global *hd, t_lst *head) {
         hd->env = mx_env_copy();
         add_str_to_env("SHLVL=2");
         new_env = mx_parse_env_args(&hd);       //функція повертає NULL якщо в env не передано ніяких команд
-        mx_del_strarr(&hd->env);
+        //mx_del_strarr(&hd->env);
         if(new_env == NULL) {                    //інакше - повертає масив змінних среди
             return 1;
         }
