@@ -176,6 +176,10 @@ void add_str_to_env(char *str);
 bool get_var_from_str(char **str);
 //returns the value of variable from environ array
 char *search_for_var(char *str);
+//
+void mx_repl_quotes_with_cmd(char **cmd, t_global *hd);
+//
+bool mx_replace_pharent_with_quotes(char *line);
 
 
 // ailchuk

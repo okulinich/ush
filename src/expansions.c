@@ -2,7 +2,7 @@
 
 int check_cmd_args_for_commands(t_lst *cur) {
 	for(int i = 0; cur->av[i] != NULL; i++) {
-		if(cur->av[i][0] == '`' && cur->av[i][mx_strlen(cur->av[i]) - 1] == '`')
+		if(mx_get_char_index(cur->av[i], '`') != -1)
 			return i;
 	}
 	return 0;
@@ -56,9 +56,15 @@ char *get_cmd_output(char *cmd, t_global *hd) {
                 delete_list(root);
                 return str;
             }
-            if(head->av[1]) {
+            if(head->av[1] && mx_strcmp(head->av[1], "-n") != 0) {
                 str = mx_strnew(strlen(head->av[1]));
                 mx_strcpy(str, head->av[1]);
+                delete_list(root);
+                return str;
+            }
+            else if(head->av[1] && mx_strcmp(head->av[1], "-n") == 0 && head->av[2]) {
+                str = mx_strnew(strlen(head->av[2]));
+                mx_strcpy(str, head->av[2]);
                 delete_list(root);
                 return str;
             }
@@ -99,6 +105,99 @@ char *get_cmd_output(char *cmd, t_global *hd) {
     return str;
 }
 
+
+
+
+void mx_repl_quotes_with_cmd(char **cmd, t_global *hd) {
+    char *command = NULL;
+    char *new_av = NULL;
+    char *output = NULL;
+    int indx = 0;
+    int end_indx = 0;
+    int j = 0;
+
+    indx = mx_get_char_index(*cmd, '`');
+    while(indx != -1) {
+        command = mx_strnew(BUFSIZE);
+        new_av = mx_strnew(BUFSIZE);
+        //getting substr in `` from str 
+        for(int i = indx; i < mx_strlen(*cmd); i++) {
+            command[j++] = (*cmd)[i];
+            if((*cmd)[i] == '`' && i != indx) {
+                end_indx = i;
+                break;
+            }
+        }
+
+        output = get_cmd_output(command, hd);
+
+        if(output == NULL) {
+            output = mx_strnew(1);
+        }
+
+        //creating new str and replacing `cmd` with cmd output
+        //1 - copying original str before first `
+        mx_strncpy(new_av, *cmd, indx);
+        j = indx;
+        //2 - copying output of cmd 
+        for(int i = 0; i < mx_strlen(output); i++) {
+            new_av[j++] = output[i];
+            if(j >= (int)malloc_size(new_av))
+                new_av = (char *)realloc(new_av, malloc_size(new_av) + BUFSIZE);
+        }
+        //3 - copying least original str after second `
+        mx_strcpy(&new_av[j], &(*cmd)[end_indx + 1]);
+
+
+        free(*cmd);
+        *cmd = mx_strdup(new_av);
+
+        free(new_av);
+        free(command);
+        free(output);
+        indx = end_indx = j = 0;
+
+        indx = mx_get_char_index(*cmd, '`');
+
+    }
+}
+
+
+bool mx_replace_pharent_with_quotes(char *line) {
+    int brackets = 0;
+    bool replace_with_quotes = false;
+
+    for(int i = 0; i < mx_strlen(line); i++) {
+        if(line[i] == '(') {
+            brackets++;
+            if(i - 1 >= 0 && line[i - 1] == '$') {
+                replace_with_quotes = true;
+                line[i - 1] = '`';
+                for(int j = i; j < mx_strlen(line); j++)
+                    line[j] = line[j + 1];
+            }
+        }
+        else if(line[i] == ')') {
+            brackets--;
+            if(replace_with_quotes) {
+                replace_with_quotes = false;
+                line[i] = '`';
+            }
+        }
+        else if(brackets > 0 && line[i] == '\"')
+            line[i] = '\'';
+    }
+
+    if(brackets != 0) {
+        mx_printerr("ush: ERROR: odd number of pharenthesis\n");
+        line[0] = '\0';
+        return false;
+    }
+    
+    return true;
+}
+
+
 t_lst *parse_string(char *str) {
     char *line = mx_strdup(str);
     char **av = NULL;
@@ -109,13 +208,12 @@ t_lst *parse_string(char *str) {
     int i = 0;
 
     av = mx_split_by_quotes(line);              //розбиваємо стркоу по лапках
+
     if(av && mx_strcmp(av[0], "ERROR") == 0) {  //якщо лапки не закриті - видаємо помилку
         mx_printerr("ush: ERROR: Odd number of quotes.\n");
         free(av);
     }
     else if(av) {
-        for(int i = 0; av[i] != NULL; i++)
-             catch_escape_seq(av[i]); 
         global = (char **)malloc(sizeof(char *) * BUFSIZE);
         for(i = 0; av[i] != NULL; i++) {
             if(av[i][0] == '\'' || av[i][0] == '\"')        //токен в лапках розглядаємо як суцільний аргумент
@@ -130,11 +228,11 @@ t_lst *parse_string(char *str) {
                 mx_del_strarr(&temp);
             }
         }
+        global[gl_i] = NULL;
         fill_cmd_list(global, &head);
         mx_del_strarr(&global);
     }
     else {
-        catch_escape_seq(line); //function that takes string and catches (ekrans) escape sequances
         av = mx_ush_split_line(line, NULL);      /* розділяємо строку на токени  */
         split_by_delimiter(&av);                /* по крапці з комою */
         i = 0;
@@ -142,7 +240,7 @@ t_lst *parse_string(char *str) {
     }
 
     free(line);
-    if(mx_strcmp(av[0], "ERROR") != 0)
+    if(av && av[0] && mx_strcmp(av[0], "ERROR") != 0)
         mx_del_strarr(&av);
     return head;
 }

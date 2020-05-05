@@ -7,12 +7,12 @@ void fill_cmd_list(char **global, t_lst **head) {
     t_lst *tmp = *head;
 
     for(int j = 0; global[j]; j++) {
-        if(mx_strcmp(global[j], ";") == 0) {     
+        if(mx_strcmp(global[j], "") == 0)
+            continue;
+        else if(mx_strcmp(global[j], ";") == 0) {     
             semicolon = true;
             continue;
         }
-        else if(mx_strcmp(global[j], "") == 0)
-            continue;
         else {
             if(semicolon) {
                 tmp = push_back(head, global[j]);
@@ -37,7 +37,7 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
     t_lst *head = NULL;
     int i = 0;
 
-    if(mx_strcmp("suka", input) != 0) {
+    if(mx_strcmp("emptyinput", input) != 0) {
         line = mx_strnew(1024);
         strcpy(line, input);
         //printf("from input parser: %s\nwritten = %s\n", input, line);
@@ -47,6 +47,10 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
         line = noncanon_read_line(hist);
     }
 
+    if(!mx_replace_pharent_with_quotes(line)) {
+        free(line);
+        return head;
+    }
     av = mx_split_by_quotes(line);              //розбиваємо стркоу по лапках
     if(av && mx_strcmp(av[0], "ERROR") == 0) {  //якщо лапки не закриті - видаємо помилку
         mx_printerr("ush: ERROR: Odd number of quotes.\n");
@@ -69,6 +73,7 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
                 mx_del_strarr(&temp);
             }
         }
+        global[gl_i] = NULL;
         fill_cmd_list(global, &head);
         mx_del_strarr(&global);
     }
@@ -81,9 +86,11 @@ t_lst *mx_ush_read_line(t_cmd_history **hist, t_global *hd, char *input) {
         i = 0;
         fill_cmd_list(av, &head);
     }
+
     free(line);
-    if(av[0] != NULL && mx_strcmp(av[0], "ERROR") != 0)
+    if(av && av[0] != NULL && mx_strcmp(av[0], "ERROR") != 0) {
         mx_del_strarr(&av);
+    }
     return head;
 }
 
@@ -171,8 +178,8 @@ void mx_replace_arg_with_arr(char ***av, int indx, char **str_arr) {
             new_av[str_arr_size + indx + i] = mx_strdup(least[i]);
         }
     new_av[str_arr_size + least_size + indx] = NULL;
-    //mx_del_strarr(av);
-    free(*av);
+    mx_del_strarr(av);
+    //free(*av);
     if(least_size > 0)
         mx_del_strarr(&least);
     *av = new_av;

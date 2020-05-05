@@ -16,7 +16,7 @@ void mx_ush_loop(t_global *hd, char *input) {
             status = mx_ush_execute(hd, hd->new);                 //виконуємо команди
         }
         delete_list(root);
-        if(mx_strcmp("suka", input) != 0) {
+        if(mx_strcmp("emptyinput", input) != 0) {
             break;
         }
         // system("leaks -q ush");
@@ -24,7 +24,7 @@ void mx_ush_loop(t_global *hd, char *input) {
     }
     free(hd);
     free(input);
-    if(mx_strcmp(input, "suka") == 0)
+    if(mx_strcmp(input, "emptyinput") == 0)
         delete_history(hist);
     system("leaks -q ush");
     exit(0);

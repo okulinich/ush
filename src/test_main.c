@@ -7,9 +7,9 @@ int main() {
     size_t buf = 0;
     char *input = NULL;
     if(isatty(0) == 0) {
-        mx_printstr("not chr device\n");
+        //mx_printstr("not chr device\n");
         if(getline(&line, &buf, stdin) < 0) {
-            mx_printstr("no input str\n");
+            //mx_printstr("no input str\n");
             exit(1);
         }
         input = mx_strnew(1024);
@@ -17,7 +17,7 @@ int main() {
     }
     else {
         input = mx_strnew(1024);
-        mx_strcpy(input, "suka");
+        mx_strcpy(input, "emptyinput");
     }
 
     //head->env = mx_env_copy();                  //системні змінні оболонки

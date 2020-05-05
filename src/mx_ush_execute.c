@@ -43,10 +43,9 @@ static void execute_av_in_qoutes(t_global *hd, t_lst *head) {
     char *str;
 
     indx = check_cmd_args_for_commands(head);
-    if(indx > 0) {
-        str = get_cmd_output(head->av[indx], hd);
-        free(head->av[indx]);
-        head->av[indx] = str;
+    while(indx > 0) {
+        mx_repl_quotes_with_cmd(&head->av[indx], hd);
+        indx = check_cmd_args_for_commands(head);
     }
 }
 
