@@ -116,3 +116,5 @@ echo "${command}" | ./ush > test_file1 ; echo "${command}" | bash > test_file2 ;
 res=$(diff test_file1 test_file2);
 echo "${i}. command = '${command}'. res = ${res}" >> test_res;
 if [ -z "$res" ]; then echo "test ${i} \033[32mdone!\033[0m!"; else echo "test ${i} \033[31mfailed!\033[0m"; fi
+
+rm -rf test_file1 test_file2 ;
