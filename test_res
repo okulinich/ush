@@ -1,0 +1,4 @@
+1. command = 'ls'. res = 
+2. command = 'pwd'. res = 
+3. command = 'which env'. res = 1d0
+< env: shell built-in command

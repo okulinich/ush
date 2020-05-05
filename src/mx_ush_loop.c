@@ -26,6 +26,6 @@ void mx_ush_loop(t_global *hd, char *input) {
     free(input);
     if(mx_strcmp(input, "emptyinput") == 0)
         delete_history(hist);
-    system("leaks -q ush");
+    //system("leaks -q ush");
     exit(0);
 }
