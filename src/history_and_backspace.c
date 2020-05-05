@@ -85,39 +85,10 @@ static void print_backsp_and_rewrite_str(char **line, int *i, bool *res) {
     *res = true;
 }
 
-bool history_or_backsp(char *ch, t_cmd_history **cur, char **line, int *i) {
+bool backsp(char *ch, char **line, int *i) {
     bool res = false;
 
-    if (arrow_pressed(ch, 27, 91, 65)) {         //перевіряє чи натиснута клавіша вгору(?)
-        if(*cur) {
-            print_from_history((*cur)->user_input, i, &res, line);
-            if((*cur)->next)
-                *cur = (*cur)->next;
-        }
-    }
-    else if (arrow_pressed(ch, 27, 91, 66)) {       //клавіша вниз
-        if(!cur || !(*cur)) {
-            print_from_history("", i, &res, line);
-            return true;
-        }
-        else if(*cur && !(*cur)->prev) {
-            print_from_history("", i, &res, line);
-            return true;
-        }
-        else if(*cur && (*cur)->prev && strlen((*cur)->prev->user_input) != 0) {                          //segmentation fault
-            // fprintf(stdout, "i'm going to print -%s-\n", (*cur)->prev->user_input);
-            print_from_history((*cur)->prev->user_input, i, &res, line);
-            // fprintf(stdout, "going down through the list\n");
-            *cur = (*cur)->prev;
-            // if((*cur)->prev)
-            //     fprintf(stdout, "next el exist!\n");
-            // else
-            //     fprintf(stdout, "next el don't exist\n");
-            mx_line_alloc(*line);
-            return true;
-        }
-    }
-    else if (ch[0] == 127)                    //backspace
+    if (ch[0] == 127)                    //backspace
         print_backsp_and_rewrite_str(line, i, &res);
     return res;
 }

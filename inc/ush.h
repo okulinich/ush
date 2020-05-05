@@ -111,7 +111,7 @@ void add_new_arg(t_lst *tmp, char *arg);
 //видаляє список що містить історію
 void delete_history(t_cmd_history *head);
 //опрацювання історії та backspace
-bool history_or_backsp(char *ch, t_cmd_history **cur, char **line, int *i);
+bool backsp(char *ch, char **line, int *i);
 //опрацювання клавіш-стрілок праворуч і ліворуч
 bool left_right_key(char ch[4], char **line, int *i);
 //перевіряє чи була натиснута клавіша за її кодом
