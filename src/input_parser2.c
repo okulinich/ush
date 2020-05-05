@@ -279,8 +279,12 @@ void reparse_input_for_env(t_global **hd, int i, char *folder_to_search) {
         free((*hd)->new->cmd);
     }
     if(filename[0] != '/') {
-        if(folder_to_search == NULL)                            //якщо флаг -Р не введено тоді бінарник шукаємо в /bin
-            (*hd)->new->cmd = mx_strjoin("/bin/", filename);        //записуємо шляха до бінарника
+        if(folder_to_search == NULL) {                              //якщо флаг -Р не введено тоді бінарник шукаємо в /bin
+            if(mx_strcmp(filename, "emacs") == 0 || mx_strcmp(filename, "vim") == 0)
+                (*hd)->new->cmd = mx_strjoin("/usr/bin/", filename);        //записуємо шляха до бінарника
+            else
+                (*hd)->new->cmd = mx_strjoin("/bin/", filename);        //записуємо шляха до бінарника
+        }
         else {                                                  //якщо флаг -P активовано, тоді шукаємо у введеній директорії
             if(folder_to_search[strlen(folder_to_search) - 1] == '/') {
                 (*hd)->new->cmd = mx_strjoin(folder_to_search, filename);

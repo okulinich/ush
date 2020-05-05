@@ -29,14 +29,14 @@ static int func_exec(t_global *hd, t_lst *head) {
 
     if (mx_strcmp(head->cmd, "env") == 0) {
         hd->env = mx_env_copy();
-        add_str_to_env("SHLVL=2");
         new_env = mx_parse_env_args(&hd);       //функція повертає NULL якщо в env не передано ніяких команд
-        //mx_del_strarr(&hd->env);
+        mx_del_strarr(&hd->env);
         if(new_env == NULL) {                    //інакше - повертає масив змінних среди
             return 1;
         }
         else
             status = execve(head->cmd, head->av, new_env); //запускаємо env з заданим набором змінних
+        fprintf(stderr, "env: %s: %s\n", head->cmd, strerror(errno));
         mx_del_strarr(&new_env);
     }
     else {
