@@ -34,6 +34,20 @@ static void write_symb_to_str(int *i, char **line, char *ch, bool *errow_pressed
     check_write(errow_pressed, line, i, move_left, j);
 }
 
+static int ctrl_c_or_d(char *ch, struct termios *savetty) {
+    if (ch[0] == 4) { // ctrl d
+        mx_printstr("\n");
+        mx_switch_canon(savetty);
+        exit(0);
+        return LOOP_BREAK;
+    }
+    else if (ch[0] == 3) { // ctrl c
+        mx_printchar('\n');
+        return RETURN_EMPTY;          //freee!!
+    }
+    return LOOP_CONTINUE;
+}
+
 int mx_read_from_stdin(char **line, int *i, bool *errow_pressed, 
                        struct termios *savetty) {
     char ch[4] = {'\0', '\0', '\0', '\0'};             //буфер для посимвольного зчитування
@@ -41,16 +55,8 @@ int mx_read_from_stdin(char **line, int *i, bool *errow_pressed,
     read(0, ch, 4);
     if(ch[0] == '\n')
         return LOOP_BREAK;          //після натискання Enter припиняємо зчитування
-    else if(ch[0] == 3) {           //відловлюємо ctrl + c
-        mx_printchar('\n');
-        return RETURN_EMPTY;          //freee!!
-    }
-    else if(ch[0] == 4) {
-        mx_printstr("\n");
-        mx_switch_canon(savetty);
-        exit(0);
-        return LOOP_BREAK;
-    }
+    else if(ch[0] == 4 || ch[0] == 3)           //відловлюємо ctrl + c
+        return ctrl_c_or_d(ch, savetty);
     else if (ch[0] == 26) 
         write(1, "\a", 1);
     else if(backsp(ch, line, i))      //опрацьовуємо бекспейс
