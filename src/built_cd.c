@@ -56,7 +56,7 @@ static int cd(char **argv, t_dirs *d, int flags, int i) {
     return status;
 }
 
-static t_dirs *initpwd() {
+static t_dirs *initpwd(void) {
     t_dirs *d = malloc(sizeof(t_dirs));
 
     d->pwd = getenv("PWD");

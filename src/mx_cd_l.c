@@ -10,7 +10,7 @@ static int get_slash(char *path) {
     return slash;
 }
 
-static char *get_new_pwd(char *path, t_dirs *d) {
+static char *get_pwd(char *path, t_dirs *d) {
     char **tokens = mx_strsplit(path, '/');
     char *tmp_pwd = path[0] == '/' ? mx_strdup("/") : mx_strdup(d->pwd);
     char *res = 0;
@@ -53,7 +53,7 @@ int mx_cd_l(char *path, char flags, t_dirs *d) {
     if (path[0] == '~' && path[1] == '/')
         new_pwd = pwd(path, d);
     else
-        new_pwd = mx_strcmp(path, "~") == 0 ? strdup(d->home) : get_new_pwd(path, d);
+        new_pwd = mx_strcmp(path, "~") == 0 ? strdup(d->home) : get_pwd(path, d);
     d->oldpwd = d->pwd;
     setenv("OLDPWD", d->pwd, 1);
     if (chdir(new_pwd) == -1) {
