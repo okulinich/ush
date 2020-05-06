@@ -180,14 +180,16 @@ void add_str_to_env(char *str);
 bool get_var_from_str(char **str);
 //returns the value of variable from environ array
 char *search_for_var(char *str);
-//
+//replace string in such `` quotes with the result of executing cmd from ``
 void mx_repl_quotes_with_cmd(char **cmd, t_global *hd);
-//
+//replace such $() with simple `` quotes (they are the same)
 bool mx_replace_pharent_with_quotes(char *line);
-//
+//check if command is built-in in out shell (for which -s)
 bool check_if_cmd_is_builtin(char *cmd);
-//
+//check if string consist only of space-symblols or not
 bool mx_string_has_chars(char *str);
+//split line by ;
+void split_by_delimiter(char ***av);
 
 // ailchuk
 int mx_exit(t_global *hd, t_lst *l);

@@ -1,24 +1,18 @@
-
-1. command = 'cd -P /tmp; pwd'. res = 
-
-2. command = 'cd /usr/bin; pwd; /bin/pwd'. res = 
-
-3. command = 'cd ~; pwd'. res = 
-
-4. command = 'echo CBL world'. res = 
-
-5. command = 'cd /var; pwd -L; pwd -P'. res = 
-
-6. command = 'which -s ls; echo $?; which -s lalala; echo $?'. res = 
-
-7. command = 'export ucode=cbl; echo $ucode; unset ucode; echo $ucode'. res = 
-
-8. command = 'echo 1 ; echo 2 ; which ls; echo 3 ; pwd'. res = 
-
-9. command = 'ls ~Desktop'. res = 
-
-10. command = 'echo ailchuk'. res = 
-
-11. command = 'echo ailchuk xterm-256color /Users/ailchuk/.brew/bin:/Users/ailchuk/.brew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki'. res = 
-
-12. command = 'echo Ave, Caesar AVE'. res = 
+1. command = 'echo NzHHhRPB7wSpCluGslu94wwbUSf14EGIYPki0wp8T6uhHOIDFZZY2qNdmINDlEXNNctME4ejCUUJLb1sdQUP5sXy7EpThX4NiKuHDT11XRUyu8zldkPAyZybLv; exit'. res = 
+2. command = 'echo -n 4MjS0G5hDPhjKAh7n7rd16UjyMUh6DmacyLXBTzanRdl3N4luMW3PbqYOp0Dsdxxuwh3n2Hkvcov8uyBnSE7ykUBYHjkiZuikSmZwTdPTf3TUJYJOOmkUiAzHonZeOjCuEnSSlcd; exit'. res = 
+3. command = 'echo -n 4MjS0G5hDPhjKAh7n7rd16UjyMUh6DmacyLXBTzanRdl3N4luMW3PbqYOp0Dsdxxuwh3n2Hkvcov8uyBnSE7ykUBYHjkiZuikSmZwTdPTf3TUJYJOOmkUiAzHonZeOjCuEnSSlcd; exit'. res = 
+4. command = 'which -s echo; echo 0 ; exit'. res = 1d0
+< echo: shell built-in command
+5. command = 'cd .. ; pwd ; exit'. res = 
+6. command = 'cd / ; pwd ; exit'. res = 
+7. command = 'cd ../../../ ; cd - ; cd .. ; pwd ; exit'. res = 
+8. command = 'cd .. ; cd . ; pwd ; exit'. res = 
+9. command = 'cd /tmp ; pwd -L ; exit'. res = 
+10. command = 'cd /tmp ; pwd -P ; exit'. res = 
+11. command = 'cd .. ; echo /Users/okulinich/Desktop/no_segfault/ush ; exit'. res = 
+12. command = 'cd .. ; echo /Users/okulinich/Desktop/no_segfault/ush ; exit'. res = 
+13. command = 'echo 2 /Users/okulinich okulinich  xterm-256color ; exit'. res = 
+14. command = 'cd ~ ; pwd ; exit'. res = 
+15. command = 'export UNIT=location; export UFK=p2p ucode=cbl; echo   ; exit'. res = 
+16. command = 'export UNIT=location UFK=p2p ucode=cbl ; echo    ; unset UNIT UFK ucode ; echo    ; exit'. res = 
+17. command = 'env -i env ; exit'. res = 
