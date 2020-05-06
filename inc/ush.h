@@ -115,11 +115,11 @@ void add_new_arg(t_lst *tmp, char *arg);
 //видаляє список що містить історію
 void delete_history(t_cmd_history *head);
 //опрацювання історії та backspace
-bool backsp(char *ch, char **line, int *i);
+bool mx_if_backsp(char *ch, char **line, int *i);
 //опрацювання клавіш-стрілок праворуч і ліворуч
 bool left_right_key(char ch[4], char **line, int *i);
 //перевіряє чи була натиснута клавіша за її кодом
-bool arrow_pressed(char *str, int a, int b, int c);
+bool mx_arrow_pressed(char *str, int a, int b, int c);
 //заповнює строку '\0'
 void mx_line_alloc(char *line);
 //prints environ array

@@ -1,0 +1,24 @@
+
+1. command = 'cd -P /tmp; pwd'. res = 
+
+2. command = 'cd /usr/bin; pwd; /bin/pwd'. res = 
+
+3. command = 'cd ~; pwd'. res = 
+
+4. command = 'echo CBL world'. res = 
+
+5. command = 'cd /var; pwd -L; pwd -P'. res = 
+
+6. command = 'which -s ls; echo $?; which -s lalala; echo $?'. res = 
+
+7. command = 'export ucode=cbl; echo $ucode; unset ucode; echo $ucode'. res = 
+
+8. command = 'echo 1 ; echo 2 ; which ls; echo 3 ; pwd'. res = 
+
+9. command = 'ls ~Desktop'. res = 
+
+10. command = 'echo ailchuk'. res = 
+
+11. command = 'echo ailchuk xterm-256color /Users/ailchuk/.brew/bin:/Users/ailchuk/.brew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/munki'. res = 
+
+12. command = 'echo Ave, Caesar AVE'. res = 

@@ -59,7 +59,7 @@ int mx_read_from_stdin(char **line, int *i, bool *errow_pressed,
         return ctrl_c_or_d(ch, savetty);
     else if (ch[0] == 26) 
         write(1, "\a", 1);
-    else if(backsp(ch, line, i))      //опрацьовуємо бекспейс
+    else if(mx_if_backsp(ch, line, i))      //опрацьовуємо бекспейс
         return LOOP_CONTINUE;
     else if(left_right_key(ch, line, i)) {
         *errow_pressed = true;
