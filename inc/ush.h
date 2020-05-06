@@ -87,7 +87,7 @@ void mx_ush_loop(t_global *hd);
 int mx_ush_execute(t_global *hd, t_lst *head);
 int mx_ush_launch(t_global *hd, t_lst *head);
 char **mx_ush_split_line(char *line, char *delim);
-t_lst *mx_ush_read_line(t_global *hd, char *input);
+t_lst *mx_ush_read_line(char *input);
 
 //зчитування, парсинг строки, формування списку команд для виконання
 t_lst *lsh_read_line(t_cmd_history **hist);
@@ -190,6 +190,28 @@ bool check_if_cmd_is_builtin(char *cmd);
 bool mx_string_has_chars(char *str);
 //split line by ;
 void split_by_delimiter(char ***av);
+//replaces string from av[] with arr of strings if it includes ';'
+void mx_replace_arg_with_arr(char ***av, int indx, char **str_arr);
+//returns index of substring in array of strings or -1
+int mx_get_substring_index(char **arr, char *str);
+//створює новий масив змінних із тих що ввів користувач (після флага -і) для передачі їх в EXECVE
+char **fill_new_env(t_global **hd, int *i);
+//check whether there are arguments after P flag in env and perform some actions
+bool mx_check_p_flag_args(t_global **hd, char **folder_to_search, int *i);
+///функція правильно розприділяє аргументи команди ENV для подальшої передачі в EXECVE///
+void reparse_input_for_env(t_global **hd, int i, char *folder_to_search);
+//функція для реалізації -u (ігнорує записані користувачем змінні)
+char **ignore_variables(t_global **hd);
+//check wether semicolons are placed correctly (bash-like style)
+bool semicol_placed_right(char **global, t_lst **head, int j);
+//checks if all types of qoutes are used correctly
+bool mx_parse_quotes(char *line, char ***av);
+//additional parsing of quotes
+void mx_parse_str_with_quotes(char ***global, char ***av);
+//free used in parser memory
+void mx_free_used_memory(char *line, char **av);
+//check string for escape seq and split str by semicolons
+void mx_escape_seq_and_split_by_semicol(char *line, char ***av);
 
 // ailchuk
 int mx_exit(t_global *hd, t_lst *l);

@@ -18,7 +18,9 @@ SRC		=	test_main.c canon.c canon1.c input_parser2.c lst_funcs.c built_exit.c \
 			mx_ush_loop.c mx_ush_execute.c mx_ush_launch.c \
 			mx_ush_split_line.c built_echo.c built_export.c built_cd.c \
 			built_unset.c mx_cd_l.c mx_cd_p.c util_cd.c built_which.c \
-			signals.c expansions.c otherbuilt.c otherbuilt1.c
+			signals.c expansions.c otherbuilt.c otherbuilt1.c strsplit.c \
+			replace_arg_with_arr.c parser_main.c additional_env.c reparse_input_env.c \
+			env_main.c 
 
 SRCS	=	$(addprefix $(SRCD)/, $(SRC))
 OBJS	=	$(addprefix $(OBJD)/, $(SRC:%.c=%.o))

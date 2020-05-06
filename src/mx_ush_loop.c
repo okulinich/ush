@@ -6,7 +6,7 @@ void mx_ush_loop(t_global *hd) {
     hd->last_exit_status = 0;
 
     while (status) {
-        hd->new = mx_ush_read_line(hd, hd->input);                     //зчитуємо строку
+        hd->new = mx_ush_read_line(hd->input);                     //зчитуємо строку
         if(hd->new == NULL)
             continue;
         root = hd->new;
