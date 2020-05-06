@@ -52,30 +52,30 @@ void backspace(char ch, char **line, int *i) {
     free(move_left);
 }
 
-static void print_from_history(char *cmd, int *i, bool *res, char **line) {
-    char esc = 27;
-    char *move_right = mx_strjoin(" ", "[1C");
-    char *move_left = mx_strjoin(" ", "[1D");
+// static void print_from_history(char *cmd, int *i, bool *res, char **line) {
+//     char esc = 27;
+//     char *move_right = mx_strjoin(" ", "[1C");
+//     char *move_left = mx_strjoin(" ", "[1D");
 
-    move_left[0] = esc;
-    move_right[0] = 27;
-    while((*i) < mx_strlen(*line)) {
-        (*i)++;
-        mx_printstr(move_right);
-    }
-    while((*i)-- != 0) {
-        mx_printstr(move_left);
-        mx_printchar(' ');
-        mx_printstr(move_left);
-    }
-    mx_printstr(cmd);
-    mx_line_alloc(*line);
-    strcpy(*line, cmd);
-    *i = strlen(*line);
-    *res = true;
-    free(move_left);
-    free(move_right);
-}
+//     move_left[0] = esc;
+//     move_right[0] = 27;
+//     while((*i) < mx_strlen(*line)) {
+//         (*i)++;
+//         mx_printstr(move_right);
+//     }
+//     while((*i)-- != 0) {
+//         mx_printstr(move_left);
+//         mx_printchar(' ');
+//         mx_printstr(move_left);
+//     }
+//     mx_printstr(cmd);
+//     mx_line_alloc(*line);
+//     strcpy(*line, cmd);
+//     *i = strlen(*line);
+//     *res = true;
+//     free(move_left);
+//     free(move_right);
+// }
 
 static void print_backsp_and_rewrite_str(char **line, int *i, bool *res) {
     char esc = 27;

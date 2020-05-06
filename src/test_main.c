@@ -2,9 +2,9 @@
 
 int main() {
     t_global *head = malloc(sizeof(t_global));
-    char *line;// = mx_strnew(1024);
+    char *line;
     size_t buf = 0;
-    char *input = NULL;
+    head->input = NULL;
     
     mx_nosig();    
     if(isatty(0) == 0) {
@@ -13,12 +13,12 @@ int main() {
             //mx_printstr("no input str\n");
             exit(1);
         }
-        input = mx_strnew(1024);
-        mx_strcpy(input, line);
+        head->input = mx_strnew(1024);
+        mx_strcpy(head->input, line);
     }
     else {
-        input = mx_strnew(1024);
-        mx_strcpy(input, "emptyinput");
+        head->input = mx_strnew(1024);
+        mx_strcpy(head->input, "emptyinput");
     }
 
     //head->env = mx_env_copy();                  //системні змінні оболонки
@@ -26,7 +26,8 @@ int main() {
     // head->vars = init_vars();                   //локальні змінні оболонки /// ЛИКУЕТ!!!!!!!!!!!!!!!!!!!!!!!!!!!
     //add_var_to_env("SHLVL", "=2", head);
     setenv("SHLVL", "2", 1);
-    mx_ush_loop(head, input);                          //основний цикл
+    // mx_ush_loop(head, input);                          //основний цикл
+    mx_ush_loop(head);                          //основний цикл
     //delete_global(head);                        //НЕ ЧИСТИТЬСЯ, ТРЕБА ЦЮ ФУНКЦІЮ
                                                 //ВИКЛИКАТИ ПЕРЕД EXIT
 }

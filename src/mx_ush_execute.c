@@ -40,7 +40,6 @@ int mx_find_builtin(t_global *hd, t_lst *head) {
 
 static void execute_av_in_qoutes(t_global *hd, t_lst *head) {
     int indx = -1;
-    char *str;
 
     indx = check_cmd_args_for_commands(head);
     while(indx > 0) {

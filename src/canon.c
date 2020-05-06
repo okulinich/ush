@@ -88,7 +88,7 @@ static void wait_next_input(char **line) {
     write(1, "u$h> ", 5);
 }
 
-char *noncanon_read_line(t_cmd_history **head) {
+char *mx_noncanon_read_line(void) {
     struct termios savetty;             //змінні для зберігання управляючих струтктур
     struct termios tty;                 //
     char *line = mx_strnew(BUFSIZE);

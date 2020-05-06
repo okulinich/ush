@@ -123,7 +123,6 @@ static void parse_flags(bool *no_new_line, bool *escape_off, t_lst *head, int *i
 }
 
 int mx_echo(t_global *hd, t_lst *head) {
-    char *str = NULL;
     bool no_new_line = false;
     bool escape_off = true;
     int i = 1;
