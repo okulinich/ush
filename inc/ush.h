@@ -93,6 +93,10 @@ t_lst *mx_ush_read_line(t_global *hd, char *input);
 t_lst *lsh_read_line(t_cmd_history **hist);
 //переводить термінал в неканонічний режим, зчитує строку, опрацьовує сигнали
 char *mx_noncanon_read_line(void);
+int mx_read_from_stdin(char **line, int *i, bool *errow_pressed, 
+                       struct termios *savetty);
+void mx_switch_noncanon(struct termios *savetty, struct termios *tty);
+void mx_switch_canon(struct termios *savetty);
 //функція що перевіряє чи є строка командою
 bool mx_is_command(char *str);
 //функція що ділить строку на токени

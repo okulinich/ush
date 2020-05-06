@@ -29,7 +29,7 @@ int mx_exit(t_global *hd, t_lst *l) {
         mx_strdel(&hd->new->cmd);
         mx_strdel(&hd->input);
         free(hd);
-        system("leaks -q ush");
+        // system("leaks -q ush");
         exit(0);
         return 1;
     }
