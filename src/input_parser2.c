@@ -56,7 +56,6 @@ t_lst *mx_ush_read_line(t_global *hd, char *input) {
     else {
         // printf("from read_line = %s\n", input);
         line = mx_noncanon_read_line();
-        mx_printstr(line);
         while(!mx_string_has_chars(line)) {
             free(line);
             line = mx_noncanon_read_line();
