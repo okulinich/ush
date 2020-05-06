@@ -8,6 +8,8 @@ void mx_ush_loop(t_global *hd, char *input) {
 
     while (status) {
         hd->new = mx_ush_read_line(&hist, hd, input);                     //зчитуємо строку
+        if(hd->new == NULL)
+            continue;
         root = hd->new;
         signal(SIGINT, mx_handler);
         for ( ; hd->new; hd->new = hd->new->next) {

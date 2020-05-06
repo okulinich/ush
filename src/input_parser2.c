@@ -10,6 +10,17 @@ void fill_cmd_list(char **global, t_lst **head) {
         if(mx_strcmp(global[j], "") == 0)
             continue;
         else if(mx_strcmp(global[j], ";") == 0) {     
+            if(j == 0) {
+                mx_printerr("ush: syntax error near unexpected token `;\'\n");
+                *head = NULL;
+                return ;
+            }
+            else if(mx_strcmp(global[j - 1], ";") == 0) {
+                delete_list(*head);
+                *head = NULL;
+                mx_printerr("ush: syntax error near unexpected token `;;\'\n");
+                return ;
+            }
             semicolon = true;
             continue;
         }
