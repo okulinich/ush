@@ -22,22 +22,22 @@ void wait_next_input(char **line) {
     write(1, "u$h> ", 5);
 }
 
-static void print_ush(char *line, struct termios savetty) {
+static void print_ush(char **line, struct termios savetty) {
     int res = 0;
     bool errow_pressed = false;
     
-    for(int i = 0; (res = mx_read_from_stdin(&line, &i, &errow_pressed, &savetty)); ) {
+    for(int i = 0; (res = mx_read_from_stdin(line, &i, &errow_pressed, &savetty)); ) {
         if(res == LOOP_BREAK) {
-            if(line[0] == '\0') {
+            if((*line)[0] == '\0') {
                 mx_printchar('\n');
-                wait_next_input(&line);
+                wait_next_input(line);
                 continue;
             }
             else
                 break;
         }
         else if(res == RETURN_EMPTY) {
-            wait_next_input(&line);
+            wait_next_input(line);
             continue;
         }
         else if(res == LOOP_CONTINUE)
@@ -54,7 +54,7 @@ char *mx_noncanon_read_line(void) {
     mx_switch_noncanon(&savetty, &tty);
     mx_memset(line, '\0', BUFSIZE);
     write(1, "u$h> ", 5);
-    print_ush(line, savetty);
+    print_ush(&line, savetty);
     mx_switch_canon(&savetty);
     mx_printchar('\n');
     return line;

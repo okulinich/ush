@@ -56,12 +56,12 @@ t_lst *mx_ush_read_line(t_global *hd, char *input) {
     else {
         // printf("from read_line = %s\n", input);
         line = mx_noncanon_read_line();
-        while(!mx_string_has_chars(line)) {
+
+        while(!mx_string_has_chars(line) && mx_strlen(line) > 0) {
             free(line);
             line = mx_noncanon_read_line();
         }
     }
-
     if(!mx_replace_pharent_with_quotes(line)) {
         free(line);
         return head;
@@ -102,7 +102,8 @@ t_lst *mx_ush_read_line(t_global *hd, char *input) {
         fill_cmd_list(av, &head);
     }
 
-    free(line);
+    if(mx_strlen(line) > 0)
+        free(line);
     if(av && av[0] != NULL && mx_strcmp(av[0], "ERROR") != 0) {
         mx_del_strarr(&av);
     }
