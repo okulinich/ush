@@ -17,7 +17,7 @@ SRC		=	test_main.c canon.c canon1.c input_parser2.c lst_funcs.c \
 			built_exit.c built_pwd.c built_env.c backspace.c left_right_key.c \
 			mx_ush_loop.c mx_ush_execute.c mx_ush_launch.c built_env1.c \
 			mx_ush_split_line.c built_echo.c built_export.c built_cd.c \
-			built_unset.c mx_cd_l.c mx_cd_p.c util_cd.c built_which.c \
+			built_unset.c mx_cd_l.c mx_cd_p.c built_which.c \
 			built_which1.c signals.c expansions.c otherbuilt.c otherbuilt1.c \
 			strsplit.c replace_arg_with_arr.c parser_main.c additional_env.c \
 			reparse_input_env.c env_main.c \
