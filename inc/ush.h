@@ -131,11 +131,11 @@ t_lst *mx_additional_parsing(t_lst **head, char *arg);
 //функція виводить помилку usage для env
 void mx_usage_env(char *flag);
 //функція ініціалізує структуру локальних змінних нульовими значеннями
-char **init_vars();
+// char **init_vars(); Ne yuzaem!!!!
 //функція додає змінну та її значення із строки до локальних змінних
-void add_local_var(t_global **hd, char *str);
+// void add_local_var(t_global **hd, char *str); // HE YUZAEM
 //фрішить глобальну структуру
-void delete_global(t_global *head);
+// void delete_global(t_global *head); // Vrode ne yuzaem!!!!!!!!!!!1
 //реалізація вбудованої команди echo
 int mx_echo(t_global *hd, t_lst *head);
 ////функція перевіряє чи менша строка входить в більшу (до знака = в більшій)
@@ -147,7 +147,7 @@ int mx_cd(t_global *hd, t_lst *head);
 //функція приймає ім'я змінної і шукає її перше входження в nev(до =) і повертає індекс
 int search_for_var_in_env(char *str);
 //те саме що і верхня тілкьки з масивом vars
-int search_for_var_in_vars(t_global *hd, char *str);
+// int search_for_var_in_vars(t_global *hd, char *str);
 //видаляє змінні із env та var
 int mx_unset(t_lst *head) ;
 //розділяє строку по лапках
@@ -176,7 +176,7 @@ t_lst *create_node(char *str);
 //returns char c + '\'
 char get_escape(char c);
 //adds new var and it's value to environ array
-void add_str_to_env(char *str);
+// void add_str_to_env(char *str);
 //checks the str for variables and replaces vars with their values
 bool get_var_from_str(char **str);
 //returns the value of variable from environ array
@@ -213,13 +213,6 @@ void mx_parse_str_with_quotes(char ***global, char ***av);
 void mx_free_used_memory(char *line, char **av);
 //check string for escape seq and split str by semicolons
 void mx_escape_seq_and_split_by_semicol(char *line, char ***av);
-//print argument passed to echo with escape characters
-void print_with_escape(char *str);
-//return value of the variable detected in echo arg
-char *get_variable_value(int pos, char *str);
-//replaces variable in echo arg with it's value
-void replace_var_with_value(char **str, char *var_value, int i);
-
 
 // ailchuk
 int mx_exit(t_global *hd, t_lst *l);

@@ -73,7 +73,7 @@ void split_by_delimiter(char ***av) {
     for (int i = 0; (*av)[i]; i++) {
         if (mx_get_char_index((*av)[i], ';') >= 0 && mx_strcmp((*av)[i], ";") != 0) {
             substrings = split_to_substr(&num_of_substr, ';', (*av)[i]);
-            if ((!substrings || substrings[0] != NULL))  /*якщо є ; - додаємо масив строк що повернула функція в основний масив аргументів*/ {
+            if ((!substrings || substrings[0] != NULL)) { /*якщо є ; w- додаємо масив строк що повернула функція в основний масив аргументів*/
                 mx_replace_arg_with_arr(av, mx_get_substring_index(*av, (*av)[i]), substrings);
             }
             mx_del_strarr(&substrings);

@@ -57,12 +57,11 @@ char *ssearch_for_var_in_env(char *str) {
 //     free(new_var);
 // }
 
-void add_str_to_env(char *str) {
+static void add_str_to_env(char *str) {
     char *var_name = mx_strndup(str, mx_get_char_index(str, '='));
     char *value = mx_strdup(&str[mx_get_char_index(str, '=') + 1]);
 
     setenv(var_name, value, 1);
-
     free(var_name);
     free(value);    
 }
@@ -71,12 +70,10 @@ int mx_export(t_lst *head) {
     for(int i = 1; head->av[i]; i++) {
         if(!head->av[i])
             return 1;
-        else if(mx_get_char_index(head->av[i], '=') < 0) {  //якщо в строці немає =
+        else if(mx_get_char_index(head->av[i], '=') < 0)  //якщо в строці немає =
             return -1;
-        }
-        else {                                              //якщо = є
+        else                                              //якщо = є
             add_str_to_env(head->av[i]);
-        }
     }
     return 1;
 }
