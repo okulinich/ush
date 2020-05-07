@@ -24,9 +24,9 @@ void wait_next_input(char **line) {
 
 static void print_ush(char **line, struct termios savetty) {
     int res = 0;
-    bool errow_pressed = false;
+    bool pressed = false;
     
-    for(int i = 0; (res = mx_read_from_stdin(line, &i, &errow_pressed, &savetty)); ) {
+    for(int i = 0; (res = mx_read_from_stdin(line, &i, &pressed, &savetty));) {
         if(res == LOOP_BREAK) {
             if((*line)[0] == '\0') {
                 mx_printchar('\n');

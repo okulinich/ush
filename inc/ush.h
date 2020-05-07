@@ -156,6 +156,7 @@ char **mx_split_by_quotes(char *line);
 void add_var_to_env(char *name, char *value, t_global *hd);
 //built-in which command
 int mx_which(t_lst *head);
+char *mx_get_path_to_binary(char *bin_name, bool search_all_bins);
 //якщо знаходить змінну повертає *=value* інакше = 0
 char *ssearch_for_var_in_env(char *str);
 //ekranirovanie of space-symbols
@@ -185,7 +186,7 @@ void mx_repl_quotes_with_cmd(char **cmd, t_global *hd);
 //replace such $() with simple `` quotes (they are the same)
 bool mx_replace_pharent_with_quotes(char *line);
 //check if command is built-in in out shell (for which -s)
-bool check_if_cmd_is_builtin(char *cmd);
+bool mx_check_if_cmd_is_builtin(char *cmd);
 //check if string consist only of space-symblols or not
 bool mx_string_has_chars(char *str);
 //split line by ;
