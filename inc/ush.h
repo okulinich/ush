@@ -213,6 +213,13 @@ void mx_parse_str_with_quotes(char ***global, char ***av);
 void mx_free_used_memory(char *line, char **av);
 //check string for escape seq and split str by semicolons
 void mx_escape_seq_and_split_by_semicol(char *line, char ***av);
+//print argument passed to echo with escape characters
+void print_with_escape(char *str);
+//return value of the variable detected in echo arg
+char *get_variable_value(int pos, char *str);
+//replaces variable in echo arg with it's value
+void replace_var_with_value(char **str, char *var_value, int i);
+
 
 // ailchuk
 int mx_exit(t_global *hd, t_lst *l);

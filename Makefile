@@ -20,7 +20,8 @@ SRC		=	test_main.c canon.c canon1.c input_parser2.c lst_funcs.c \
 			built_unset.c mx_cd_l.c mx_cd_p.c built_which.c \
 			built_which1.c signals.c expansions.c otherbuilt.c otherbuilt1.c \
 			strsplit.c replace_arg_with_arr.c parser_main.c additional_env.c \
-			reparse_input_env.c env_main.c \
+			reparse_input_env.c env_main.c print_escape.c repl_var_with_value.c \
+			get_var_from_str.c
 
 SRCS	=	$(addprefix $(SRCD)/, $(SRC))
 OBJS	=	$(addprefix $(OBJD)/, $(SRC:%.c=%.o))
