@@ -23,8 +23,15 @@ char **mx_env_copy(void) {
 }
 
 void mx_print_env(char **env) {
-    for(int i = 0; env[i]; i++) {
+    for (int i = 0; env[i]; i++) {
         mx_printstr(env[i]);
         mx_printstr("\n");
     }
+}
+
+void mx_usage_env(char *flag) {
+    mx_printerr("env: option requires an argument -- ");
+    mx_printerr(flag);
+    mx_printerr("\nusage: env [-i] [-P utilpath] [-u name]\n");
+    mx_printerr("[name=value ...] [utility [argument ...]]\n");
 }

@@ -1,13 +1,87 @@
 #include "ush.h"
 
-int mx_ush_execute(t_global *hd) {
-    if(hd->new->cmd == NULL)
-        return 1;
-    if (mx_strcmp(hd->new->cmd, "pwd") == 0)
-        return mx_builtin_pwd(hd->new);
-    if (mx_strcmp(hd->new->cmd, "exit") == 0)
-        mx_exit(hd->new);
-        // функція яка знаходить білтін і юзає його
-        // якщо енв то заходить ush_launch 
-    return mx_ush_launch(hd);
+static int find_add(t_global *hd, t_lst *head) {
+    if (mx_strcmp(head->cmd, "help") == 0)
+        return mx_help_command(hd, head);
+    else if (mx_strcmp(head->cmd, "true") == 0)
+        return mx_call_true(hd);
+    else if (mx_strcmp(head->cmd, "false") == 0)
+        return mx_call_false(hd);
+    else if (mx_strcmp(head->cmd, "set") == 0)
+        return mx_set(head);
+    else if (mx_strcmp(head->cmd, "bye") == 0)
+        return mx_bye(hd, head);
+    return 0;
 }
+
+int mx_find_builtin(t_global *hd, t_lst *head) {
+    if (mx_strcmp(head->cmd, "pwd") == 0)
+        return mx_builtin_pwd(head);
+    else if (mx_strcmp(head->cmd, "exit") == 0)
+        return mx_exit(hd, head); 
+    else if (mx_strcmp(head->cmd, "env") == 0)
+        return mx_ush_launch(hd, head); 
+    else if (mx_strcmp(head->cmd, "echo") == 0)
+        return mx_echo(hd, head);
+    else if (mx_strcmp(head->cmd, "export") == 0)
+        return mx_export(head);
+    else if (mx_strcmp(head->cmd, "cd") == 0)
+        return mx_cd(hd, head);
+    else if (mx_strcmp(head->cmd, "unset") == 0)
+        return mx_unset(head);
+    else if (mx_strcmp(head->cmd, "which") == 0)
+        return mx_which(head);
+    return find_add(hd, head);
+}
+
+static void execute_av_in_qoutes(t_global *hd, t_lst *head) {
+    int indx = -1;    
+    indx = mx_check_cmd_args_for_commands(head);
+    while (indx > 0) {
+        mx_repl_quotes_with_cmd(&head->av[indx], hd);
+        indx = mx_check_cmd_args_for_commands(head);
+    }
+}
+
+static void cmd_sub_tilda(t_lst *head) {
+    char *user_name = mx_search_for_var("USER");
+    char *tilda_value = mx_strjoin("/Users/", user_name);
+    char *temp = NULL;
+
+    for (int i = 1; head->av[i] != NULL; i++) {
+        while (mx_get_char_index(head->av[i], '~') >= 0) {
+            temp = mx_replace_substr(head->av[i], "~", tilda_value);
+            free(head->av[i]);
+            head->av[i] = mx_strnew(mx_strlen(temp));
+            mx_strcpy(head->av[i], temp);
+            free(temp);
+        }
+    }
+
+    free(user_name);
+    free(tilda_value);
+}
+//тут перевірка аргументів на наявність  `cmd` і запуск відповідної ф-кції
+//результат віконання цієї ф-кції = строка з виводом запущеної команди
+//ця строка записується в якості аргумента поміщеного в ``
+int mx_ush_execute(t_global *hd, t_lst *head) {
+    int ret = -2;
+
+    if (head->cmd == NULL)
+        return 1;
+    execute_av_in_qoutes(hd, head); 
+    cmd_sub_tilda(head); 
+    ret = mx_find_builtin(hd, head);
+    if (ret < 0) { // -1 error 
+        hd->last_exit_status = 1;
+        return 1;
+    }
+    else if (ret > 0) { // builtin
+        hd->last_exit_status = 0;
+        return 1;
+    }
+    else if (ret == 0)
+        ret = mx_ush_launch(hd, head);
+    return ret;
+}
+
