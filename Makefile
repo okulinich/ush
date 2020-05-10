@@ -55,4 +55,4 @@ uninstall: clean
 	@rm -rf $(NAME)
 	@printf "$(NAME)\t   \033[31;1muninstalled\033[0m\n"
 
-reinstall: uninstall install
+reinstall: uninstall $(LMXA) $(NAME)
