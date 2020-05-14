@@ -17,12 +17,14 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <spawn.h>
+#include <pwd.h>
 
 #define MX_BUFSIZE 1024
 #define MX_DELIMITERS "\t\r\n\a "
 #define MX_LOOP_BREAK 1
 #define MX_RETURN_EMPTY 2
 #define MX_LOOP_CONTINUE 3
+#define MX_DEFAULT_PATH "/bin:/usr/bin:/usr/local/bin:/usr/sbin:/sbin"
 
 typedef struct s_dirs {
     char *pwd;

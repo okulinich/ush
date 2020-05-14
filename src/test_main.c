@@ -1,17 +1,29 @@
 #include "ush.h"
 
+static void init_val() {
+    char cur_path[PATH_MAX];
+
+    getwd(cur_path);
+    setenv("PWD", cur_path, 1);
+    mx_nosig();
+    if (getenv("HOME") == NULL) {
+        struct passwd *pw = getpwuid(getuid());
+        
+        setenv("HOME", pw->pw_dir, 1);
+    }
+}
+
 int main() {
     t_global *head = malloc(sizeof(t_global));
     char *line;
     size_t buf = 0;
-    
     head->input = NULL;
     head->last_exit_status = 0; 
-    mx_nosig();    
+
+    init_val();
     if(isatty(0) == 0) {
-        if(getline(&line, &buf, stdin) < 0) {
+        if(getline(&line, &buf, stdin) < 0)
             exit(1);
-        }
         head->input = mx_strnew(1024);
         mx_strcpy(head->input, line);
     }
