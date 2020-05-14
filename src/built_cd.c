@@ -77,8 +77,6 @@ int	mx_cd(t_global *s, t_lst *h) {
             s->last_exit_status = 1;
             return -1;
         }
-        else
-            printf("%s\n", d->oldpwd);
     }  
     if ((status = cd(h->av, d, flags, i)) == -1) {
         free(d);
