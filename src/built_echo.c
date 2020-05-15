@@ -58,20 +58,25 @@ static void parse_flags(bool *no_new_line, bool *escape_off, t_lst *head, int *i
 }
 
 static void print_arguments(t_lst *head, int i, t_global *hd, bool escape_off) {
+    bool print_space = false;
+
     for (; head->av[i]; i++) {
         if (mx_strcmp(head->av[i], "$?") == 0) {
             mx_printint(hd->last_exit_status);
+	    print_space = true;
         }
         else if (mx_get_var_from_str(&head->av[i])) {
             while (mx_get_var_from_str(&head->av[i]))
                 ;
         }
-        if (mx_strcmp(head->av[i], "$?") != 0)
+        if (head->av[i] != NULL && mx_strlen(head->av[i]) > 0
+	   && print_space)
+		mx_printstr(" ");
+	if (mx_strcmp(head->av[i], "$?") != 0) {
             escape_off == true ? mx_printstr(head->av[i]) : 
                                  mx_print_with_escape(head->av[i]);
-        if (head->av[i + 1] && mx_strlen(head->av[i]) > 0
-             && mx_strcmp(head->av[i], "") != 0)
-            mx_printstr(" ");
+	    print_space = true;
+	}
     }
 }
 
