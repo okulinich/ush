@@ -1,7 +1,7 @@
 #include <ush.h>
 
 bool mx_check_if_cmd_is_builtin(char *cmd) {
-	char *com[] = {"echo", "env", "set", "cd", "exit", "export", "unset", 
+	char *com[] = {"env", "set", "cd", "exit", "export", "unset", 
 				   "which", "help", "true", "false", "bye", NULL};
 
 	for (int i = 0; com[i]; i++)
