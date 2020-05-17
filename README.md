@@ -32,9 +32,9 @@ Use `MAKE` to install and `./ush` to start shell.
 `make reistall` - uninstall & install shell
 
 **ush** implements builtin commands:
-- `export
-- `unset
-- `exit
+- `export`
+- `unset`
+- `exit`
 - `env` with `-i`, `-P`, `-u`
 - `cd`  with `-s`, `-P`  and `-` argumen
 - `pwd` with `-L`, `-P`
@@ -51,8 +51,8 @@ These characters are escaped to be used literally:
 `space`, `'`, `"`, `$`, `(`, `)`, `\\`, `{`, `}`.
 
 Ush manages tilde expansion `~`, the basic form of parameter 
-expansion `${parameter}`, command substitution `\`command\` and `$(command)`.
+expansion `${parameter}`, command substitution ``command`` and `$(command)`.
 
 Command editing is allowed with Arrow keys.
 
-**Enjoy!
+**Enjoy!**
