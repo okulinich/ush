@@ -1,21 +1,6 @@
 # ush
 
-           dMMmy+.                -ohmMMo                                   
-          :MMMMMMMdoosyyhhhhyysosmMMMMMMN                                   
-          /MMMMMMMMMMMMMMMMMMMMMMMMMMMMMM`                                  
-          .MMMMMMMMMMMMMMMMMMMMMMMMMMMMMd                                   
-         `yMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNo                                  
-        `dMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMo                                 
-        +MMMMMMNmdddmmNNNNNNNmmmddmNMMMMMMM.                                
-        yMMMMMy-``--```......``.:.`./dMMMMM/                                
-        yMMMMo  .dMMm:        oNMNs  `dMMMM/                                
-        +MMMM`  sMMMMh       `MMMMM-  +MMMM.                                
-        `mMMM-  :NMMMo        dMMMm`  sMMMh                                 
-         -mMMd-  :sy/         `oyo. `/NMMh`                                 
-          .odNNy/-.`           ``.:+dMNh/`                                  
-            `-/shdddhhhhhhhhhhhddhdhs/.                                     
-                 ``..-okulinich-..``
-
+(image)
 
 This is simple command line interpreter for Unix.
        contributors: @okulinich, @ailchuk
