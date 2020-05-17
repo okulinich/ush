@@ -20,7 +20,7 @@
 This is simple command line interpreter for Unix.
        contributors: @okulinich, @ailchuk
 
-    ush:
+   **ush**:
 * u - ucode
 * sh - shell
 
