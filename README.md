@@ -1,6 +1,6 @@
 # ush
 
-(image)
+![usage screenshot](https://github.com/okulinich/ush/blob/master/ush_usage.png?raw=true)
 
 This is simple command line interpreter for Unix.
        contributors: @okulinich, @ailchuk
