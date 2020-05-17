@@ -63,20 +63,20 @@ static void print_arguments(t_lst *head, int i, t_global *hd, bool escape_off) {
     for (; head->av[i]; i++) {
         if (mx_strcmp(head->av[i], "$?") == 0) {
             mx_printint(hd->last_exit_status);
-	    print_space = true;
+	        print_space = true;
         }
         else if (mx_get_var_from_str(&head->av[i])) {
             while (mx_get_var_from_str(&head->av[i]))
                 ;
         }
         if (head->av[i] != NULL && mx_strlen(head->av[i]) > 0
-	   && print_space)
-		mx_printstr(" ");
-	if (mx_strcmp(head->av[i], "$?") != 0) {
+	        && print_space)
+		    mx_printstr(" ");
+	    if (mx_strcmp(head->av[i], "$?") != 0) {
             escape_off == true ? mx_printstr(head->av[i]) : 
                                  mx_print_with_escape(head->av[i]);
-	    print_space = true;
-	}
+	        print_space = true;
+	    }
     }
 }
 
