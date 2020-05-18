@@ -21,7 +21,7 @@ Use `MAKE` to install and `./ush` to start shell.
 - `unset`
 - `exit`
 - `env` with `-i`, `-P`, `-u`
-- `cd`  with `-s`, `-P`  and `-` argumen
+- `cd`  with `-s`, `-P`  and `-` argument
 - `pwd` with `-L`, `-P`
 - `which` with `-a`, `-s`
 - `echo` with `-n`, `-e`, `-E`
