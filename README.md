@@ -3,7 +3,7 @@
 ![usage screenshot](https://github.com/okulinich/ush/blob/master/ush_usage.png?raw=true)
 
 This is simple command line interpreter for Unix.
-       contributors: @okulinich, @ailchuk
+       contributors: [@okulinich](https://github.com/okulinich), [@ailchuk](https://github.com/ailchuk)
 
    **ush**:
 * u - ucode
