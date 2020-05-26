@@ -12,7 +12,7 @@ This is simple command line interpreter for Unix.
 You need clang compiler to be installed to compile this 
 project, or you can change default compiler in Makefile.
 
-Use `MAKE` to install and `./ush` to start shell.
+Use `make` to install and `./ush` to start shell.
 `make uninstall` - uninstall shell
 `make reistall` - uninstall & install shell
 
